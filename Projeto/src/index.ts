@@ -2,7 +2,7 @@
 import { App } from "./app/app"
 
 
-var port = normalizePort(process.env.PORT || '5001');
+var port = normalizePort(process.env.PORT || '5002');
 
 function normalizePort(val: string) {
 

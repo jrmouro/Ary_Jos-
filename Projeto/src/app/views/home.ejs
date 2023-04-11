@@ -9,18 +9,38 @@
 
 <body style="font-family:Verdana;color:#05252c;" onload="chatroom()">
 
-  <div style="background-color:#90b1df;padding:15px;text-align:center;">
-    <h2><%= title %></h2>
-    <p style="font-size:50%;"><%= wsa %>:<%= wsp %></p>
+  <div style="background-color:#90b1df;padding:5px;text-align:center;">
+    <h2 style="margin: 0px;padding: 0;"><%= title %></h2>
+    <p style="font-size:50%;margin: 0px;padding: 0;"><%= wsa %>:<%= wsp %></p>
+    <% if (fail_msg != undefined) { %>
+      <p style="font-family:Verdana;color:#e10e1c;"> <%= fail_msg%> </p>
+    <%}%>
   </div>
 
   <div  style="overflow:auto;background-color:#90b1df;margin-top:7px;">
 
     <div class="left" style="background-color:#90b1df">
-      <h3><a href="/quiz_home"> Quizzes </a></h3>
-      <h3>Matches</h3>
-      <h3>Challenges</h3>           
+      <h3 style="margin: 0px;padding: 0;">Data</h3>
+      <ul style="list-style-type: none; margin: 10px;padding: 0;">
+        <li> 
+          <Div  style="padding-bottom: 10px ;">
+            &#x1F50E <a href="/quiz_home" >Quizzes</a>
+          </Div>            
+        </li>
+        <li> 
+          <Div  style="padding-bottom: 10px ;">
+            &#x1F50E <a href="/match_home" >Matches</a>
+          </Div>            
+        </li>
+        <li> 
+          <Div  style="padding-bottom: 10px ;">
+            &#x1F50E <a href="/challenge_home" >Challenges</a>
+          </Div>            
+        </li>
+       
+      </ul>       
     </div>
+
 
     <div class="main">
       <h3>Welcome!!</h3>
@@ -29,15 +49,14 @@
     
   </div>
 
-  <div id="status" style="background-color:#90b1df;text-align:center;padding:10px;margin-top:7px;">
+  <div id="status" style="background-color:#90b1df;text-align:center;padding:5px;margin-top:7px;">
     <% if (user != undefined) { %>
-    <p> <%= user.name %> </p>
-    <p style="font-size:50%;"> <%= user.email %> </p>
+    <p style="margin: 0px;padding: 0;"> <%= user.name %> </p>
+    <p style="font-size:50%;margin: 0px;padding: 0;"> <%= user.email %> </p>
     <a href="/user_logout"> logout </a>
     <%} else { %>
-    <a href="/user_login_form"> login </a>
+    <a style="margin: 0px;padding: 0;" href="/user_login_form"> login </a>
     <% } %>
-  </div>
 
 </body>
 

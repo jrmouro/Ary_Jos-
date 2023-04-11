@@ -16,7 +16,8 @@ class HomeController{
       title: app_name,
       wsa: wsaddress,
       wsp: wsport,
-      user: user
+      user: user,
+      fail_msg:undefined
     });
 
   }
