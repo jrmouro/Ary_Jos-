@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css"  href="/stylesheets/style.css">
+  <script src="/javascripts/chatroom.js"></script>
+</head>
+
+<body style="font-family:Verdana;color:#05252c;" onload="chatroom()">
+
+  <div style="background-color:#90b1df;padding:5px;text-align:center;">
+    <h2 style="margin: 0px;padding: 0;"><%= title %></h2>
+    <p style="font-size:50%;margin: 0px;padding: 0;"><%= wsa %>:<%= wsp %></p>
+    <% if (fail_msg != undefined) { %>
+      <p style="font-family:Verdana;color:#e10e1c;"> <%= fail_msg%> </p>
+    <%}%>
+  </div>
+
+  <div  style="overflow:auto;background-color:#90b1df;margin-top:7px;">
+
+    <div class="left" style="background-color:#90b1df">
+      <h3 style="margin: 0px;padding: 0;">Quizzes</h3>
+      <ul style="list-style-type: none; margin: 10px;padding: 0;">
+        <li> 
+          <Div  style="padding-bottom: 10px ;">
+            &#x1F4C4 <a href="/quiz_register_form" >New Quiz...</a>
+          </Div>            
+        </li>
+        <% if (user_quizzes != undefined) { %>
+          <% for (const key in user_quizzes) { %>
+              <li> 
+                <Div>
+                  &#x1F50E <a href= <%= "/quiz_view?quiz_key=" + key %> style="text-decoration: none;"> <%= user_quizzes[key].name %> </a>
+                  <p style="font-size:50%;margin-top: 0.0em ; margin-bottom: 0.0em ;"> <%= user_quizzes[key].theme %> </p>
+                </Div>                
+              </li>
+          <% } %>
+        <% } %>
+      </ul>       
+    </div>
+
+    <div class="main">
+      <h3 style="padding: 0;"><%= user_quizzes[quiz_key].name %></h3>
+      <h4 style="margin: 0px;margin-left: 10px;padding: 0;"><%= user_quizzes[quiz_key].theme %></h4>
+      <h4 style="margin: 0px;margin-left: 10px;padding: 0;">Questions</h4>
+      <ul style="margin: 0px;margin-left: 30px;padding: 0;">
+        <li> 
+          <Div>
+            <a href= <%= "/question_register_form?quiz_key=" + quiz_key %>> New Question... </a>
+          </Div>            
+        </li>
+        <% if (user_quizzes != undefined && quiz_key in user_quizzes) { %>
+          <% for (const question_key in user_quizzes[quiz_key].questions) { %>
+            <li> 
+              <Div>
+                <p style="margin-top: 0.0em ; margin-bottom: 0.0em ;"> <%= user_quizzes[quiz_key].questions[question_key].description %>  <a href= <%= "/question_edit_form?quiz_key=" + quiz_key + "&question_key=" + question_key %> style="text-decoration: none;"> &#9998 </a></p>
+                <ul style="list-style-type: none;margin: 0;padding: 0;">
+                  <li>
+                    <p style="margin-top: 0.0em ; margin-bottom: 0.0em ;">True Option:  <%= user_quizzes[quiz_key].questions[question_key].true_option %> </p>
+                  </li>
+                  <% for(var i=0; i < user_quizzes[quiz_key].questions[question_key].fake_options.length; i++) {%>
+                    <li>
+                      <p style="margin-top: 0.0em ; margin-bottom: 0.0em; color:#e10e1c;"> Fake Option<%= i + 1 %> :  <%= user_quizzes[quiz_key].questions[question_key].fake_options[i] %> </p>
+                    </li>                    
+                  <% } %>
+                </ul>                
+              </Div>                
+            </li>
+          <% } %>
+        <% } %>
+      </ul>  
+    </div>
+    
+  </div>
+
+  <div id="status" style="background-color:#90b1df;text-align:center;padding:5px;margin-top:7px;">
+    <% if (user != undefined) { %>
+    <p style="margin: 0px;padding: 0;"> <%= user.name %> </p>
+    <p style="font-size:50%;margin: 0px;padding: 0;"> <%= user.email %> </p>
+    <a href="/user_logout"> logout </a>
+    <%} else { %>
+    <a style="margin: 0px;padding: 0;" href="/user_login_form"> login </a>
+    <% } %>
+  </div>
+
+</body>
+
+</html>

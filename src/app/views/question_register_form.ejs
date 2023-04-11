@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css"  href="/stylesheets/style.css">
+  <script src="/javascripts/chatroom.js"></script>
+</head>
+
+<body style="font-family:Verdana;color:#05252c;" onload="chatroom()">
+
+  <div style="background-color:#90b1df;padding:5px;text-align:center;">
+    <h2><%= title %></h2>
+    <p style="font-size:50%;"><%= wsa %>:<%= wsp %></p>
+    <% if (fail_msg != undefined) { %>
+      <p style="font-family:Verdana;color:#e10e1c;"> <%= fail_msg%> </p>
+    <%}%>
+  </div>
+
+  <div  style="overflow:auto;background-color:#90b1df;margin-top:7px;">
+
+    <div class="left" style="background-color:#90b1df">
+      <h3>Quizzes</h3>
+      <ul>
+        <li> 
+          <Div>
+            <a href="/quiz_register_form" > New... </a>
+          </Div>            
+        </li>
+        <% if (user_quizzes != undefined) { %>
+          <% for (const key in user_quizzes) { %>
+            <li> 
+              <Div>
+                <p style="margin-top: 0.0em ; margin-bottom: 0.0em ;"><%= user_quizzes[key].name %> <a href= <%= "/quiz_edit_form?quiz_key=" + key %> style="text-decoration: none;"> &#9998 </a> </p>
+                <p style="font-size:50%;margin-top: 0.0em ; margin-bottom: 0.0em ;"> <%= user_quizzes[key].theme %> </p>
+              </Div>                
+            </li>
+          <% } %>
+        <% } %>
+      </ul>    
+    </div>
+
+    <div class="forms" style="background-color:#90b1df">
+      <h3>New Question</h3>
+      <form id="quiz_register" action="/question_register" method="get">
+        <input id="quiz_key" name="quiz_key" type="hidden" value= <%= quiz_key %> >
+        <textarea id="description" name="description" placeholder="question description" style="width:50%; margin: 2px" required autofocus></textarea><br>
+        <textarea id="true_option" name="true_option" placeholder="true option" style="width:50%; margin: 2px" required></textarea><br>
+        <textarea id="fake_option1" name="fake_option1" placeholder="fake option1" style="width:50%; margin: 2px" required></textarea><br>
+        <textarea id="fake_option2" name="fake_option2" placeholder="fake option2" style="width:50%; margin: 2px"></textarea><br>
+        <textarea id="fake_option3" name="fake_option3" placeholder="fake option3" style="width:50%; margin: 2px"></textarea><br>
+        <button id="register_btn" type="submit" style="width:50%; margin: 5px">Register</button>
+      </form>
+    </div>
+
+    <div class="left"></div>
+    
+  </div>
+
+  <div id="status" style="background-color:#90b1df;text-align:center;padding:5px;margin-top:7px;">
+    <% if (user != undefined) { %>
+    <p> <%= user.name %> </p>
+    <p style="font-size:50%;"> <%= user.email %> </p>
+    <a href="/user_logout"> logout </a>
+    <%} else { %>
+    <a href="/user_login_form"> login </a>
+    <% } %>
+  </div>
+
+</body>
+
+</html>

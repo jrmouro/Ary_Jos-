@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css"  href="/stylesheets/style.css">
+  <script src="/javascripts/chatroom.js"></script>
+</head>
+
+<body style="font-family:Verdana;color:#05252c;" onload="chatroom()">
+
+  <div style="background-color:#90b1df;padding:15px;text-align:center;">
+    <h2><%= title %></h2>
+    <p style="font-size:50%;"><%= wsa %>:<%= wsp %></p>
+  </div>
+
+  <div  style="overflow:auto;background-color:#90b1df;margin-top:7px;">
+
+    <div class="left"></div>
+
+    <div class="forms" style="background-color:#90b1df">
+      <h3>User Register Form</h3>      
+      <form id="connection-form" action="/user_register" method="get">
+        <!--<input type="hidden" id="webserver-ip-input" name="webserver-ip-input" value=<%= wsa %>>-->
+        <!--<input type="hidden" id="webserver-port-input" name="webserver-port-input" value=<%= wsp %>>-->
+        <input id="name" name="name"  placeholder="nickname" style="width:50%; margin: 2px" autofocus required></input>
+        <input id="email" name="email" placeholder="email" style="width:50%; margin: 2px" required type="email" ></input><br>
+        <input id="password" name="password" placeholder="password" style="width:50%; margin: 2px" required type="password" minlength="5"></input><br>
+        <button id="connection-btn" type="submit" style="margin: 5px">register</button>
+      </form>     
+    </div>
+
+    <div class="left"></div>
+    
+  </div>
+
+  <div id="status" style="background-color:#90b1df;text-align:center;padding:10px;margin-top:7px;">
+    <a href="/user_login_form"> login </a>
+  </div>
+
+</body>
+
+</html>

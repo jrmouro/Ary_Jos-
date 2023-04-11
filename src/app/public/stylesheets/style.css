@@ -1,0 +1,46 @@
+* {
+  box-sizing: border-box;
+}
+
+.main {
+  float: left;
+  width: 40%;
+  padding: 0 20px;
+}
+
+.right {
+  float: left;
+  width: 30%;
+  padding: 15px;
+  margin-top: 7px;
+  text-align: center;
+}
+
+.left {
+  float: left;
+  width: 30%;
+  padding: 15px;
+  margin-top: 7px;
+  text-align: left;
+}
+
+.forms {
+  float: left;
+  width: 40%;
+  padding: 0 20px;
+  margin-top: 7px;
+  text-align: center;
+}
+
+
+@media only screen and (max-width: 620px) {
+
+  /* For mobile phones: */
+  .menu,
+  .forms,
+  .main,
+  .left,
+  .right {
+    width: 100%;
+  }
+}

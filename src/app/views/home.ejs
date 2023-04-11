@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css"  href="/stylesheets/style.css">
+  <script src="/javascripts/chatroom.js"></script>
+</head>
+
+<body style="font-family:Verdana;color:#05252c;" onload="chatroom()">
+
+  <div style="background-color:#90b1df;padding:15px;text-align:center;">
+    <h2><%= title %></h2>
+    <p style="font-size:50%;"><%= wsa %>:<%= wsp %></p>
+  </div>
+
+  <div  style="overflow:auto;background-color:#90b1df;margin-top:7px;">
+
+    <div class="left" style="background-color:#90b1df">
+      <h3><a href="/quiz_home"> Quizzes </a></h3>
+      <h3>Matches</h3>
+      <h3>Challenges</h3>           
+    </div>
+
+    <div class="main">
+      <h3>Welcome!!</h3>
+      <p>On this site, you can create quizzes, games and educational challenges, as well as participate in games and challenges proposed by other users. Good studies!</p>
+    </div>
+    
+  </div>
+
+  <div id="status" style="background-color:#90b1df;text-align:center;padding:10px;margin-top:7px;">
+    <% if (user != undefined) { %>
+    <p> <%= user.name %> </p>
+    <p style="font-size:50%;"> <%= user.email %> </p>
+    <a href="/user_logout"> logout </a>
+    <%} else { %>
+    <a href="/user_login_form"> login </a>
+    <% } %>
+  </div>
+
+</body>
+
+</html>
