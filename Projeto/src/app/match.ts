@@ -37,7 +37,7 @@ export class WS_Match_Control implements Match {
     isOpenRegistry: boolean;
     config: MatchConfig;
     rounds: Round[];
-    round_timeoutId:NodeJS.Timeout | undefined = undefined;
+    round_timeoutId: NodeJS.Timeout | undefined = undefined;
     Keyplayer_score_map: Map<string, number> = new Map();
     keyplayer_ws_map: Map<string, WebSocket> = new Map();
     ws_keyplayer_map: Map<WebSocket, string> = new Map();
@@ -69,6 +69,30 @@ export class WS_Match_Control implements Match {
 
     }
 
+    control(msg_obj: any) {
+
+        const receiver = msg_obj.receiver;
+        const sender = msg_obj.sender;
+        const msg_type = msg_obj.msg_type;
+        const msg_content = msg_obj.msg_content;
+
+        if (receiver === key && sender !== undefined) {
+
+            switch (msg_type) {
+                case "registry":
+                    if (sender !== undefined) self.Keyplayer_score_map.set(sender, 0);
+                    break;
+                case "unregistry":
+                    if (sender !== undefined) self.Keyplayer_score_map.delete(sender);
+                    break;
+                case "match_shot":
+                    break;
+            }
+
+        }
+
+    }
+
 
     next_round(index: number) {
 
@@ -91,7 +115,7 @@ export class WS_Match_Control implements Match {
 
             var self = this;
 
-            this.round_timeoutId = setTimeout(function(){
+            this.round_timeoutId = setTimeout(function () {
 
                 self.socket?.send(
                     JSON.stringify({
@@ -154,25 +178,10 @@ export class WS_Match_Control implements Match {
             socket.onmessage = function (event: MessageEvent) {
 
                 const msg_obj = JSON.parse(event.data.toString());
-                const receiver = msg_obj.receiver;
-                const sender = msg_obj.sender;
-                const msg_type = msg_obj.msg_type;
-                const msg_content = msg_obj.msg_content;
 
-                if (receiver === key && sender !== undefined) {
+                self.control(msg_obj);
 
-                    switch (msg_type) {
-                        case "registry":
-                            if (sender !== undefined) self.Keyplayer_score_map.set(sender, 0);
-                            break;
-                        case "unregistry":
-                            if (sender !== undefined) self.Keyplayer_score_map.delete(sender);
-                            break;
-                        case "match_shot":
-                            break;
-                    }
 
-                }
 
 
             };
