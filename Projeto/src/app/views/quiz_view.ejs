@@ -52,21 +52,23 @@
         </li>
         <% if (user_quizzes != undefined && quiz_key in user_quizzes) { %>
           <% for (const question_key in user_quizzes[quiz_key].questions) { %>
-            <li> 
-              <Div>
-                <p style="margin-top: 0.0em ; margin-bottom: 0.0em ;"> <%= user_quizzes[quiz_key].questions[question_key].description %>  <a href= <%= "/question_edit_form?quiz_key=" + quiz_key + "&question_key=" + question_key %> style="text-decoration: none;"> &#9998 </a></p>
-                <ul style="list-style-type: none;margin: 0;padding: 0;">
-                  <li>
-                    <p style="margin-top: 0.0em ; margin-bottom: 0.0em ;">True Option:  <%= user_quizzes[quiz_key].questions[question_key].true_option %> </p>
-                  </li>
-                  <% for(var i=0; i < user_quizzes[quiz_key].questions[question_key].fake_options.length; i++) {%>
+            <Div  style="column-count: 3;">
+              <li> 
+                <Div>
+                  <p style="margin-top: 0.0em ; margin-bottom: 0.0em ;"> <%= user_quizzes[quiz_key].questions[question_key].description %>  <a href= <%= "/question_edit_form?quiz_key=" + quiz_key + "&question_key=" + question_key %> style="text-decoration: none;"> &#9998 </a></p>
+                  <ul style="list-style-type: none;margin: 0;padding: 0;">
                     <li>
-                      <p style="margin-top: 0.0em ; margin-bottom: 0.0em; color:#e10e1c;"> Fake Option<%= i + 1 %> :  <%= user_quizzes[quiz_key].questions[question_key].fake_options[i] %> </p>
-                    </li>                    
-                  <% } %>
-                </ul>                
-              </Div>                
-            </li>
+                      <p style="margin-top: 0.0em ; margin-bottom: 0.0em ;">True Option:  <%= user_quizzes[quiz_key].questions[question_key].true_option %> </p>
+                    </li>
+                    <% for(var i=0; i < user_quizzes[quiz_key].questions[question_key].fake_options.length; i++) {%>
+                      <li>
+                        <p style="margin-top: 0.0em ; margin-bottom: 0.0em; color:#e10e1c;"> Fake Option<%= i + 1 %> :  <%= user_quizzes[quiz_key].questions[question_key].fake_options[i] %> </p>
+                      </li>                    
+                    <% } %>
+                  </ul>                
+                </Div>                
+              </li>
+            </Div>
           <% } %>
         <% } %>
       </ul>  
