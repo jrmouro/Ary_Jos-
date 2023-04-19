@@ -1,4 +1,5 @@
 import { WebSocket, WebSocketServer } from "ws";
+import { WS_MSG } from "./ws_msg";
 
 
 export class WSS {
@@ -20,7 +21,7 @@ export class WSS {
     }
 
 
-    broadcast(msgObj: any, isBinary: boolean) {
+    private broadcast(msgObj: any, isBinary: boolean) {
 
         this.wss?.clients.forEach(function each(client: WebSocket) {
 
@@ -34,7 +35,7 @@ export class WSS {
 
     }
 
-    broadcast_cluster(groupkey: string, msgObj: any, isBinary: boolean) {
+    private broadcast_cluster(groupkey: string, msgObj: any, isBinary: boolean) {
 
         const grpou = this.clusterkey_wsclientset_map.get(groupkey);
 
@@ -69,43 +70,36 @@ export class WSS {
 
                 console.log("message = " + data);
 
-                const msgObj = JSON.parse(data.toString());
+                const ws_msg:WS_MSG = JSON.parse(data.toString()) as WS_MSG;
 
-                const sender: string | undefined = msgObj.sender;
-                const sender_cluster: string  | undefined = msgObj.sender_cluster;
-                const receiver: string  | undefined = msgObj.receiver;
-                const receiver_cluster: string  | undefined = msgObj.receiver_cluster;
-                const msg_type: string  | undefined = msgObj.type;
-                const msg_content: any  | undefined = msgObj.content;
-
-                if(sender !== undefined){
-                    self.userkey_wsclient_map.set(sender, ws);
-                    self.wsclient_userkey_map.set(ws,sender);
+                if(ws_msg.sender !== undefined){
+                    self.userkey_wsclient_map.set(ws_msg.sender, ws);
+                    self.wsclient_userkey_map.set(ws,ws_msg.sender);
                 }
 
-                if(sender_cluster !== undefined){
-                    if(!self.clusterkey_wsclientset_map.has(sender_cluster)){
-                        self.clusterkey_wsclientset_map.set(sender_cluster, new Set());
+                if(ws_msg.sender_cluster !== undefined){
+                    if(!self.clusterkey_wsclientset_map.has(ws_msg.sender_cluster)){
+                        self.clusterkey_wsclientset_map.set(ws_msg.sender_cluster, new Set());
                     }
-                    self.clusterkey_wsclientset_map.get(sender_cluster)?.add(ws);
-                    self.wsclient_clusterkey_map.set(ws,sender_cluster);
+                    self.clusterkey_wsclientset_map.get(ws_msg.sender_cluster)?.add(ws);
+                    self.wsclient_clusterkey_map.set(ws,ws_msg.sender_cluster);
                 }
 
-                if (receiver === '__broadcast__') {
+                if (ws_msg.receiver === '__broadcast__') {
 
-                    self.broadcast(msgObj, isBinary);
+                    self.broadcast(ws_msg, isBinary);
 
-                } else if (receiver === '__cluster__' && receiver_cluster !== undefined) {
+                } else if (ws_msg.receiver === '__cluster__' && ws_msg.receiver_cluster !== undefined) {
 
-                    self.broadcast_cluster(receiver_cluster, msgObj, isBinary);
+                    self.broadcast_cluster(ws_msg.receiver_cluster, ws_msg, isBinary);
 
-                } else if ( receiver!== undefined && self.userkey_wsclient_map.has(receiver)) {
+                } else if ( ws_msg.receiver!== undefined && self.userkey_wsclient_map.has(ws_msg.receiver)) {
 
-                    const ws_receiver = self.userkey_wsclient_map.get(receiver);
+                    const ws_receiver = self.userkey_wsclient_map.get(ws_msg.receiver);
 
                     if (ws_receiver?.readyState === WebSocket.OPEN) {
 
-                        ws_receiver?.send(JSON.stringify(msgObj), {
+                        ws_receiver?.send(JSON.stringify(ws_msg), {
                             binary: isBinary
                         });
 
@@ -142,3 +136,5 @@ export class WSS {
     }
 
 }
+
+const server =  new WSS(5555);

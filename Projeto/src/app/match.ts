@@ -1,21 +1,18 @@
-import { MessageEvent, WebSocket, WebSocketServer } from "ws";
+import { MessageEvent, WebSocket } from "ws";
+import { Round } from "./round";
+import { WS_MSG } from "./ws_msg";
 
 
 export interface MatchConfig {
 
     show_options: boolean;
+    min_amount_players: number;
+    max_amount_players: number;
+    wait_to_start_time:number;
+    msg_status_interval:number;
 
 }
 
-export interface Round {
-
-    key: string;
-    quiz_key: string;
-    question_key: string;
-    time: number;
-    score: Number;
-
-}
 
 export interface Match {
 
@@ -24,113 +21,70 @@ export interface Match {
     config: MatchConfig;
     rounds: Round[];
     Keyplayer_score_map: Map<string, number>
-    isMatchRunning: boolean;
-    isOpenRegistry: boolean;
+    Keyplayer_name_map: Map<string, string>
 
 }
 
-export class WS_Match_Control implements Match {
+export class WS_Match {
 
-    key: string;
-    name: string;
-    isMatchRunning: boolean;
-    isOpenRegistry: boolean;
-    config: MatchConfig;
-    rounds: Round[];
+    match: Match;
+    isMatchRunning: boolean = false;
+    isOpenRegistry: boolean = true;
+
     round_timeoutId: NodeJS.Timeout | undefined = undefined;
-    Keyplayer_score_map: Map<string, number> = new Map();
-    keyplayer_ws_map: Map<string, WebSocket> = new Map();
-    ws_keyplayer_map: Map<WebSocket, string> = new Map();
+    wait_intervalId: NodeJS.Timer | undefined = undefined;
 
     socket: WebSocket | undefined = undefined;
-    wss_port: number | undefined = undefined;
-    wss_ip: string | undefined = undefined;
 
-    constructor(
-        key: string,
-        name: string,
-        config: MatchConfig,
-        wss_ip: string | undefined = undefined,
-        wss_port: number | undefined = undefined,
-        isOpenRegistry: boolean = true, // true-> accept registrations
-        rounds: Round[] = []) {
-        this.key = key;
-        this.name = name;
-        this.wss_port = wss_port;
-        this.wss_ip = wss_ip;
-        this.isMatchRunning = false;
-        this.isOpenRegistry = isOpenRegistry;
-        this.config = config;
-        this.rounds = rounds;
-
-        if (this.wss_ip !== undefined && this.wss_port !== undefined) {
-            this.launch(this.wss_ip, this.wss_port);
+    constructor(match: Match, wss_ip?: string, port?: number) {
+        this.match = match;
+        if(wss_ip !== undefined && port !== undefined){
+            this.launch(wss_ip, port);
         }
-
     }
 
-    control(msg_obj: any) {
+
+    private control(msg_obj: WS_MSG) {
 
         const receiver = msg_obj.receiver;
         const sender = msg_obj.sender;
         const msg_type = msg_obj.msg_type;
         const msg_content = msg_obj.msg_content;
 
-        if (receiver === key && sender !== undefined) {
+        if (receiver === this.match.key && sender !== undefined) {
 
             switch (msg_type) {
-                case "registry":
-                    if (sender !== undefined) self.Keyplayer_score_map.set(sender, 0);
+
+                //status
+                case "wait_min_amount_players":
                     break;
-                case "unregistry":
-                    if (sender !== undefined) self.Keyplayer_score_map.delete(sender);
+                case "max_amount_players":
                     break;
-                case "match_shot":
+                case "match_end":
+                    break;
+
+                //registry
+                case "registry_player":
+                    if (sender !== undefined && msg_content !== undefined) {
+                        this.match.Keyplayer_score_map.set(sender, 0);
+                        this.match.Keyplayer_name_map.set(sender, msg_content.username);
+                    }
+                    break;
+                case "unregistry_player":
+                    if (sender !== undefined) {
+                        this.match.Keyplayer_score_map.delete(sender);
+                        this.match.Keyplayer_name_map.delete(sender);
+                    }
+                    break;
+
+                //round
+                case "round_shot":
+                    break;
+                case "round_start":
+                    break;
+                case "round_end":
                     break;
             }
-
-        }
-
-    }
-
-
-    next_round(index: number) {
-
-        //send next_rount
-
-        if (this.socket !== undefined && this.socket.readyState === WebSocket.OPEN && index < this.rounds.length) {
-
-            this.socket?.send(
-                JSON.stringify({
-                    sender: this.key,
-                    sender_cluster: this.key,
-                    receiver: "__cluster__",
-                    receiver_cluster: this.key,
-                    msg_type: "next_round",
-                    msg_content: {
-                        index_round: index,
-                        round: this.rounds[index],
-                    }
-                }));
-
-            var self = this;
-
-            this.round_timeoutId = setTimeout(function () {
-
-                self.socket?.send(
-                    JSON.stringify({
-                        sender: self.key,
-                        sender_cluster: self.key,
-                        receiver: "__cluster__",
-                        receiver_cluster: self.key,
-                        msg_type: "end_round",
-                        msg_content: {
-                            index_round: index,
-                            round: self.rounds[index],
-                        }
-                    }));
-
-            }, this.rounds[index].time);
 
         }
 
@@ -141,22 +95,35 @@ export class WS_Match_Control implements Match {
 
         if (this.socket !== undefined && this.socket.readyState === WebSocket.OPEN) {
 
-            let index_round = 0;
+            this.isMatchRunning = false;
+            this.isOpenRegistry = true;
+
             var self = this;
+            // status msg: agd min amount 
+            this.wait_intervalId = setInterval(() => {
 
-            let func = function (rounds: Round[], index: number) {
+                self.socket?.send(
+                    JSON.stringify({
+                        sender: self.match.key,
+                        sender_cluster: self.match.key,
+                        receiver: "__cluster__",
+                        receiver_cluster: self.match.key,
+                        msg_type: "wait_min_amount_players",
+                        msg_content: {}
+                    }));
 
-                //send
+            }, self.match.config.msg_status_interval);
 
-                if (index + 1 < rounds.length)
+            setTimeout(()=>{
 
-                    setTimeout(func, self.rounds[index + 1].time, self.rounds, index + 1);
+                if( !self.isMatchRunning && 
+                    self.match.Keyplayer_score_map.size <  self.match.config.min_amount_players){
 
-            }
+                        self.end("no min amount players");
 
-            if (this.rounds.length > 0)
+                }
 
-                setTimeout(func, this.rounds[0].time, this.rounds, 0);
+            }, self.match.config.wait_to_start_time)
 
         }
 
@@ -167,62 +134,86 @@ export class WS_Match_Control implements Match {
 
         this.end();
 
-        this.socket = new WebSocket('ws://' + this.wss_ip + ':' + this.wss_port?.toString() + '/');
+        this.socket = new WebSocket('ws://' + wss_ip + ':' + port.toString() + '/');
 
         var self = this;
-        var socket = this.socket;
-        var key = this.key;
 
-        socket.onopen = function (event) {
+        this.socket.onopen = function (event) {
 
-            socket.onmessage = function (event: MessageEvent) {
+            if (self.socket !== undefined) {
 
-                const msg_obj = JSON.parse(event.data.toString());
+                self.socket.onmessage = function (event: MessageEvent) {
 
-                self.control(msg_obj);
+                    console.log('Match control websocket(' + self.match.key + ') received message: ' + event.data.toString());
 
+                    self.control(JSON.parse(event.data.toString()) as WS_MSG);
 
+                };
 
+                self.socket.onerror = function (error) {
+
+                    console.log('Match control websocket(' + self.match.key + ') error: ' + error);
+
+                };
+
+                self.socket.onclose = function (event) { 
+
+                    console.log('Match control websocket(' + self.match.key + ') closed.');
+                };
+
+                self.start();
 
             };
 
-            socket.onerror = function (error) {
-
-                console.log('Match control websocket(' + key + ') error: ' + error);
-
-            };
-
-            //Mostrando a mensagem de desconectado quando o websocket for fechado.
-            socket.onclose = function (event) {
-            };
-
-
-            socket.send(
-                JSON.stringify({
-                    sender: key
-                }));
-
-        };
-
+        }
     }
 
-    end() {
-
-        this.wss_port = undefined;
-        this.wss_ip = undefined;
-
-        this.keyplayer_ws_map.clear();
-        this.Keyplayer_score_map.clear();
-        this.ws_keyplayer_map.clear();
+    end(info?:string) {
 
         if (this.socket !== undefined) {
 
-            this.socket.close(1000);
+            this.socket.send(
+                JSON.stringify({
+                    sender: this.match.key,
+                    sender_cluster: this.match.key,
+                    receiver: "__cluster__",
+                    receiver_cluster: this.match.key,
+                    msg_type: "match_end",
+                    msg_content: {
+                        info: info
+                    }
+                }));
+
+            var self = this;
+
+            setTimeout(()=>{
+
+                self.socket?.close(1000);
+
+            },2000);
+
+            
 
         }
 
     }
 
 
+}
+
+
+const match:Match = {
+    key: "",
+    name: "",
+    config: {
+        show_options: false,
+        min_amount_players: 0,
+        max_amount_players: 0,
+        wait_to_start_time: 0,
+        msg_status_interval: 0
+    },
+    rounds: [],
+    Keyplayer_score_map: new Map(),
+    Keyplayer_name_map: new Map()
 }
 
