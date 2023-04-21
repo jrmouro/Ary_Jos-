@@ -1,15 +1,18 @@
-import { User } from "./user";
+import { Score } from "./score";
 
-export class Player {
 
-    user:User;
-    score:Number;
+export interface PlayerConfig {
 
-    constructor(user:User, score:Number = 0){
+    wait_to_start_time:number;
 
-        this.user = user;
-        this.score = score;
-        
-    }
+}
+
+
+export interface Player {
+
+    key: string;
+    name:string;
+    config:PlayerConfig;   
+    scores:Score[];
 
 }
