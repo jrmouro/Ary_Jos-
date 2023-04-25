@@ -31,7 +31,7 @@
           <% for (const key in user_quizzes) { %>
             <li> 
               <Div>
-                <p style="margin-top: 0.0em ; margin-bottom: 0.0em ;"><%= user_quizzes[key].name %> <a href= <%= "/quiz_edit_form?quiz_key=" + key %> style="text-decoration: none;"> &#9998 </a> </p>
+                <p style="margin-top: 0.0em ; margin-bottom: 0.0em ;"><%= user_quizzes[key].name %> <a href= <%= "/quiz_view?quiz_key=" + key %> style="text-decoration: none;"> &#9998 </a> </p>
                 <p style="font-size:50%;margin-top: 0.0em ; margin-bottom: 0.0em ;"> <%= user_quizzes[key].theme %> </p>
               </Div>                
             </li>
@@ -42,7 +42,7 @@
 
     <div class="forms" style="background-color:#90b1df">
       <h3>New Question</h3>
-      <form id="quiz_register" action="/question_register" method="get">
+      <form id="quiz_register" action=<%= "/quiz_view?quiz_key=" + quiz_key %> method="get">
         <input id="quiz_key" name="quiz_key" type="hidden" value= <%= quiz_key %> >
         <textarea id="description" name="description" placeholder="question description" style="width:50%; margin: 2px" required autofocus></textarea><br>
         <textarea id="true_option" name="true_option" placeholder="true option" style="width:50%; margin: 2px" required></textarea><br>
@@ -62,6 +62,7 @@
     <p> <%= user.name %> </p>
     <p style="font-size:50%;"> <%= user.email %> </p>
     <a href="/user_logout"> logout </a>
+    <a href="/quiz_view"> back </a>
     <%} else { %>
     <a href="/user_login_form"> login </a>
     <% } %>

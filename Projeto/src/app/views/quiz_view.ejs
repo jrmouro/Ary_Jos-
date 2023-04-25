@@ -31,7 +31,7 @@
           <% for (const key in user_quizzes) { %>
               <li> 
                 <Div>
-                  &#x1F50E <a href= <%= "/quiz_view?quiz_key=" + key %> style="text-decoration: none;"> <%= user_quizzes[key].name %> </a>
+                  &#x1F50E <a href= <%= "/quiz_view?quiz_key=" + key %> style="text-decoration: none;"> <%= user_quizzes[key].name %> <a href= <%= "/quiz_edit_form?quiz_key=" + key %> style="text-decoration: none;"> &#9998 </a> </a>
                   <p style="font-size:50%;margin-top: 0.0em ; margin-bottom: 0.0em ;"> <%= user_quizzes[key].theme %> </p>
                 </Div>                
               </li>
@@ -81,6 +81,7 @@
     <p style="margin: 0px;padding: 0;"> <%= user.name %> </p>
     <p style="font-size:50%;margin: 0px;padding: 0;"> <%= user.email %> </p>
     <a href="/user_logout"> logout </a>
+    <a href="/quiz_home"> back </a>
     <%} else { %>
     <a style="margin: 0px;padding: 0;" href="/user_login_form"> login </a>
     <% } %>

@@ -42,7 +42,7 @@
 
     <div class="forms" style="background-color:#90b1df">
       <h3>Edit '<%= user_quizzes[quiz_key].name %>' </h3>
-      <form id="quiz_register" action="/quiz_edit" method="get">
+      <form id="quiz_register" action=<%= "/quiz_view?quiz_key=" + quiz_key %> method="get">
         <input id="quiz_key" name="quiz_key" type="hidden" value= <%= quiz_key %> >
         <input id="name" name="name"  style="width:50%; margin: 2px" required autofocus type="text" value= '<%= user_quizzes[quiz_key].name %>' ></input><br>
         <textarea id="theme" name="theme" style="width:50%; margin: 2px" required ><%= user_quizzes[quiz_key].theme %></textarea><br>
@@ -88,6 +88,7 @@
     <p> <%= user.name %> </p>
     <p style="font-size:50%;"> <%= user.email %> </p>
     <a href="/user_logout"> logout </a>
+    <a href="/quiz_view"> back </a>
     <%} else { %>
     <a href="/user_login_form"> login </a>
     <% } %>
