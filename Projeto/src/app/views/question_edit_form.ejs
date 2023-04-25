@@ -56,7 +56,7 @@
 
 
       <h3>Edit Question</h3>
-      <form id="quiz_register" action=<%= "/question_edit?quiz_key=" + quiz_key + "&question_key=" + question_key%> method="get">
+      <form id="quiz_register" action=<%= "/quiz_view?quiz_key=" + quiz_key + "&question_key=" + question_key%> method="get">
         <input id="quiz_key" name="quiz_key" type="hidden" value= <%= quiz_key %> >
         <input id="question_key" name="question_key" type="hidden" value= <%= question_key %> >
         <textarea id="description" name="description" placeholder="question description" style="width:50%; margin: 2px" required autofocus><%= user_quizzes[quiz_key].questions[question_key].description %></textarea><br>
@@ -101,6 +101,7 @@
     <p> <%= user.name %> </p>
     <p style="font-size:50%;"> <%= user.email %> </p>
     <a href="/user_logout"> logout </a>
+    <a href="/quiz_view"> back </a>
     <%} else { %>
     <a href="/user_login_form"> login </a>
     <% } %>

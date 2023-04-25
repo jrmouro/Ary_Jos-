@@ -30,7 +30,8 @@
     "ip": "^1.1.8",
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
-    "tsd": "^0.28.1"
+    "tsd": "^0.28.1",
+    "typescript": "^5.0.4"
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.3",
