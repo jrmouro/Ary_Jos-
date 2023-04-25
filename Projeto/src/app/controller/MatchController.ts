@@ -3,6 +3,7 @@ import { User } from "../user";
 import { Match } from "../match";
 import { UID } from "../uid";
 import { test_match } from "../test_match";
+import { Data } from "../data";
 
 class MatchController {
 
@@ -19,6 +20,8 @@ class MatchController {
             const user_matches: { [key: string]: Match } = req.app.get("app_user_data_map")[user.email].matches;
 
             // user_matches[UID.get()] = test_match;
+
+            // Data.writeFileSync<User>(req.app.get("app_user_data_path"), req.app.get("app_user_data_map"));
 
             console.log(user_matches);
 
