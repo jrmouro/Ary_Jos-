@@ -3,6 +3,7 @@ import { User } from "../user";
 import { Data } from "../data";
 import { Quiz } from "../quiz";
 import { Question } from "../question";
+import { UID } from "../uid";
 
 class QuestionController {
 
@@ -189,7 +190,14 @@ class QuestionController {
                         if (fake_option2 !== undefined && fake_option2 !== "") fake_options.push(fake_option2);
                         if (fake_option3 !== undefined && fake_option3 !== "") fake_options.push(fake_option3);
 
-                        const question: Question = new Question(description, true_option, fake_options);
+                        const question: Question = {
+                            key: UID.get(),
+                            description: description,
+                            fake_options:fake_options,
+                            true_option: true_option
+                        }
+
+                        // const question: Question = new Question(description, description, fake_options);
 
                         console.log("USER_QUIZZES");
                         console.log(user_quizzes);

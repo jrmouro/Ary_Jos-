@@ -5,6 +5,7 @@ import { Protocol } from "./protocol";
 
 export class WS_Match {
 
+    key: string;
     match: Match;
     isRunning: boolean = false;
     isOpenToRegistry: boolean = true;
@@ -17,7 +18,8 @@ export class WS_Match {
 
     socket: WebSocket | undefined = undefined;
 
-    constructor(match: Match, wss_ip?: string, port?: number) {
+    constructor(key:string, match: Match, wss_ip?: string, port?: number) {
+        this.key = key;
         this.match = match;
         if (wss_ip !== undefined && port !== undefined) {
             this.launch(wss_ip, port);
@@ -85,10 +87,10 @@ export class WS_Match {
 
                     self.socket?.send( // Verificar se é o caso
                         JSON.stringify({
-                            sender: this.match.key,
-                            sender_cluster: this.match.key,
+                            sender: this.key,
+                            sender_cluster: this.key,
                             receiver: "__cluster__",
-                            receiver_cluster: this.match.key,
+                            receiver_cluster: this.key,
                             msg_type: Protocol.match_wait_to_round_resume,
                             msg_content: {}
                         }));
@@ -113,10 +115,10 @@ export class WS_Match {
 
             this.socket.send(
                 JSON.stringify({
-                    sender: this.match.key,
-                    sender_cluster: this.match.key,
+                    sender: this.key,
+                    sender_cluster: this.key,
                     receiver: "__cluster__",
-                    receiver_cluster: this.match.key,
+                    receiver_cluster: this.key,
                     msg_type: Protocol.round_resume,
                     msg_content: {
                         player: sender
@@ -147,10 +149,10 @@ export class WS_Match {
 
                     self.socket?.send(
                         JSON.stringify({
-                            sender: this.match.key,
-                            sender_cluster: this.match.key,
+                            sender: this.key,
+                            sender_cluster: this.key,
                             receiver: "__cluster__",
-                            receiver_cluster: this.match.key,
+                            receiver_cluster: this.key,
                             msg_type: Protocol.round_end,
                             msg_content: {}
                         }));
@@ -179,10 +181,10 @@ export class WS_Match {
 
                 this.socket.send(
                     JSON.stringify({
-                        sender: this.match.key,
-                        sender_cluster: this.match.key,
+                        sender: this.key,
+                        sender_cluster: this.key,
                         receiver: "__cluster__",
-                        receiver_cluster: this.match.key,
+                        receiver_cluster: this.key,
                         msg_type: Protocol.match_shooting,
                         msg_content: {
                             player: sender
@@ -213,10 +215,10 @@ export class WS_Match {
 
                 this.socket.send(
                     JSON.stringify({
-                        sender: this.match.key,
-                        sender_cluster: this.match.key,
+                        sender: this.key,
+                        sender_cluster: this.key,
                         receiver: sender,
-                        receiver_cluster: this.match.key,
+                        receiver_cluster: this.key,
                         msg_type: Protocol.unregistry_at_match,
                         msg_content: {}
                     }));
@@ -245,11 +247,11 @@ export class WS_Match {
 
             this.socket.send(
                 JSON.stringify({
-                    sender: this.match.key,
-                    sender_cluster: this.match.key,
+                    sender: this.key,
+                    sender_cluster: this.key,
                     receiver: sender,
-                    receiver_cluster: this.match.key,
-                    msg_type: Protocol.match_registry,
+                    receiver_cluster: this.key,
+                    msg_type: Protocol.registry_at_match,
                     msg_content: {
                         info: info
                     }
@@ -265,10 +267,10 @@ export class WS_Match {
 
             this.socket.send(
                 JSON.stringify({
-                    sender: this.match.key,
-                    sender_cluster: this.match.key,
+                    sender: this.key,
+                    sender_cluster: this.key,
                     receiver: receiver || "__cluster__",
-                    receiver_cluster: this.match.key,
+                    receiver_cluster: this.key,
                     msg_type: Protocol.start_match,
                     msg_content: {
                         isRunning: this.isRunning,
@@ -287,10 +289,10 @@ export class WS_Match {
 
             this.socket.send(
                 JSON.stringify({
-                    sender: this.match.key,
-                    sender_cluster: this.match.key,
+                    sender: this.key,
+                    sender_cluster: this.key,
                     receiver: "__cluster__",
-                    receiver_cluster: this.match.key,
+                    receiver_cluster: this.key,
                     msg_type: Protocol.abort_match,
                     msg_content: {
                         info: info
@@ -315,10 +317,10 @@ export class WS_Match {
 
             this.socket.send(
                 JSON.stringify({
-                    sender: this.match.key,
-                    sender_cluster: this.match.key,
+                    sender: this.key,
+                    sender_cluster: this.key,
                     receiver: receiver || "__cluster__",
-                    receiver_cluster: this.match.key,
+                    receiver_cluster: this.key,
                     msg_type: Protocol.match_failure,
                     msg_content: {
                         info: info
@@ -340,10 +342,10 @@ export class WS_Match {
 
             this.socket.send(
                 JSON.stringify({
-                    sender: this.match.key,
-                    sender_cluster: this.match.key,
+                    sender: this.key,
+                    sender_cluster: this.key,
                     receiver: "__cluster__",
-                    receiver_cluster: this.match.key,
+                    receiver_cluster: this.key,
                     msg_type: Protocol.match_prepare,
                     msg_content: {}
                 }));
@@ -378,10 +380,10 @@ export class WS_Match {
 
                 this.socket.send(
                     JSON.stringify({
-                        sender: this.match.key,
-                        sender_cluster: this.match.key,
+                        sender: this.key,
+                        sender_cluster: this.key,
                         receiver: "__cluster__",
-                        receiver_cluster: this.match.key,
+                        receiver_cluster: this.key,
                         msg_type: Protocol.round_start,
                         msg_content: {}
                     }));
@@ -394,10 +396,10 @@ export class WS_Match {
     
                         self.socket?.send(
                             JSON.stringify({
-                                sender: this.match.key,
-                                sender_cluster: this.match.key,
+                                sender: this.key,
+                                sender_cluster: this.key,
                                 receiver: "__cluster__",
-                                receiver_cluster: this.match.key,
+                                receiver_cluster: this.key,
                                 msg_type: Protocol.round_end,
                                 msg_content: {}
                             }));
@@ -430,10 +432,10 @@ export class WS_Match {
 
             this.socket.send(
                 JSON.stringify({
-                    sender: this.match.key,
-                    sender_cluster: this.match.key,
+                    sender: this.key,
+                    sender_cluster: this.key,
                     receiver: "__cluster__",
-                    receiver_cluster: this.match.key,
+                    receiver_cluster: this.key,
                     msg_type: Protocol.start_match,
                     msg_content: {}
                 }));
@@ -456,10 +458,10 @@ export class WS_Match {
 
             this.socket.send(
                 JSON.stringify({
-                    sender: this.match.key,
-                    sender_cluster: this.match.key,
+                    sender: this.key,
+                    sender_cluster: this.key,
                     receiver: "__cluster__",
-                    receiver_cluster: this.match.key,
+                    receiver_cluster: this.key,
                     msg_type: Protocol.wait_to_start_match,
                     msg_content: {}
                 }));
@@ -486,10 +488,10 @@ export class WS_Match {
 
             this.socket.send(
                 JSON.stringify({
-                    sender: this.match.key,
-                    sender_cluster: this.match.key,
+                    sender: this.key,
+                    sender_cluster: this.key,
                     receiver: "__cluster__",
-                    receiver_cluster: this.match.key,
+                    receiver_cluster: this.key,
                     msg_type: Protocol.match_wait_to_registry,
                     msg_content: {}
                 }));
@@ -581,10 +583,10 @@ export class WS_Match {
 
             this.socket.send(
                 JSON.stringify({
-                    sender: this.match.key,
-                    sender_cluster: this.match.key,
+                    sender: this.key,
+                    sender_cluster: this.key,
                     receiver: "__cluster__",
-                    receiver_cluster: this.match.key,
+                    receiver_cluster: this.key,
                     msg_type: Protocol.end_match,
                     msg_content: {
                         info: info
@@ -615,4 +617,4 @@ const match1: Match = {
     Keyplayer_score_map: new Map()
 };
 
-const ws_match = new WS_Match(match1, "localhost", 5555);
+const ws_match = new WS_Match("m1", match1, "localhost", 5555);

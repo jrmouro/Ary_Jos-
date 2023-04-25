@@ -1,3 +1,4 @@
+import { Match } from './match';
 import { Quiz } from './quiz';
 
 export class User {
@@ -6,13 +7,20 @@ export class User {
     readonly email:string;
     readonly password:string;
     readonly quizzes: { [key: string]: Quiz };
+    readonly matches: { [key: string]: Match };
 
-    constructor(name:string, email:string, password:string,  quizzes: { [key: string] : Quiz} = {}){
+    constructor(
+        name:string, 
+        email:string, 
+        password:string,  
+        quizzes: { [key: string] : Quiz} = {}, 
+        matches: { [key: string] : Match} = {}){
 
         this.name = name;
         this.email = email;
         this.password = password;
         this.quizzes = quizzes;
+        this.matches = matches;
 
     }
 

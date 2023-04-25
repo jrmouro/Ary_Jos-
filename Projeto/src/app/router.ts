@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { registerController } from "./controller/RegisterController";
 import { homeController } from "./controller/HomeController";
 import { userController } from "./controller/UserController";
 import { quizController } from "./controller/QuizController";
 import { questionController } from "./controller/QuestionController";
+import { matchController } from "./controller/MatchController";
 
 const router: Router = Router()
 
@@ -30,8 +30,13 @@ router.get("/question_edit_form", questionController.edit_form);
 router.get("/question_register", questionController.register);
 router.get("/question_edit", questionController.edit);
 
+//Matches
+router.get("/match_home", matchController.home);
+router.get("/match_view", matchController.view);
 
-router.get("/player_register", registerController.player);
-router.get("/match_register", registerController.match);
+// router.get("/player_register", registerController.player);
+// router.get("/match_register", registerController.match);
+
+
 
 export { router };

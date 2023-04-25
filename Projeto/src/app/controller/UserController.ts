@@ -101,7 +101,7 @@ class UserController {
 
         req.app.get("users_session_login").delete(req.session.id);
 
-        res.redirect('/user_login_form');
+        res.redirect('/');
 
     }
 

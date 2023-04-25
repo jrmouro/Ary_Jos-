@@ -28,21 +28,21 @@ export class Quiz {
 
 }
 
-const q1: Question = new Question("Quanto é 1 + 1?",  '2', ['0', '1', '3']);
-const q2: Question = new Question("Quanto é 1 - 1?", '0', ['1', '2', '3']);
-const q3: Question = new Question("Quanto é 1 * 1?",  '1', ['0', '2', '3']);
-const q4: Question = new Question("Quanto é 1 / 1?",  '1', ['0', '2', '3']);
+// const q1: Question = new Question("Quanto é 1 + 1?",  '2', ['0', '1', '3']);
+// const q2: Question = new Question("Quanto é 1 - 1?", '0', ['1', '2', '3']);
+// const q3: Question = new Question("Quanto é 1 * 1?",  '1', ['0', '2', '3']);
+// const q4: Question = new Question("Quanto é 1 / 1?",  '1', ['0', '2', '3']);
 
-const arithmetic_quiz: Quiz = new Quiz(
-    "Arithmetic", 
-    'arithmetic with number one');
+// const arithmetic_quiz: Quiz = new Quiz(
+//     "Arithmetic", 
+//     'arithmetic with number one');
 
-arithmetic_quiz.set(q1);
-arithmetic_quiz.set(q2);
-arithmetic_quiz.set(q3);
-arithmetic_quiz.set(q4);
-
-
+// arithmetic_quiz.set(q1);
+// arithmetic_quiz.set(q2);
+// arithmetic_quiz.set(q3);
+// arithmetic_quiz.set(q4);
 
 
-export { arithmetic_quiz };
+
+
+// export { arithmetic_quiz };

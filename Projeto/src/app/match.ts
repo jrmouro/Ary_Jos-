@@ -21,7 +21,9 @@ export interface Match {
     name: string;
     config: MatchConfig;
     rounds: Round[];
-    Keyplayer_score_map: Map<string, Score[]>
+    Keyplayer_score_map: Map<string, Score[]>;
+
+    
 
 }
 

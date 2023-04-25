@@ -20,31 +20,29 @@
   <div  style="overflow:auto;background-color:#90b1df;margin-top:7px;">
 
     <div class="left" style="background-color:#90b1df">
-      <h3 style="margin: 0px;padding: 0;">Data</h3>
+      
+      <h3 style="margin: 0px;padding: 0;"><a href="/" style="text-decoration: none;">&#x1F519</a>  Matches</h3>
       <ul style="list-style-type: none; margin: 10px;padding: 0;">
         <li> 
           <Div  style="padding-bottom: 10px ;">
-            &#x1F50E <a href="/quiz_home" >Quizzes</a>
+            &#x1F4C4 <a href="/match_register_form" >New...</a>
           </Div>            
         </li>
-        <li> 
-          <Div  style="padding-bottom: 10px ;">
-            &#x1F50E <a href="/match_home" >Matches</a>
-          </Div>            
-        </li>
-        <li> 
-          <Div  style="padding-bottom: 10px ;">
-            &#x1F50E <a href="/challenge_home" >Challenges</a>
-          </Div>            
-        </li>
-       
+        <% if (user_matches != undefined) { %>
+          <% for (const key in user_matches) { %>
+              <li> 
+                <Div>
+                  &#x1F50E <a href= <%= "/match_view?match_key=" + key %> style="text-decoration: none;"> <%= user_matches[key].name %> </a>
+                  <p style="font-size:50%;margin-top: 0.0em ; margin-bottom: 0.0em ;"> <%= user_matches[key].theme %> </p>
+                </Div>                
+              </li>
+          <% } %>
+        <% } %>
       </ul>       
     </div>
 
-
     <div class="main">
-      <h3>Welcome!!</h3>
-      <p>On this site, you can create quizzes, games and educational challenges, as well as participate in games and challenges proposed by other users. Good studies!</p>
+      <p>In this site, you can manage your matches.</p>
     </div>
     
   </div>
@@ -54,12 +52,10 @@
     <p style="margin: 0px;padding: 0;"> <%= user.name %> </p>
     <p style="font-size:50%;margin: 0px;padding: 0;"> <%= user.email %> </p>
     <a href="/user_logout"> logout </a>
-    <%} else { %> 
-      <p style="margin: 0px;padding: 0;">
-        <a style="margin: 0px;padding: 0;" href="/user_login_form"> login </a> or
-        <a style="margin: 0px;padding: 0;" href="/user_register_form"> register </a>
-      </p>
+    <%} else { %>
+    <a style="margin: 0px;padding: 0;" href="/user_login_form"> login </a>
     <% } %>
+  </div>
 
 </body>
 
