@@ -1,5 +1,3 @@
-import { UID } from "./uid";
-
 export interface Question {
 
     key:string;

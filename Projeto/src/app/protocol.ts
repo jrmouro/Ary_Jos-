@@ -1,8 +1,8 @@
 export const Protocol = {
 
     wait_to_start_match: "0",
-    start_match: "1",
-    end_match: "2",
+    match_start: "1",
+    match_end: "2",
     state_match: "3",
     registry_at_match: "4",
     unregistry_at_match: "5",
@@ -16,6 +16,10 @@ export const Protocol = {
     match_shooting: "30",
     match_wait_to_shooting: "31",
     match_wait_to_round_resume: "32",
+    match_info_get_status: "33",
+    match_info_set_status: "34",
+    match_info_update_status: "35",
+    match_info: "36",
 
     round_wait: "10",
     round_start: "11",

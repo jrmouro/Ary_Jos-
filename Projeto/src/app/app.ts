@@ -8,15 +8,20 @@ import sessions from "express-session";
 import { User } from "./user";
 import { Data } from "./data";
 import bodyParser from "body-parser";
-import multer from "multer";
 import { WSS } from "./wss";
-// import { Quiz, arithmetic_quiz } from "./quiz";
-// var upload = multer();
+import { WS_Match } from "./ws_match";
+import { WS_MatchInfo } from "./ws_match_info";
+import { UID } from "./uid";
 
 export class App {
 
   public server: express.Application;
-  wss:WSS = new WSS();
+
+  wss: WSS = new WSS((ev: string, wss: WSS) => {
+
+    console.log(`wss at port ${wss.port} event: ${ev}`);
+
+  });
 
   constructor(webPort: number, wssPort: number) {
 
@@ -26,7 +31,13 @@ export class App {
     this.server.set('app_web_server_address', IP.address());
     this.server.set('app_web_server_port', webPort);
     this.server.set('app_websockt_server_port', wssPort);
+    this.server.set('app_ws_match_info_client', new WS_MatchInfo(UID.get(), (ev: string, ws_match_info: WS_MatchInfo) => {
+
+      console.log(`wsmatchinfo at port ${ws_match_info.port} event: ${ev}`);
+
+    }));
     this.server.set('app_user_data_path', path.join(__dirname, 'data', 'user_data.json'));
+    this.server.set('app_launched_matches', new Map<string, WS_Match>()); // wsmatchkey->wsmatch
     this.server.set('users_session_login', new Map<string, User>()); // session.id->user
     this.server.set('views', path.join(__dirname, 'views'));
     this.server.set('view engine', 'ejs');
@@ -78,9 +89,10 @@ export class App {
 
     var server = this.server.listen(this.server.get("app_web_server_port"));
 
-    this.wss.launch(this.server.get("app_websockt_server_port"))
-
+    this.wss.launch(this.server.get("app_websockt_server_port"));
     const wss = this.wss;
+    const wsMatchInfo = this.server.get("app_ws_match_info_client") as WS_MatchInfo;
+    wsMatchInfo.launch(this.server.get("app_web_server_address"), this.server.get("app_websockt_server_port"));
 
     console.log(`web server listening on port:${this.server.get("app_web_server_port")}`);
     console.log(`websocket server listening on port:${this.server.get("app_websockt_server_port")}`);
@@ -93,7 +105,8 @@ export class App {
           console.log("Http server closed.");
           process.exit(err ? 1 : 0);
         });
-        console.log("Closing websock server.");
+        console.log("Closing websock server and wsmatchinfo client.");
+        wsMatchInfo.close();
         wss.close();
       });
   }

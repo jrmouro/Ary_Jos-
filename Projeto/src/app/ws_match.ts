@@ -18,9 +18,12 @@ export class WS_Match {
 
     socket: WebSocket | undefined = undefined;
 
-    constructor(key:string, match: Match, wss_ip?: string, port?: number) {
+    eventCallback:(event:string)=>void;
+
+    constructor(key:string, match: Match, eventCallback:(event:string)=>void, wss_ip?: string, port?: number) {
         this.key = key;
         this.match = match;
+        this.eventCallback = eventCallback;
         if (wss_ip !== undefined && port !== undefined) {
             this.launch(wss_ip, port);
         }
@@ -34,7 +37,7 @@ export class WS_Match {
         const msg_type = msg_obj.msg_type;
         const msg_content = msg_obj.msg_content;
 
-        if (receiver === this.match.key && sender !== undefined) {
+        if (receiver === this.key && sender !== undefined) {
 
             switch (msg_type) {
 
@@ -271,7 +274,7 @@ export class WS_Match {
                     sender_cluster: this.key,
                     receiver: receiver || "__cluster__",
                     receiver_cluster: this.key,
-                    msg_type: Protocol.start_match,
+                    msg_type: Protocol.match_start,
                     msg_content: {
                         isRunning: this.isRunning,
                         isOpenToRegistry: this.isOpenToRegistry,
@@ -300,6 +303,8 @@ export class WS_Match {
                 }));
 
             var self = this;
+
+            this.eventCallback("abort");
 
             setTimeout(() => {
 
@@ -351,6 +356,8 @@ export class WS_Match {
                 }));
 
             var self = this;
+
+            this.eventCallback("prepare");
 
             setTimeout(() => {
 
@@ -436,11 +443,13 @@ export class WS_Match {
                     sender_cluster: this.key,
                     receiver: "__cluster__",
                     receiver_cluster: this.key,
-                    msg_type: Protocol.start_match,
+                    msg_type: Protocol.match_start,
                     msg_content: {}
                 }));
 
             var self = this;
+
+            this.eventCallback("start");
 
             setTimeout(() => {
 
@@ -536,8 +545,6 @@ export class WS_Match {
 
     launch(wss_ip: string, port: number) {
 
-        this.end();
-
         this.socket = new WebSocket('ws://' + wss_ip + ':' + port.toString() + '/');
 
         var self = this;
@@ -565,6 +572,8 @@ export class WS_Match {
                     console.log('Match control websocket(' + self.match.key + ') closed.');
                 };
 
+                self.eventCallback("launch");
+
                 setTimeout(() => {
 
                     self.prepare();
@@ -587,11 +596,13 @@ export class WS_Match {
                     sender_cluster: this.key,
                     receiver: "__cluster__",
                     receiver_cluster: this.key,
-                    msg_type: Protocol.end_match,
+                    msg_type: Protocol.match_end,
                     msg_content: {
                         info: info
                     }
                 }));
+
+            this.eventCallback("end");
 
         }
 
@@ -601,20 +612,20 @@ export class WS_Match {
 }
 
 
-const match1: Match = {
-    key: "m1",
-    name: "match1",
-    config: {
-        show_options: false,
-        min_amount_players: 2,
-        max_amount_players: 2,
-        wait_to_registry_at_match_time: 60000,
-        wait_to_start_match_time: 10000,
-        wait_to_shooting_time: 5000,
-        wait_to_round_resume_time: 10000
-    },
-    rounds: [],
-    Keyplayer_score_map: new Map()
-};
+// const match1: Match = {
+//     key: "m1",
+//     name: "match1",
+//     config: {
+//         show_options: false,
+//         min_amount_players: 2,
+//         max_amount_players: 2,
+//         wait_to_registry_at_match_time: 60000,
+//         wait_to_start_match_time: 10000,
+//         wait_to_shooting_time: 5000,
+//         wait_to_round_resume_time: 10000
+//     },
+//     rounds: [],
+//     Keyplayer_score_map: new Map()
+// };
 
-const ws_match = new WS_Match("m1", match1, "localhost", 5555);
+// const ws_match = new WS_Match("m1", match1,(ev:string)=>{}, "localhost", 5555);

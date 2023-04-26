@@ -8,11 +8,13 @@ export class WSS {
     private userkey_wsclient_map: Map<string, WebSocket> = new Map();
     private clusterkey_wsclientset_map: Map<string, Set<WebSocket>> = new Map();
     private wsclient_clusterkey_map: Map<WebSocket,string> = new Map();
-    private wss: WebSocketServer | undefined = undefined;
+    private websocketserver: WebSocketServer | undefined = undefined;
     port:number | undefined;
+    
+    eventCallback:(event:string, wss:WSS)=>void;
 
-    constructor(port?:number){
-        
+    constructor(eventCallback:(event:string, wss:WSS)=>void, port?:number){
+        this.eventCallback = eventCallback;
         this.port = port;
         if(this.port !== undefined){
             this.launch(this.port);
@@ -23,7 +25,7 @@ export class WSS {
 
     private broadcast(msgObj: any, isBinary: boolean) {
 
-        this.wss?.clients.forEach(function each(client: WebSocket) {
+        this.websocketserver?.clients.forEach(function each(client: WebSocket) {
 
             if (client.readyState === WebSocket.OPEN) {
                 client.send(JSON.stringify(msgObj), {
@@ -60,11 +62,13 @@ export class WSS {
 
     launch(port: number) {
 
-        this.wss = new WebSocketServer({ port: port });
+        this.port = port;
+        
+        this.websocketserver = new WebSocketServer({ port: port });
 
         var self = this;
 
-        this.wss.on('connection', function connection(ws, req) {
+        this.websocketserver.on('connection', function connection(ws, req) {
 
             ws.on('message', function message(data, isBinary) {
 
@@ -107,6 +111,8 @@ export class WSS {
 
                 }
 
+                
+
             });
 
             ws.on('close', function (code, reason) {
@@ -118,23 +124,36 @@ export class WSS {
                     self.wsclient_userkey_map.delete(ws);
                 }
 
+                self.eventCallback("client closed", self);
+
             });
 
+            self.eventCallback("client connection", self);
+            
+
         });
+
+        this.eventCallback("launch", this);
 
     }
 
     close() {
 
-        this.wss?.close();
-        this.wss = undefined;
+        this.websocketserver?.close();
+        this.websocketserver = undefined;
         this.userkey_wsclient_map.clear();
         this.wsclient_userkey_map.clear();
         this.clusterkey_wsclientset_map.clear();
         this.wsclient_clusterkey_map.clear();
 
+        this.eventCallback("close", this);
+
     }
 
 }
 
-const server =  new WSS(5555);
+// const server =  new WSS((ev:string, wss:WSS)=>{
+
+//     console.log(`wss at port ${wss.port} event: ${ev}`);
+    
+// }, 5555);
