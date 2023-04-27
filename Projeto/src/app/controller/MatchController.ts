@@ -5,6 +5,8 @@ import { UID } from "../uid";
 import { test_match } from "../test_match";
 import { Data } from "../data";
 import { WS_Match } from "../ws_match";
+import { MatchStatus } from "../match_status";
+import { WS_MatchInfo } from "../ws_match_info";
 
 class MatchController {
 
@@ -95,37 +97,47 @@ class MatchController {
         if (user !== undefined) {
 
             const match_key: string = req.query.match_key as string;
+            const match_name: string = req.query.match_name as string || "nameless match";
 
             if (match_key !== undefined) {
 
+                const wsmatchinfo:WS_MatchInfo = req.app.get("app_ws_match_info_client") as WS_MatchInfo;
+
                 const match:Match = req.app.get("app_user_data_map")[user.email].matches[match_key];
 
-                if(!req.app.get("app_launched_matches").has(match_key)){
+                const wsmatchkey = UID.get();
 
-                    const wsmatch: WS_Match = new WS_Match(match.key, match, (ev:string)=>{
+                const wsmatch: WS_Match = new WS_Match(wsmatchkey, match, (ev:string, wsmatch:WS_Match)=>{
 
-                        if(ev === 'end' || ev === "abort"){
+                    switch(ev){
 
-                            req.app.get("app_launched_matches").delete(match_key);
+                        case MatchStatus.aborted:
 
-                        } else if(ev === "launch"){
+                            req.app.get("app_launched_matches").delete(wsmatchkey);    
 
-                            req.app.get("app_launched_matches").set(match.key, wsmatch);
+                        case MatchStatus.started:
+                        case MatchStatus.finished:                 
+                        case MatchStatus.wait_to_registry:
 
-                        }
+                            wsmatchinfo.setInfo({
+                                name: match_name,
+                                key: match_key,
+                                status: ev
+                            });
 
-                    });
+                            break;
 
-                    wsmatch.launch(req.app.get("app_web_server_address"), req.app.get("app_websockt_server_port"));
-                    
-                    res.redirect('/match_run?match_key=' + match_key);
+                        
+                    }
 
-                } else {
+                });
 
-                    res.redirect('/match_view?fail_msg= match already launched');
+                req.app.get("app_launched_matches").set(wsmatchkey, wsmatch);
 
-                }
+                wsmatch.launch(req.app.get("app_web_server_address"), req.app.get("app_websockt_server_port"));
 
+                res.redirect('/');
+                
             } else {
 
                 res.redirect('/match_view?fail_msg=invalid match_key');

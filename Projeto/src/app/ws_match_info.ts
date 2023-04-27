@@ -13,9 +13,9 @@ export class WS_MatchInfo {
 
     key: string;
     port: number | undefined;
-    socket: WebSocket | undefined = undefined;
+    private socket: WebSocket | undefined = undefined;
 
-    matchesInfo: {[key:string]: MatchInfo} = {};
+    private matchesInfo: {[key:string]: MatchInfo} = {};
 
     eventCallback:(event:string, matchInfo:WS_MatchInfo)=>void;
 
@@ -39,7 +39,7 @@ export class WS_MatchInfo {
     }
 
     
-    info(matchinfo:MatchInfo){
+    setInfo(matchinfo:MatchInfo){
 
         if (this.socket !== undefined && this.socket.readyState === WebSocket.OPEN) {
 
@@ -59,7 +59,7 @@ export class WS_MatchInfo {
                 receiver: "__cluster__",
                 receiver_cluster: this.key,
                 msg_type: Protocol.match_info,
-                msg_content: matchinfo
+                msg_content: this.matchesInfo
             }
 
             this.socket.send(JSON.stringify(msg_obj));
@@ -79,12 +79,19 @@ export class WS_MatchInfo {
 
             switch (msg_type) {
 
-                case Protocol.match_info_get_status:
-                    // this.register(sender);
-                    break;
+                case Protocol.match_info:
 
-                case Protocol.match_info_set_status:
-                    // this.register(sender);
+                    const msg_obj:WS_MSG = {
+                        sender: this.key,
+                        sender_cluster: this.key,
+                        receiver: sender,
+                        receiver_cluster: this.key,
+                        msg_type: Protocol.match_info,
+                        msg_content: this.matchesInfo
+                    }
+        
+                    this.socket?.send(JSON.stringify(msg_obj));
+
                     break;
                                 
             }
@@ -128,6 +135,17 @@ export class WS_MatchInfo {
                     self.eventCallback("close", self);
 
                 };
+
+                const msg_obj:WS_MSG = {
+                    sender: self.key,
+                    sender_cluster: self.key,
+                    receiver: "__server__",
+                    receiver_cluster: self.key,
+                    msg_type: Protocol.wss_client_register,
+                    msg_content: {}
+                }
+    
+                self.socket.send(JSON.stringify(msg_obj));
 
                 self.eventCallback("open", self);
 

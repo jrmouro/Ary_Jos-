@@ -16,9 +16,6 @@ export const Protocol = {
     match_shooting: "30",
     match_wait_to_shooting: "31",
     match_wait_to_round_resume: "32",
-    match_info_get_status: "33",
-    match_info_set_status: "34",
-    match_info_update_status: "35",
     match_info: "36",
 
     round_wait: "10",
@@ -36,5 +33,7 @@ export const Protocol = {
     player_state: "23",
     player_shot_response: "24",
     player_shot_pass: "25",
+
+    wss_client_register:"99"
 
 } as const;
