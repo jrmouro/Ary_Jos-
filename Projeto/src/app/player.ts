@@ -3,7 +3,7 @@ import { Score } from "./score";
 
 export interface PlayerConfig {
 
-    wait_to_start_time:number;
+    // wait_to_start_time:number;
 
 }
 

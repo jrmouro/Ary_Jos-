@@ -13,17 +13,12 @@ export interface MatchConfig {
     wait_to_round_resume_time:number;
 
 }
-
-
 export interface Match {
 
     key: string;
     name: string;
     config: MatchConfig;
-    rounds: Round[];
-    Keyplayer_score_map: Map<string, Score[]>;
-
-    
+    rounds: Round[];    
 
 }
 

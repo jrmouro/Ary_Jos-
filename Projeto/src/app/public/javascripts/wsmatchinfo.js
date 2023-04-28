@@ -1,12 +1,11 @@
 function wsmatchinfo() {
 
-    // window.onload = function () {
-
     // Pegando as referências para os elementos da página.
     var wssp = document.getElementById('web_socket_server_port').innerHTML;
     var wsa = document.getElementById('web_server_address').innerHTML;
-    var wsmatchinfoclusterkey = document.getElementById('ws_matchtinfo_cluster_key').innerHTML;
+    var wsmatchinfoclusterkey = document.getElementById('ws_matchinfo_cluster_key').innerHTML;
     var wsmatchinfokey = document.getElementById('ws_matchtinfo_key').innerHTML;
+    var user_key = document.getElementById('user_key').innerHTML;
     var launched_matches_list = document.getElementById('launched_matches_list');
 
 
@@ -43,18 +42,71 @@ function wsmatchinfo() {
             while (launched_matches_list.lastElementChild) {
 
                 launched_matches_list.removeChild(launched_matches_list.lastElementChild);
-                
+
             }
-            
+
             for (const wsmatchkey in launched_matches) {
 
                 var matchname = launched_matches[wsmatchkey].name;
                 var matchstatus = launched_matches[wsmatchkey].status;
+                var owner_user_key = launched_matches[wsmatchkey].owner_user_key;
 
-                var x = document.createElement("LI");
-                var t = document.createTextNode(matchname);
-                x.appendChild(t);
-                launched_matches_list.appendChild(x);
+                var status_simbol = '&#x1F64B;';
+                var tooltip_text = 'register';
+
+                switch (matchstatus) {
+                    case "1":
+                        status_simbol = '&#x1F64D;';
+                        tooltip_text = 'waiting start';
+                        break;
+                    case "2":
+                        status_simbol = '&#x1F647;';
+                        tooltip_text = 'starded';
+                        break;
+                    case "3":
+                        status_simbol = '&#x1F646;';
+                        tooltip_text = 'finished';
+                        break;
+                }
+
+                const x = document.createElement("A");
+                x.setAttribute("href", "/match_room?ws_match_key=" + wsmatchkey);
+                x.setAttribute("class", "tooltip");
+                x.style.textDecorationLine = "none";
+                x.innerHTML = status_simbol;
+                const s = document.createElement("SPAN");
+                s.setAttribute("class", "tooltiptext");
+                s.innerHTML = tooltip_text;
+
+                x.appendChild(s);
+
+
+
+                var y = document.createElement("LI");
+                var v = document.createTextNode(matchname);
+                y.appendChild(v);
+                y.appendChild(x);
+
+                if (owner_user_key == user_key) {
+                    
+                    const a = document.createElement("A");
+                    a.setAttribute("href", "/match_abort?ws_match_key=" + wsmatchkey);
+                    a.setAttribute("class", "tooltip");
+                    a.style.textDecorationLine = "none";
+                    a.innerHTML = '&#x1F645;';
+                    const sa = document.createElement("SPAN");
+                    sa.setAttribute("class", "tooltiptext");
+                    sa.innerHTML = "abort";
+                    a.appendChild(sa);
+                    y.appendChild(a);
+
+                } else {
+                    // alert(owner_user_key + " - " + user_key);
+                }
+
+
+
+                launched_matches_list.appendChild(y);
 
             }
 

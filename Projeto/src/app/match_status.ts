@@ -5,7 +5,7 @@ export const MatchStatus = {
     started: "2",
     finished: "3",
     launched: "4",
-    prepared: "5",
+    registry: "5",
     aborted: "6",
     failure: "7",
     opened_socket: "8",

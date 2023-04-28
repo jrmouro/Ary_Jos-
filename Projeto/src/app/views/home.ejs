@@ -24,7 +24,7 @@
       <ul style="list-style-type: none; margin: 10px;padding: 0;">
         <li> 
           <Div  style="padding-bottom: 10px ;">
-            &#x1F50E <a href="/quiz_home" >Quizzes</a>
+            &#x1F50E; <a href="/quiz_home" >Quizzes</a>
           </Div>            
         </li>
         <li> 
@@ -51,17 +51,16 @@
 
       <h1 id="web_socket_server_port" hidden><%= wssp %></h1>
       <h1 id="web_server_address" hidden><%= wsa %></h1>
-      <h1 id="ws_matchtinfo_cluster_key" hidden><%= wsmatchinfoclusterkey %></h1>
+      <h1 id="ws_matchinfo_cluster_key" hidden><%= wsmatchinfoclusterkey %></h1>
       <h1 id="ws_matchtinfo_key" hidden><%= wsmatchinfokey %></h1>
+      <% if (user != undefined) { %>
+        <h1 id="user_key" hidden><%= user.email %></h1>
+      <%} else { %> 
+        <h1 id="user_key" hidden></h1>
+      <% } %>
 
       <h3 style="margin: 0px;padding: 0;">Launched Matches</h3>
-      <ul id="launched_matches_list" style="list-style-type: none; margin: 10px;padding: 0;">
-        <li> 
-          <Div  style="padding-bottom: 10px ;">
-            &#x1F4C4 <a href="/match_register_form" >New...</a>
-          </Div>   
-        </li>         
-      </ul>       
+      <ul id="launched_matches_list" style="list-style-type: none; margin: 10px;padding: 0;"></ul>       
     </div>
     
   </div>

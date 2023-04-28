@@ -2,16 +2,14 @@ import { Request, Response } from "express";
 import { User } from "../user";
 import { Match } from "../match";
 import { UID } from "../uid";
-import { test_match } from "../test_match";
-import { Data } from "../data";
 import { WS_Match } from "../ws_match";
 import { MatchStatus } from "../match_status";
 import { WS_MatchInfo } from "../ws_match_info";
 
 class MatchController {
 
-    public home(req: Request, res: Response) {
-        // const port = req.query.wssport | 3000;
+    public home(req: Request, res: Response) { 
+
         const wsaddress = req.app.get("app_web_server_address");
         const wsport = req.app.get("app_web_server_port");
         const app_name = req.app.get("app_name");
@@ -21,12 +19,6 @@ class MatchController {
         if (user !== undefined) {
 
             const user_matches: { [key: string]: Match } = req.app.get("app_user_data_map")[user.email].matches;
-
-            // user_matches[UID.get()] = test_match;
-
-            // Data.writeFileSync<User>(req.app.get("app_user_data_path"), req.app.get("app_user_data_map"));
-
-            console.log(user_matches);
 
             res.render('match_home', {
                 title: app_name,
@@ -43,7 +35,60 @@ class MatchController {
 
         }
 
-       
+
+    }
+
+    public room(req: Request, res: Response) {
+
+        const wsaddress = req.app.get("app_web_server_address");
+        const wsport = req.app.get("app_web_server_port");
+        const wss_port = req.app.get("app_websockt_server_port");
+        const app_name = req.app.get("app_name");
+
+        const user: User = req.app.get("users_session_login").get(req.session.id);
+        const fail_msg = req.query.fail_msg;
+
+        if (user !== undefined) {
+
+            const ws_match_key: string = req.query.ws_match_key as string;
+
+            if (ws_match_key !== undefined) {
+
+                const wsmatch = req.app.get("app_launched_matches").get(ws_match_key) as WS_Match;
+
+                if (wsmatch !== undefined) {
+
+                    res.render('match_room', {
+                        title: app_name,
+                        wsa: wsaddress,
+                        wsp: wsport,
+                        wssp: wss_port,
+                        user: user,
+                        matche: wsmatch.match,
+                        ws_match_cluster_key: ws_match_key,
+                        ws_match_player_key: UID.get(),
+                        fail_msg: fail_msg
+                    });
+
+                } else {
+
+                    res.redirect('/?fail_msg=invalid ws_match_key');
+
+                }
+
+            } else {
+
+                res.redirect('/?fail_msg=ws_match_key not provided');
+
+            }
+
+        } else {
+
+            res.redirect('/user_login_form?fail_msg=login is required');
+
+        }
+
+
     }
 
     public view(req: Request, res: Response) {
@@ -76,7 +121,175 @@ class MatchController {
 
                 res.redirect('/match_home?fail_msg=invalid match_key');
 
-            }           
+            }
+
+        } else {
+
+            res.redirect('/user_login_form?fail_msg=login is required');
+
+        }
+
+    }
+
+    public register(req: Request, res: Response) {
+
+        const user: User = req.app.get("users_session_login").get(req.session.id);
+
+        if (user !== undefined) {
+
+            const ws_match_key: string = req.query.ws_match_key as string;
+
+            if (ws_match_key !== undefined) {
+
+                const wsmatch = req.app.get("app_launched_matches").get(ws_match_key) as WS_Match;
+
+                if (wsmatch !== undefined) {
+
+                    const regok = wsmatch.register({
+                        key: user.email,
+                        name: user.name,
+                        config: {},
+                        scores: []
+                    });
+
+                    if(regok){
+
+                        const wsmatchinfo: WS_MatchInfo = req.app.get("app_ws_match_info_client") as WS_MatchInfo;
+
+                        wsmatchinfo.setInfo({
+                            name: wsmatch.match.name,
+                            key: wsmatch.key,
+                            status: MatchStatus.registry,
+                            owner_user_key: wsmatch.owner_user_key,
+                            players: wsmatch.players
+                        });
+
+                        res.redirect('/');
+
+                    } else {
+
+                        res.redirect('/?fail_msg=no possible to register for match');
+
+                    }
+
+                }
+
+            } else {
+
+                res.redirect('/?fail_msg=invalid ws_match_key');
+
+            }
+
+        } else {
+
+            res.redirect('/user_login_form?fail_msg=login is required');
+
+        }
+
+    }
+
+    public unregister(req: Request, res: Response) {
+
+        const user: User = req.app.get("users_session_login").get(req.session.id);
+
+        if (user !== undefined) {
+
+            const ws_match_key: string = req.query.ws_match_key as string;
+
+            if (ws_match_key !== undefined) {
+
+                const wsmatch = req.app.get("app_launched_matches").get(ws_match_key) as WS_Match;
+
+                if (wsmatch !== undefined) {
+
+                    const regok = wsmatch.unregister(user.email);
+
+                    if(regok){
+
+                        const wsmatchinfo: WS_MatchInfo = req.app.get("app_ws_match_info_client") as WS_MatchInfo;
+
+                        wsmatchinfo.setInfo({
+                            name: wsmatch.match.name,
+                            key: wsmatch.key,
+                            status: MatchStatus.registry,
+                            owner_user_key: wsmatch.owner_user_key,
+                            players: wsmatch.players
+                        });
+
+                        res.redirect('/');
+
+                    } else {
+
+                        res.redirect('/?fail_msg=no possible to unregister for match');
+
+                    }
+
+                }
+
+            } else {
+
+                res.redirect('/?fail_msg=invalid ws_match_key');
+
+            }
+
+        } else {
+
+            res.redirect('/user_login_form?fail_msg=login is required');
+
+        }
+
+    }
+
+    public abort(req: Request, res: Response) {
+
+        const user: User = req.app.get("users_session_login").get(req.session.id);
+
+        if (user !== undefined) {
+
+            const ws_match_key: string = req.query.ws_match_key as string;
+
+            if (ws_match_key !== undefined) {
+
+                const wsmatch = req.app.get("app_launched_matches").get(ws_match_key) as WS_Match;
+
+                if (wsmatch !== undefined) {
+
+                    const match: Match = req.app.get("app_user_data_map")[user.email].matches[wsmatch.match.key];
+
+                    // console.log("AQUI...0:" + wsmatch.match.key);
+                    // console.log(req.app.get("app_user_data_map")[user.email].matches[wsmatch.match.key]);
+
+                    if (match !== undefined) {
+
+                        // console.log("AQUI...0");
+
+                        wsmatch.abort();
+
+                        const wsmatchinfo: WS_MatchInfo = req.app.get("app_ws_match_info_client") as WS_MatchInfo;
+
+                        wsmatchinfo.setInfo({
+                            name: wsmatch.match.name,
+                            key: ws_match_key,
+                            status: MatchStatus.aborted,
+                            owner_user_key: wsmatch.owner_user_key,
+                            players: wsmatch.players
+                        });
+
+                        req.app.get("app_launched_matches").delete(ws_match_key);
+
+                        console.log("AQUI");
+
+                    }
+
+                }
+
+                res.redirect('/');
+
+            } else {
+
+                res.redirect('/?fail_msg=invalid ws_match_key');
+
+            }
 
         } else {
 
@@ -101,33 +314,38 @@ class MatchController {
 
             if (match_key !== undefined) {
 
-                const wsmatchinfo:WS_MatchInfo = req.app.get("app_ws_match_info_client") as WS_MatchInfo;
+                const wsmatchinfo: WS_MatchInfo = req.app.get("app_ws_match_info_client") as WS_MatchInfo;
 
-                const match:Match = req.app.get("app_user_data_map")[user.email].matches[match_key];
+                const match: Match = req.app.get("app_user_data_map")[user.email].matches[match_key];
 
                 const wsmatchkey = UID.get();
 
-                const wsmatch: WS_Match = new WS_Match(wsmatchkey, match, (ev:string, wsmatch:WS_Match)=>{
+                const wsmatch: WS_Match = new WS_Match(wsmatchkey, user.email, match, (ev: string, wsmatch: WS_Match) => {
 
-                    switch(ev){
+                    switch (ev) {
 
                         case MatchStatus.aborted:
 
-                            req.app.get("app_launched_matches").delete(wsmatchkey);    
+                        // req.app.get("app_launched_matches").delete(wsmatchkey);
 
+                        // break;
+
+                        case MatchStatus.finished:
                         case MatchStatus.started:
-                        case MatchStatus.finished:                 
+                        case MatchStatus.wait_to_start:
                         case MatchStatus.wait_to_registry:
 
                             wsmatchinfo.setInfo({
-                                name: match_name,
-                                key: match_key,
-                                status: ev
+                                name: wsmatch.match.name,
+                                key: wsmatch.key,
+                                status: ev,
+                                owner_user_key: wsmatch.owner_user_key,
+                                players: wsmatch.players
                             });
 
                             break;
 
-                        
+
                     }
 
                 });
@@ -137,12 +355,12 @@ class MatchController {
                 wsmatch.launch(req.app.get("app_web_server_address"), req.app.get("app_websockt_server_port"));
 
                 res.redirect('/');
-                
+
             } else {
 
                 res.redirect('/match_view?fail_msg=invalid match_key');
 
-            }           
+            }
 
         } else {
 
@@ -153,7 +371,7 @@ class MatchController {
     }
 
 
-   
+
 
 }
 

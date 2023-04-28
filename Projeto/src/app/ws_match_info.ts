@@ -2,11 +2,15 @@ import { MessageEvent, WebSocket } from "ws";
 import { WS_MSG } from "./ws_msg";
 import { Protocol } from "./protocol";
 import { MatchStatus } from "./match_status";
+import { Player } from "./player";
 
 interface MatchInfo{
     name:string;
     key:string;
     status:string;
+    owner_user_key:string;
+    players: { [key: string]: Player };
+
 }
 
 export class WS_MatchInfo {
@@ -43,7 +47,7 @@ export class WS_MatchInfo {
 
         if (this.socket !== undefined && this.socket.readyState === WebSocket.OPEN) {
 
-            if(matchinfo.status === MatchStatus.finished){
+            if(matchinfo.status === MatchStatus.aborted){
 
                 delete this.matchesInfo[matchinfo.key];
 
@@ -114,7 +118,7 @@ export class WS_MatchInfo {
 
                 self.socket.onmessage = function (event: MessageEvent) {
 
-                    console.log('MatchInfo control websocket(' + self.key + ') received message: ' + event.data.toString());
+                    // console.log('MatchInfo control websocket(' + self.key + ') received message: ' + event.data.toString());
 
                     self.control(JSON.parse(event.data.toString()) as WS_MSG);
 

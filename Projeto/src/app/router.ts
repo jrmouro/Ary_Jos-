@@ -34,6 +34,8 @@ router.get("/question_edit", questionController.edit);
 router.get("/match_home", matchController.home);
 router.get("/match_view", matchController.view);
 router.get("/match_launch", matchController.launch);
+router.get("/match_abort", matchController.abort);
+router.get("/match_room", matchController.room);
 
 // router.get("/player_register", registerController.player);
 // router.get("/match_register", registerController.match);

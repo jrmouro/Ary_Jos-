@@ -3,11 +3,16 @@ import { MessageEvent, WebSocket } from "ws";
 import { WS_MSG } from "./ws_msg";
 import { Protocol } from "./protocol";
 import { MatchStatus } from "./match_status";
+import { Player } from "./player";
 
 export class WS_Match {
 
     key: string;
+    owner_user_key: string;
     match: Match;
+
+    players: { [key: string]: Player } = {};
+
     isRunning: boolean = false;
     isOpenToRegistry: boolean = true;
     isRoundShooting: boolean = false;
@@ -15,14 +20,16 @@ export class WS_Match {
 
     round_timeoutId: NodeJS.Timeout | undefined = undefined;
     shooting_timeoutId: NodeJS.Timeout | undefined = undefined;
-    wait_intervalId: NodeJS.Timer | undefined = undefined;
+    wait_to_start_intervalId: NodeJS.Timer | undefined = undefined;
+    wait_to_registry_intervalId: NodeJS.Timer | undefined = undefined;
 
     socket: WebSocket | undefined = undefined;
 
     eventCallback: (event: string, wsmatch: WS_Match) => void;
 
-    constructor(key: string, match: Match, eventCallback: (event: string, wsmatch: WS_Match) => void, wss_ip?: string, port?: number) {
+    constructor(key: string, owner_user_key: string, match: Match, eventCallback: (event: string, wsmatch: WS_Match) => void, wss_ip?: string, port?: number) {
         this.key = key;
+        this.owner_user_key = owner_user_key;
         this.match = match;
         this.eventCallback = eventCallback;
         if (wss_ip !== undefined && port !== undefined) {
@@ -38,18 +45,9 @@ export class WS_Match {
         const msg_type = msg_obj.msg_type;
         const msg_content = msg_obj.msg_content;
 
-        if (receiver === this.key && sender !== undefined) {
+        if (receiver === this.key && sender !== undefined && sender !== this.key) {
 
             switch (msg_type) {
-
-                //registry
-                case Protocol.registry_at_match:
-                    this.register(sender);
-                    break;
-
-                case Protocol.unregistry_at_match:
-                    this.unregister(sender);
-                    break;
 
                 //round
                 case Protocol.match_shot_pass:
@@ -57,7 +55,6 @@ export class WS_Match {
                     break;
 
                 case Protocol.match_shot_response:
-
 
 
                     break;
@@ -211,61 +208,87 @@ export class WS_Match {
 
     }
 
-    unregister(sender: string) {
+    unregister(player_key: string): boolean {
 
-        if (this.socket !== undefined && this.socket.readyState === WebSocket.OPEN) {
+        if (player_key in this.players) {
 
-            if (this.isOpenToRegistry) {
+            if (this.socket !== undefined && this.socket.readyState === WebSocket.OPEN) {
+
+                delete this.players[player_key];
 
                 this.socket.send(
                     JSON.stringify({
                         sender: this.key,
                         sender_cluster: this.key,
-                        receiver: sender,
+                        receiver: "__cluster__",
                         receiver_cluster: this.key,
-                        msg_type: Protocol.unregistry_at_match,
-                        msg_content: {}
+                        msg_type: Protocol.player_unregistry_at_match,
+                        msg_content: {
+                            player_key: player_key
+                        }
                     }));
 
+                return true;
+
             }
 
         }
 
+        return false;
+
     }
 
-    register(sender: string) {
+    register(player: Player): boolean {
 
-        if (this.socket !== undefined && this.socket.readyState === WebSocket.OPEN) {
+        if (this.isOpenToRegistry && Object.keys(this.players).length < this.match.config.max_amount_players) {
 
-            let info = "no";
+            if (this.socket !== undefined && this.socket.readyState === WebSocket.OPEN) {
 
-            if (this.isOpenToRegistry && this.match.Keyplayer_score_map.size < this.match.config.max_amount_players) {
+                this.players[player.key] = player;
 
-                this.match.Keyplayer_score_map.set(sender, []);
+                this.isOpenToRegistry = Object.keys(this.players).length < this.match.config.max_amount_players;
 
-                this.isOpenToRegistry = this.match.Keyplayer_score_map.size < this.match.config.max_amount_players;
+                this.socket.send(
+                    JSON.stringify({
+                        sender: this.key,
+                        sender_cluster: this.key,
+                        receiver: "__cluster__",
+                        receiver_cluster: this.key,
+                        msg_type: Protocol.player_registry_at_match,
+                        msg_content: {
+                            player: player
+                        }
+                    }));
 
-                info = "yes";
+                if (!this.isOpenToRegistry) {
 
-            }
-
-            this.socket.send(
-                JSON.stringify({
-                    sender: this.key,
-                    sender_cluster: this.key,
-                    receiver: sender,
-                    receiver_cluster: this.key,
-                    msg_type: Protocol.registry_at_match,
-                    msg_content: {
-                        info: info
+                    if (this.wait_to_registry_intervalId !== undefined) {
+                        clearTimeout(this.wait_to_registry_intervalId);
+                        this.wait_to_registry_intervalId = undefined;
                     }
-                }));
+
+                    var self = this;
+
+                    setTimeout(() => {
+
+                        self.wait_to_start();
+
+                    }, 1000);
+
+                }
+
+                return true;
+
+            }
 
         }
 
+        return false;
+
     }
 
-    state(receiver?: string) {
+
+    private state(receiver?: string) {
 
         if (this.socket !== undefined && this.socket.readyState === WebSocket.OPEN) {
 
@@ -303,21 +326,15 @@ export class WS_Match {
                     }
                 }));
 
-            var self = this;
-
-            this.eventCallback(MatchStatus.aborted, self);
-
-            setTimeout(() => {
-
-                self.socket?.close(1000);
-
-            }, 2000);
-
         }
+
+        this.prepare();
+
+        this.eventCallback(MatchStatus.aborted, this);
 
     }
 
-    failure(receiver?: string, info?: string) {
+    private failure(receiver?: string, info?: string) {
 
         if (this.socket !== undefined && this.socket.readyState === WebSocket.OPEN) {
 
@@ -333,24 +350,50 @@ export class WS_Match {
                     }
                 }));
 
-                this.eventCallback(MatchStatus.failure, this);
+            this.eventCallback(MatchStatus.failure, this);
 
         }
 
     }
 
+    private prepare() {
 
-    prepare() {
+        if (this.wait_to_start_intervalId !== undefined) {
+            clearTimeout(this.wait_to_registry_intervalId);
+            this.wait_to_start_intervalId = undefined;
+        }
+
+        if (this.wait_to_registry_intervalId !== undefined) {
+            clearTimeout(this.wait_to_registry_intervalId);
+            this.wait_to_registry_intervalId = undefined;
+        }
+
+        if (this.round_timeoutId !== undefined) {
+            clearTimeout(this.round_timeoutId);
+            this.round_timeoutId = undefined;
+        }
+
+        if (this.shooting_timeoutId !== undefined) {
+            clearTimeout(this.shooting_timeoutId);
+            this.shooting_timeoutId = undefined;
+        }
 
         this.isRunning = false;
         this.isOpenToRegistry = true;
         this.roundIndex = -1;
-        this.eventCallback(MatchStatus.prepared, this);
-        this.wait_to_registry();
+
+
+        if (this.socket !== undefined && this.socket.readyState === WebSocket.OPEN) {
+
+            this.socket.close(1000);
+
+        }
+
+        this.socket = undefined;
 
     }
 
-    round() {
+    private round() {
 
         if (this.socket !== undefined && this.socket.readyState === WebSocket.OPEN) {
 
@@ -412,7 +455,7 @@ export class WS_Match {
 
     }
 
-    start() {
+    private start() {
 
         if (this.socket !== undefined && this.socket.readyState === WebSocket.OPEN) {
 
@@ -442,7 +485,7 @@ export class WS_Match {
 
     }
 
-    wait_to_start() {
+    private wait_to_start() {
 
         if (this.socket !== undefined && this.socket.readyState === WebSocket.OPEN) {
 
@@ -458,7 +501,7 @@ export class WS_Match {
 
             var self = this;
 
-            setTimeout(() => {
+            this.wait_to_start_intervalId = setTimeout(() => {
 
                 if (!self.isRunning && !self.isOpenToRegistry) {
 
@@ -474,31 +517,27 @@ export class WS_Match {
 
     }
 
-    wait_to_registry() {
+    private wait_to_registry() {
 
         var self = this;
 
-        setTimeout(() => {
+        this.wait_to_registry_intervalId = setTimeout(() => {
 
-            if (!self.isRunning) {
+            if (!self.isRunning && self.isOpenToRegistry) {
 
-                if (self.isOpenToRegistry) {
+                if (Object.keys(this.players).length < self.match.config.min_amount_players) {
 
-                    if (self.match.Keyplayer_score_map.size < self.match.config.min_amount_players) {
+                    self.failure(undefined, "no min amount players");
 
-                        self.failure(undefined, "no min amount players");
+                    self.abort("no min amount players");
 
-                        self.abort("no min amount players");
+                    return;
 
-                        return;
+                } else {
 
-                    } else {
+                    self.isOpenToRegistry = false;
 
-                        self.isOpenToRegistry = false;
-
-                        self.wait_to_start();
-
-                    }
+                    self.wait_to_start();
 
                 }
 
@@ -512,11 +551,7 @@ export class WS_Match {
 
     launch(wss_ip: string, port: number) {
 
-        if (this.socket !== undefined && this.socket.readyState === WebSocket.OPEN) {
-
-            this.socket.close(1000);
-
-        }
+        this.prepare();
 
         this.socket = new WebSocket('ws://' + wss_ip + ':' + port.toString() + '/');
 
@@ -530,7 +565,7 @@ export class WS_Match {
 
                 self.socket.onmessage = function (event: MessageEvent) {
 
-                    console.log('Match control websocket(' + self.match.key + ') received message: ' + event.data.toString());
+                    // console.log('Match control websocket(' + self.match.key + ') received message: ' + event.data.toString());
 
                     self.control(JSON.parse(event.data.toString()) as WS_MSG);
 
@@ -540,7 +575,7 @@ export class WS_Match {
 
                     self.eventCallback(MatchStatus.error_socket, self);
 
-                    console.log('Match control websocket(' + self.match.key + ') error: ' + error);
+                    console.log('Match control websocket(' + self.key + ') error: ' + error);
 
                 };
 
@@ -548,19 +583,21 @@ export class WS_Match {
 
                     self.eventCallback(MatchStatus.closed_socket, self);
 
-                    console.log('Match control websocket(' + self.match.key + ') closed.');
+                    console.log('Match control websocket(' + self.key + ') closed.');
+
                 };
 
-                self.prepare();
+                self.wait_to_registry();
 
             };
+
         }
 
         self.eventCallback(MatchStatus.launched, self);
 
     }
 
-    end(info?: string) {
+    private end(info?: string) {
 
         if (this.socket !== undefined && this.socket.readyState === WebSocket.OPEN) {
 
