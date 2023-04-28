@@ -529,7 +529,7 @@ export class WS_Match {
 
                     self.failure(undefined, "no min amount players");
 
-                    self.abort("no min amount players");
+                    self.end("no min amount players");
 
                     return;
 

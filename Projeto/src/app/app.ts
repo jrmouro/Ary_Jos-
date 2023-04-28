@@ -37,7 +37,7 @@ export class App {
 
     }));
     this.server.set('app_user_data_path', path.join(__dirname, 'data', 'user_data.json'));
-    this.server.set('app_launched_matches', new Map<string, WS_Match>()); // wsmatchkey->wsmatch
+    this.server.set('app_launched_matches', new Map<string, Map<string, WS_Match>>()); // userkey->(wsmatchkey->wsmatch)
     this.server.set('users_session_login', new Map<string, User>()); // session.id->user
     this.server.set('views', path.join(__dirname, 'views'));
     this.server.set('view engine', 'ejs');

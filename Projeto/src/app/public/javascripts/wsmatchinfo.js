@@ -64,13 +64,13 @@ function wsmatchinfo() {
                         tooltip_text = 'starded';
                         break;
                     case "3":
-                        status_simbol = '&#x1F646;';
+                        status_simbol = '&#x1F645;';
                         tooltip_text = 'finished';
                         break;
                 }
 
                 const x = document.createElement("A");
-                x.setAttribute("href", "/match_room?ws_match_key=" + wsmatchkey);
+                x.setAttribute("href", "/match_room?ws_match_key=" + wsmatchkey + "&owner_user_key="+owner_user_key);
                 x.setAttribute("class", "tooltip");
                 x.style.textDecorationLine = "none";
                 x.innerHTML = status_simbol;
@@ -80,25 +80,23 @@ function wsmatchinfo() {
 
                 x.appendChild(s);
 
-
-
                 var y = document.createElement("LI");
-                var v = document.createTextNode(matchname);
-                y.appendChild(v);
+                var v = document.createTextNode(" " + matchname);
                 y.appendChild(x);
+                y.appendChild(v);
 
                 if (owner_user_key == user_key) {
-                    
-                    const a = document.createElement("A");
-                    a.setAttribute("href", "/match_abort?ws_match_key=" + wsmatchkey);
-                    a.setAttribute("class", "tooltip");
-                    a.style.textDecorationLine = "none";
-                    a.innerHTML = '&#x1F645;';
-                    const sa = document.createElement("SPAN");
-                    sa.setAttribute("class", "tooltiptext");
-                    sa.innerHTML = "abort";
-                    a.appendChild(sa);
-                    y.appendChild(a);
+
+                    // const a = document.createElement("A");
+                    // a.setAttribute("href", "/match_abort?ws_match_key=" + wsmatchkey + "&owner_user_key="+owner_user_key);
+                    // a.setAttribute("class", "tooltip");
+                    // a.style.textDecorationLine = "none";
+                    // a.innerHTML = '&#x1F645;';
+                    // const sa = document.createElement("SPAN");
+                    // sa.setAttribute("class", "tooltiptext");
+                    // sa.innerHTML = "abort";
+                    // a.appendChild(sa);
+                    // y.appendChild(a);
 
                 } else {
                     // alert(owner_user_key + " - " + user_key);
