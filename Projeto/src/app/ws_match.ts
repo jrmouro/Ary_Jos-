@@ -405,6 +405,26 @@ export class WS_Match {
 
         if (this.socket !== undefined && this.socket.readyState === WebSocket.OPEN) {
 
+            let theme:string|undefined = undefined;
+            let description:string|undefined = undefined;
+            let options:string[] = [];
+
+            if(this.roundIndex > -1 && this.roundIndex < this.match.rounds.length){
+
+                description = this.match.rounds[this.roundIndex].question.description;
+                theme = this.match.rounds[this.roundIndex].quiz_theme;
+
+                for(let option in this.match.rounds[this.roundIndex].question.fake_options){
+                    options.push(this.match.rounds[this.roundIndex].question.fake_options[option]);
+                }
+
+                options.push(this.match.rounds[this.roundIndex].question.true_option);
+                
+                options.sort(function(a, b){return 0.5 - Math.random()});
+
+            }
+
+
             this.socket.send(
                 JSON.stringify({
                     sender: this.key,
@@ -426,7 +446,10 @@ export class WS_Match {
                         player_response: this.player_response,
                         player_pass: this.player_pass,
                         roundIndex: this.roundIndex,
-                        scoreboard: this.scoreboard()
+                        scoreboard: this.scoreboard(),
+                        quiz_theme: theme,
+                        question_description: description,
+                        question_opptions: options
 
                     }
 

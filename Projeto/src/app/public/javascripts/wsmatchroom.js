@@ -14,6 +14,10 @@ function wsmatchroom() {
     var status_text = document.getElementById('ws_match_status_text');
 
     var question_room_div = document.getElementById('question_room_div');
+    var question_description = document.getElementById('question_description');
+    var question_options_list = document.getElementById('question_options_list');
+    var quiz_theme = document.getElementById('quiz_theme');
+    
     var register_room_div = document.getElementById('register_room_div');
     var pass_response_room_div = document.getElementById('pass_response_room_div');
     var scoreboard_list = document.getElementById('scoreboard_list');
@@ -164,8 +168,6 @@ function wsmatchroom() {
                             status_text.innerHTML = "?";
 
                         }
-
-
 
                     }
 
