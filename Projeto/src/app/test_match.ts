@@ -46,9 +46,10 @@ const rounds:Round[] = [
 ]
 
 export const test_match:Match = {
-    key: "test_match",
+    key: "test_match_key",
     name: "Test Match",
     config: config,
-    rounds: rounds,
-    Keyplayer_score_map: new Map()
+    rounds: rounds
 };
+
+console.log(JSON.stringify(test_match))

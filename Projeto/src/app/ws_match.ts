@@ -4,6 +4,7 @@ import { WS_MSG } from "./ws_msg";
 import { Protocol } from "./protocol";
 import { MatchStatus } from "./match_status";
 import { Player } from "./player";
+import { ScoreType } from "./score";
 
 export class WS_Match {
 
@@ -13,15 +14,23 @@ export class WS_Match {
 
     players: { [key: string]: Player } = {};
 
+    player_response:string | undefined = undefined;
+    player_pass:string | undefined = undefined;
+
     isRunning: boolean = false;
     isOpenToRegistry: boolean = true;
     isRoundShooting: boolean = false;
+    isRoundResponse: boolean = false;
+    isRoundpass: boolean = false;
     roundIndex: number = -1;
 
-    round_timeoutId: NodeJS.Timeout | undefined = undefined;
+    // round_timeoutId: NodeJS.Timeout | undefined = undefined;
     shooting_timeoutId: NodeJS.Timeout | undefined = undefined;
+    response_timeoutId: NodeJS.Timeout | undefined = undefined;
+    pass_timeoutId: NodeJS.Timeout | undefined = undefined;
     wait_to_start_intervalId: NodeJS.Timer | undefined = undefined;
     wait_to_registry_intervalId: NodeJS.Timer | undefined = undefined;
+    wait_to_round_resume_intervalId: NodeJS.Timer | undefined = undefined;
 
     socket: WebSocket | undefined = undefined;
 
@@ -37,13 +46,33 @@ export class WS_Match {
         }
     }
 
+    private scoreboard(): { [key: string]: { name: string; score: number; } } {
+
+        const sb: { [key: string]: { name: string; score: number } } = {};
+
+        for (const player_key in this.players) {
+
+            sb[player_key] = { name: this.players[player_key].name, score: 0 };
+
+            for (let index = 0; index < this.players[player_key].scores.length; index++) {
+
+                sb[player_key].score += this.players[player_key].scores[index].value;
+
+            }
+
+
+        }
+
+        return sb;
+
+    }
+
 
     private control(msg_obj: WS_MSG) {
 
         const receiver = msg_obj.receiver;
         const sender = msg_obj.sender;
         const msg_type = msg_obj.msg_type;
-        const msg_content = msg_obj.msg_content;
 
         if (receiver === this.key && sender !== undefined && sender !== this.key) {
 
@@ -51,19 +80,23 @@ export class WS_Match {
 
                 //round
                 case Protocol.match_shot_pass:
-
+                    this.shooting_pass(sender);
                     break;
 
                 case Protocol.match_shot_response:
-
-
+                    this.shooting_response(sender);
                     break;
 
-                // player
-                case Protocol.match_shooting:
+                case Protocol.match_point_at_pass:
+                    this.point_pass(sender, msg_obj.msg_content);
+                    break;
 
-                    this.shooting(sender);
-
+                case Protocol.match_response:
+                    this.response(sender, msg_obj.msg_content);
+                    break;
+                
+                case Protocol.match_state:
+                    this.state(sender);
                     break;
 
 
@@ -73,136 +106,175 @@ export class WS_Match {
 
     }
 
-    wait_to_round_resume(sender: string) {
+    point_pass(sender:string, content:{player_pointed:string;}){
 
-        if (this.socket !== undefined && this.socket.readyState === WebSocket.OPEN) {
+        const player_pointed = content.player_pointed;        
 
+        if(player_pointed in this.players && sender in this.players){
+
+            if (this.pass_timeoutId !== undefined) {
+                clearTimeout(this.pass_timeoutId);
+                this.pass_timeoutId = undefined;
+            }
+
+            this.player_response = player_pointed;
+
+            this.state();
+        
+            this.shooting_response(player_pointed, sender);            
+
+        }
+
+    }
+
+    response(sender:string, content:{response:string;roundIndex:number;player_pass:string;}){
+
+        if(this.isRoundResponse && this.roundIndex === content.roundIndex && sender in this.players){
+
+            if (this.response_timeoutId !== undefined) {
+                clearTimeout(this.response_timeoutId);
+                this.response_timeoutId = undefined;
+            }
+
+            var score = this.match.rounds[content.roundIndex].score;
+
+            if(this.match.rounds[content.roundIndex].question.true_option === content.response){
+
+                if(content.player_pass !== undefined){
+
+                    score *= 2;
+
+                }
+
+                this.players[sender].scores.push({
+                    scoretype: ScoreType.pass,
+                    value: score
+                })
+
+            } else {
+
+                if(content.player_pass !== undefined){
+
+                    this.players[content.player_pass].scores.push({
+                        scoretype: ScoreType.pass,
+                        value: score
+                    })
+
+                }
+
+            }
+
+            this.round_resume();
+
+        }
+
+    }
+
+    wait_to_round_resume() {
+
+        this.isRoundShooting = false;
+        this.isRoundResponse = false;
+        this.isRoundpass = false;
+
+        var self = this;
+
+        this.wait_to_round_resume_intervalId = setTimeout(() => {
+
+                self.round();            
+
+        }, this.match.config.wait_to_round_resume_time);
+
+        this.state();
+
+    }
+
+    round_resume() {    
+        
+        //calcula
+
+        this.state();
+
+        this.wait_to_round_resume();
+
+    }
+
+    wait_to_shooting() {
+
+        this.isRoundShooting = true;
+        this.isRoundResponse = false;
+        this.isRoundpass = false;
+        this.player_response = undefined;
+        this.player_pass = undefined;
+
+        this.shooting_timeoutId = setTimeout(() => {
 
             var self = this;
 
-            setTimeout(() => {
+            if (self.isRoundShooting) {
 
-                if (self.isRoundShooting) {
-
-                    self.isRoundShooting = false;
-
-                    self.socket?.send( // Verificar se é o caso
-                        JSON.stringify({
-                            sender: this.key,
-                            sender_cluster: this.key,
-                            receiver: "__cluster__",
-                            receiver_cluster: this.key,
-                            msg_type: Protocol.match_wait_to_round_resume,
-                            msg_content: {}
-                        }));
-
-                    setTimeout(() => {
-
-                        self.round();
-
-                    }, 1000);
-
-                }
-
-            }, this.match.config.wait_to_round_resume_time);
-
-        }
-
-    }
-
-    round_resume(sender: string, msg_content?: {}) {
-
-        if (this.socket !== undefined && this.socket.readyState === WebSocket.OPEN) {
-
-            this.socket.send(
-                JSON.stringify({
-                    sender: this.key,
-                    sender_cluster: this.key,
-                    receiver: "__cluster__",
-                    receiver_cluster: this.key,
-                    msg_type: Protocol.round_resume,
-                    msg_content: {
-                        player: sender
-                    }
-                }));
-
-            var self = this
-
-            setTimeout(() => {
-
-                self.wait_to_round_resume(sender);
-
-            }, 1000);
-
-        }
-
-    }
-
-    wait_to_shooting(sender: string) {
-
-        if (this.socket !== undefined && this.socket.readyState === WebSocket.OPEN) {
-
-            this.shooting_timeoutId = setTimeout(() => {
-
-                var self = this;
-
-                if (self.isRoundShooting) {
-
-                    self.socket?.send(
-                        JSON.stringify({
-                            sender: this.key,
-                            sender_cluster: this.key,
-                            receiver: "__cluster__",
-                            receiver_cluster: this.key,
-                            msg_type: Protocol.round_end,
-                            msg_content: {}
-                        }));
-
-                    setTimeout(() => {
-
-                        self.round_resume(sender);
-
-                    }, 1000);
-
-                }
-
-            }, this.match.config.wait_to_shooting_time);
-
-        }
-
-    }
-
-    shooting(sender: string) {
-
-        if (this.socket !== undefined && this.socket.readyState === WebSocket.OPEN) {
-
-            if (!this.isRoundShooting) {
-
-                this.isRoundShooting = true;
-
-                this.socket.send(
-                    JSON.stringify({
-                        sender: this.key,
-                        sender_cluster: this.key,
-                        receiver: "__cluster__",
-                        receiver_cluster: this.key,
-                        msg_type: Protocol.match_shooting,
-                        msg_content: {
-                            player: sender
-                        }
-                    }));
-
-                var self = this;
-
-                setTimeout(() => {
-
-                    self.wait_to_shooting(sender);
-
-                }, 1000);
-
+                self.round_resume();
 
             }
 
+        }, this.match.rounds[this.roundIndex].shooting_timeout);
+
+        this.state();
+
+    }
+
+    shooting_response(sender:string, player_pass:string | undefined = undefined) {
+
+        if(this.isRoundShooting && sender in this.players){
+
+            if (this.shooting_timeoutId !== undefined) {
+                clearTimeout(this.shooting_timeoutId);
+                this.shooting_timeoutId = undefined;
+            }
+
+            this.isRoundShooting = false;
+            this.isRoundResponse = true;
+            this.isRoundpass = false;
+            this.player_pass = player_pass;
+            this.player_response = sender;
+
+            var self = this;
+            this.response_timeoutId = setTimeout(() => {
+
+                self.round_resume();   
+                    
+            }, this.match.rounds[this.roundIndex].response_timeout);
+
+            this.state();
+
+        }
+
+    }
+
+    
+
+    shooting_pass(sender:string) {
+
+        if(this.isRoundShooting && sender in this.players){
+
+            if (this.shooting_timeoutId !== undefined) {
+                clearTimeout(this.shooting_timeoutId);
+                this.shooting_timeoutId = undefined;
+            }
+
+            this.isRoundShooting = false;
+            this.isRoundResponse = false;
+            this.isRoundpass = true;
+            this.player_pass = sender;
+            this.player_response = undefined;
+
+            var self = this;
+            this.response_timeoutId = setTimeout(() => {
+
+                self.round_resume();   
+                    
+            }, this.match.rounds[this.roundIndex].pass_timeout);
+
+            this.state();
 
         }
 
@@ -298,12 +370,24 @@ export class WS_Match {
                     sender_cluster: this.key,
                     receiver: receiver || "__cluster__",
                     receiver_cluster: this.key,
-                    msg_type: Protocol.match_start,
+                    msg_type: Protocol.match_state,
                     msg_content: {
-                        isRunning: this.isRunning,
-                        isOpenToRegistry: this.isOpenToRegistry,
-                        roundIndex: this.roundIndex
+
+                        state_flag: {
+                            isRunning: this.isRunning,
+                            isOpenToRegistry: this.isOpenToRegistry,
+                            isRoundShooting: this.isRoundShooting,
+                            isRoundResponse: this.isRoundResponse,
+                            isRoundpass: this.isRoundpass,
+                        },
+                        
+                        player_response: this.player_response,
+                        player_pass: this.player_pass,
+                        roundIndex: this.roundIndex,
+                        scoreboard: this.scoreboard()
+
                     }
+
                 }));
 
         }
@@ -368,14 +452,28 @@ export class WS_Match {
             this.wait_to_registry_intervalId = undefined;
         }
 
-        if (this.round_timeoutId !== undefined) {
-            clearTimeout(this.round_timeoutId);
-            this.round_timeoutId = undefined;
-        }
+        // if (this.round_timeoutId !== undefined) {
+        //     clearTimeout(this.round_timeoutId);
+        //     this.round_timeoutId = undefined;
+        // }
 
         if (this.shooting_timeoutId !== undefined) {
             clearTimeout(this.shooting_timeoutId);
             this.shooting_timeoutId = undefined;
+        }
+
+        if (this.wait_to_round_resume_intervalId !== undefined) {
+            clearTimeout(this.wait_to_round_resume_intervalId);
+            this.wait_to_round_resume_intervalId = undefined;
+        }
+
+        if (this.response_timeoutId!== undefined) {
+            clearTimeout(this.response_timeoutId);
+            this.response_timeoutId = undefined;
+        }
+        if (this.pass_timeoutId !== undefined) {
+            clearTimeout(this.pass_timeoutId);
+            this.pass_timeoutId = undefined;
         }
 
         this.isRunning = false;
@@ -395,61 +493,17 @@ export class WS_Match {
 
     private round() {
 
-        if (this.socket !== undefined && this.socket.readyState === WebSocket.OPEN) {
+        this.roundIndex++;
 
-            this.roundIndex++;
+        if (this.roundIndex < this.match.rounds.length) {
 
-            if (this.roundIndex < this.match.rounds.length) {
+            this.wait_to_shooting();
 
-                if (this.round_timeoutId !== undefined) {
+        } else {
 
-                    clearTimeout(this.round_timeoutId);
+            this.roundIndex = -1;
 
-                }
-
-                this.isRoundShooting = false;
-
-                this.socket.send(
-                    JSON.stringify({
-                        sender: this.key,
-                        sender_cluster: this.key,
-                        receiver: "__cluster__",
-                        receiver_cluster: this.key,
-                        msg_type: Protocol.round_start,
-                        msg_content: {}
-                    }));
-
-                var self = this;
-
-                this.round_timeoutId = setTimeout(() => {
-
-                    if (self.isRunning && !self.isOpenToRegistry) {
-
-                        self.socket?.send(
-                            JSON.stringify({
-                                sender: this.key,
-                                sender_cluster: this.key,
-                                receiver: "__cluster__",
-                                receiver_cluster: this.key,
-                                msg_type: Protocol.round_end,
-                                msg_content: {}
-                            }));
-
-                        setTimeout(() => {
-
-                            self.round();
-
-                        }, 1000);
-
-                    }
-
-                }, self.match.rounds[this.roundIndex].response_timeout);
-
-            } else {
-
-                this.end();
-
-            }
+            this.end();
 
         }
 
@@ -457,63 +511,95 @@ export class WS_Match {
 
     private start() {
 
-        if (this.socket !== undefined && this.socket.readyState === WebSocket.OPEN) {
+        // if (this.socket !== undefined && this.socket.readyState === WebSocket.OPEN) {
 
-            this.isRunning = true;
+        //     this.isRunning = true;
 
-            this.socket.send(
-                JSON.stringify({
-                    sender: this.key,
-                    sender_cluster: this.key,
-                    receiver: "__cluster__",
-                    receiver_cluster: this.key,
-                    msg_type: Protocol.match_start,
-                    msg_content: {}
-                }));
+        //     this.socket.send(
+        //         JSON.stringify({
+        //             sender: this.key,
+        //             sender_cluster: this.key,
+        //             receiver: "__cluster__",
+        //             receiver_cluster: this.key,
+        //             msg_type: Protocol.match_start,
+        //             msg_content: {}
+        //         }));
 
-            var self = this;
+        //     var self = this;
 
-            this.eventCallback(MatchStatus.started, self);
+        //     this.eventCallback(MatchStatus.started, self);
 
-            setTimeout(() => {
+        //     setTimeout(() => {
 
-                self.round();
+        //         self.round();
 
-            }, 1000);
+        //     }, 1000);
 
-        }
+        // }
+
+        this.isRunning = true;
+
+        this.state()
+
+        this.eventCallback(MatchStatus.started, this);
+
+        var self = this;
+
+        setTimeout(() => {
+
+            self.round();
+
+        }, 1000);
 
     }
 
     private wait_to_start() {
 
-        if (this.socket !== undefined && this.socket.readyState === WebSocket.OPEN) {
+        // if (this.socket !== undefined && this.socket.readyState === WebSocket.OPEN) {
 
-            this.socket.send(
-                JSON.stringify({
-                    sender: this.key,
-                    sender_cluster: this.key,
-                    receiver: "__cluster__",
-                    receiver_cluster: this.key,
-                    msg_type: Protocol.wait_to_start_match,
-                    msg_content: {}
-                }));
+        //     this.socket.send(
+        //         JSON.stringify({
+        //             sender: this.key,
+        //             sender_cluster: this.key,
+        //             receiver: "__cluster__",
+        //             receiver_cluster: this.key,
+        //             msg_type: Protocol.wait_to_start_match,
+        //             msg_content: {}
+        //         }));
 
-            var self = this;
+        //     var self = this;
 
-            this.wait_to_start_intervalId = setTimeout(() => {
+        //     this.wait_to_start_intervalId = setTimeout(() => {
 
-                if (!self.isRunning && !self.isOpenToRegistry) {
+        //         if (!self.isRunning && !self.isOpenToRegistry) {
 
-                    self.start();
+        //             self.start();
 
-                }
+        //         }
 
-            }, self.match.config.wait_to_start_match_time);
+        //     }, self.match.config.wait_to_start_match_time);
 
-            self.eventCallback(MatchStatus.wait_to_start, self);
+        //     self.eventCallback(MatchStatus.wait_to_start, self);
 
-        }
+        // }
+
+        this.isOpenToRegistry = false;
+
+        var self = this;
+
+        this.wait_to_start_intervalId = setTimeout(() => {
+
+            if (!self.isRunning && !self.isOpenToRegistry) {
+
+                self.start();
+
+            }
+
+        }, self.match.config.wait_to_start_match_time);
+
+        this.state();
+
+        self.eventCallback(MatchStatus.wait_to_start, self);
 
     }
 
@@ -544,6 +630,8 @@ export class WS_Match {
             }
 
         }, self.match.config.wait_to_registry_at_match_time);
+
+        this.state();
 
         self.eventCallback(MatchStatus.wait_to_registry, self);
 
@@ -587,6 +675,16 @@ export class WS_Match {
 
                 };
 
+                self.socket.send(
+                    JSON.stringify({
+                        sender: self.key,
+                        sender_cluster: self.key,
+                        receiver: "__server__",
+                        receiver_cluster: self.key,
+                        msg_type: Protocol.wss_client_register,
+                        msg_content: {}
+                    }));
+
                 self.wait_to_registry();
 
             };
@@ -598,26 +696,11 @@ export class WS_Match {
     }
 
     private end(info?: string) {
-
-        if (this.socket !== undefined && this.socket.readyState === WebSocket.OPEN) {
-
-            this.isRunning = false;
-
-            this.socket.send(
-                JSON.stringify({
-                    sender: this.key,
-                    sender_cluster: this.key,
-                    receiver: "__cluster__",
-                    receiver_cluster: this.key,
-                    msg_type: Protocol.match_end,
-                    msg_content: {
-                        info: info
-                    }
-                }));
-
-            this.eventCallback(MatchStatus.finished, this);
-
-        }
+        
+        this.roundIndex = -1;
+        this.isRunning = this.isOpenToRegistry = this.isRoundResponse = this.isRoundShooting = this.isRoundpass = false;
+        this.state();
+        this.eventCallback(MatchStatus.finished, this);
 
     }
 

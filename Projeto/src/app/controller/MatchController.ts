@@ -50,14 +50,15 @@ class MatchController {
 
         if (user !== undefined) {
 
-            const ws_match_key: string = req.query.ws_match_key as string; const owner_user_key: string = req.query.owner_user_key as string;
+            const ws_match_key: string = req.query.ws_match_key as string; 
+            const owner_user_key: string = req.query.ws_match_owner_user_key as string;
 
             if (ws_match_key !== undefined && owner_user_key !== undefined) {
 
                 if (req.app.get("app_launched_matches").has(owner_user_key)) {
 
                     const wsmatch = req.app.get("app_launched_matches").get(owner_user_key).get(ws_match_key) as WS_Match;
-
+                    
                     if (wsmatch !== undefined) {
 
                         res.render('match_room', {
@@ -68,6 +69,7 @@ class MatchController {
                             user: user,
                             match: wsmatch.match,
                             ws_match_cluster_key: wsmatch.key,
+                            ws_match_owner_user_key: wsmatch.owner_user_key,
                             ws_match_player_key: user.email,
                             fail_msg: fail_msg
                         });
@@ -148,7 +150,7 @@ class MatchController {
         if (user !== undefined) {
 
             const ws_match_key: string = req.query.ws_match_key as string;
-            const owner_user_key: string = req.query.owner_user_key as string;
+            const owner_user_key: string = req.query.ws_match_owner_user_key as string;
 
             if (ws_match_key !== undefined && owner_user_key !== undefined) {
 
@@ -177,7 +179,7 @@ class MatchController {
                                 players: wsmatch.players
                             });
 
-                            res.redirect('/');
+                            res.redirect("/match_room?ws_match_key=" + wsmatch.key + "&ws_match_owner_user_key=" + wsmatch.owner_user_key);
 
                         } else {
 
@@ -193,13 +195,13 @@ class MatchController {
 
                 } else {
 
-                    res.redirect('/?fail_msg=invalid owner_user_key');
+                    res.redirect('/?fail_msg=invalid ws_match_owner_user_key');
 
                 }
 
             } else {
 
-                res.redirect('/?fail_msg=no provided ws_match_key or owner_user_key');
+                res.redirect('/?fail_msg=no provided ws_match_key or ws_match_owner_user_key');
 
             }
 
@@ -218,7 +220,7 @@ class MatchController {
         if (user !== undefined) {
 
             const ws_match_key: string = req.query.ws_match_key as string;
-            const owner_user_key: string = req.query.owner_user_key as string;
+            const owner_user_key: string = req.query.ws_match_owner_user_key as string;
 
             if (ws_match_key !== undefined && owner_user_key !== undefined) {
 

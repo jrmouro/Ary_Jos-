@@ -70,7 +70,7 @@ function wsmatchinfo() {
                 }
 
                 const x = document.createElement("A");
-                x.setAttribute("href", "/match_room?ws_match_key=" + wsmatchkey + "&owner_user_key="+owner_user_key);
+                x.setAttribute("href", "/match_room?ws_match_key=" + wsmatchkey + "&ws_match_owner_user_key="+owner_user_key);
                 x.setAttribute("class", "tooltip");
                 x.style.textDecorationLine = "none";
                 x.innerHTML = status_simbol;

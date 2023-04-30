@@ -1,9 +1,10 @@
-export enum ScoreType{
-    shot_response,
-    shot_pass
-}
+export const ScoreType = {
+    response:"0",
+    pass:"1",
+    none:"2"
+} as const;
 
 export interface Score{
-    scoretype:ScoreType;
+    scoretype:string;
     value:number;
 }

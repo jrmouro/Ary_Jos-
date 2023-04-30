@@ -3,59 +3,80 @@
 
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" type="text/css"  href="/stylesheets/style.css">
+  <link rel="stylesheet" type="text/css" href="/stylesheets/style.css">
   <script src="/javascripts/wsmatchroom.js"></script>
 </head>
 
 <body style="font-family:Verdana;color:#05252c;" onload="wsmatchroom()">
 
-  <div style="background-color:#7a814b;padding:5px;text-align:center;">
+  <div style="background-color:#dde1be;padding:5px;text-align:center;">
     <h2 style="margin: 0px;padding: 0;"><%= title %></h2>
     <p style="font-size:50%;margin: 0px;padding: 0;"><%= wsa %>:<%= wsp %></p>
     <% if (fail_msg != undefined) { %>
-      <p style="font-family:Verdana;color:#e10e1c;"> <%= fail_msg%> </p>
+    <p style="font-family:Verdana;color:#e10e1c;"> <%= fail_msg%> </p>
     <%}%>
   </div>
 
-  <div  style="overflow:auto;background-color:#7a814b;margin-top:7px;">
+  <div  style="overflow:auto;background-color:#dde1be;margin-top:7px;">
 
-    <div class="left" style="background-color:#7a814b">
+    <div class="left" style="background-color:#dde1be">
       <h3 style="margin: 0px;padding: 0;">Scoreboard</h3>    
+      <ul id="scoreboard_list" style="list-style-type: none; margin: 10px;padding: 0;"></ul>
     </div>
 
 
-    <div class="main">
-      <h3>Match Room</h3>
-      <button id="pass_button" class="button button1">Pass</button>
-      <button id="response_button" class="button button2">Response</button>
+    <div class="main" style='text-align: center;margin-top: 7px;'>
+      <h3 style="margin: 0px;padding: 0;">Match Room</h3>
+      <div id="register_room_div" hidden>
+        <h3>Register at Match</h3>
+        <h3><a style="text-decoration: none;" href= <%= "/match_register_player?ws_match_key=" + ws_match_cluster_key + "&ws_match_owner_user_key=" + ws_match_owner_user_key %> >&#128587;</a></h3>        
+      </div>   
+      <div id="question_room_div" hidden>
+        <h3>Question</h3>
+        <div style="float: left;text-align: center;width: 70%;">
+          <h3>Description</h3>                    
+        </div>
+        <div id="pass_response_room_div" style='float: left;text-align: center;width: 30%;'>
+          <button id="pass_button" class="button button1">Pass</button>
+          <button id="response_button" class="button button2">Response</button>
+        </div>
+      </div>      
     </div>
 
-    <div class="left" style="background-color:#7a814b">
+    <div class="left" style="background-color:#dde1be;text-align: center">
 
+      <h3>Status</h3>   
+      <span id="ws_match_status_emoji" style='font-size:50px;'></span>
+      <h5 id="ws_match_status_text" style="margin: 0px;padding: 0;"></h5>
+              
       <h1 id="web_socket_server_port" hidden><%= wssp %></h1>
-      <h1 id="web_server_address" hidden><%= wsa %></h1>
-      <h1 id="ws_match_cluster_key" hidden><%= ws_match_cluster_key %></h1>
-      <h1 id="ws_match_player_key" hidden><%= ws_match_player_key %></h1>
-      <% if (user != undefined) { %>
-        <h1 id="user_key" hidden><%= user.email %></h1>
-      <%} else { %> 
-        <h1 id="user_key" hidden></h1>
-      <% } %>
-           
-    </div>
-    
+    <h1 id="web_server_address" hidden><%= wsa %></h1>
+    <h1 id="ws_match_owner_user_key" hidden><%= ws_match_owner_user_key %></h1>
+    <h1 id="ws_match_cluster_key" hidden><%= ws_match_cluster_key %></h1>
+    <h1 id="ws_match_player_key" hidden><%= ws_match_player_key %></h1>
+    <% if (user != undefined) { %>
+    <h1 id="user_key" hidden><%= user.email %></h1>
+    <%} else { %>
+    <h1 id="user_key" hidden></h1>
+    <% } %>
+
+
+
+
   </div>
 
-  <div id="status" style="background-color:#7a814b;text-align:center;padding:5px;margin-top:7px;">
+  </div>
+
+  <div id="status" style="background-color:#dde1be;text-align:center;padding:5px;margin-top:7px;">
     <% if (user != undefined) { %>
     <p style="margin: 0px;padding: 0;"> <%= user.name %> </p>
     <p style="font-size:50%;margin: 0px;padding: 0;"> <%= user.email %> </p>
     <a href="/user_logout"> logout </a>
-    <%} else { %> 
-      <p style="margin: 0px;padding: 0;">
-        <a style="margin: 0px;padding: 0;" href="/user_login_form"> login </a> or
-        <a style="margin: 0px;padding: 0;" href="/user_register_form"> register </a>
-      </p>
+    <%} else { %>
+    <p style="margin: 0px;padding: 0;">
+      <a style="margin: 0px;padding: 0;" href="/user_login_form"> login </a> or
+      <a style="margin: 0px;padding: 0;" href="/user_register_form"> register </a>
+    </p>
     <% } %>
 
 </body>

@@ -72,7 +72,7 @@ export class WSS {
 
             ws.on('message', function message(data, isBinary) {
 
-                // console.log("wss message = " + data);
+                // console.log("==============wss message = " + data);
 
                 const ws_msg:WS_MSG = JSON.parse(data.toString()) as WS_MSG;
 
@@ -103,7 +103,7 @@ export class WSS {
 
                     if (ws_receiver?.readyState === WebSocket.OPEN) {
 
-                        // console.log("passou aqui");
+                        // console.log("===========passou aqui");
 
                         ws_receiver?.send(JSON.stringify(ws_msg), {
                             binary: isBinary

@@ -17,6 +17,9 @@ export const Protocol = {
     match_wait_to_shooting: "31",
     match_wait_to_round_resume: "32",
     match_info: "36",
+    match_state: "37",
+    match_response: "38",
+    match_point_at_pass:"39",
 
     round_wait: "10",
     round_start: "11",
