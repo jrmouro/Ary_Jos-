@@ -31,7 +31,9 @@
     "morgan": "^1.10.0",
     "multer": "^1.4.5-lts.1",
     "tsd": "^0.28.1",
-    "typescript": "^5.0.4"
+    "typescript": "^5.0.4",
+    "websocket": "^1.0.34",
+    "ws": "^8.13.0"
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.3",
@@ -40,7 +42,8 @@
     "@types/ip": "^1.1.0",
     "@types/morgan": "^1.9.4",
     "@types/multer": "^1.4.7",
-    "@types/node": "^18.15.11",
+    "@types/node": "^18.16.2",
+    "@types/websocket": "^1.0.5",
     "@types/ws": "^8.5.4",
     "nodemon": "^2.0.22",
     "ts-node": "^10.9.1"
