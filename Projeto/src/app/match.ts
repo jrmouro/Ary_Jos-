@@ -11,6 +11,7 @@ export interface MatchConfig {
     wait_to_start_match_time:number;
     wait_to_shooting_time:number;
     wait_to_round_resume_time:number;
+    wait_to_match_abort_time:number;
 
 }
 export interface Match {

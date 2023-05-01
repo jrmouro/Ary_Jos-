@@ -22,7 +22,6 @@ function wsmatchroom() {
     var pass_response_room_div = document.getElementById('pass_response_room_div');
     var scoreboard_list = document.getElementById('scoreboard_list');
 
-
     var socket = undefined;
 
     pass_button.addEventListener("click", (event) => {
@@ -149,6 +148,8 @@ function wsmatchroom() {
 
                         status_emoji.innerHTML = "&#x1F647;";
                         status_text.innerHTML = "players shooting";
+                        question_room_div.hidden = false;
+                        pass_response_room_div.hidden = false;
 
                     } else {
 
@@ -156,16 +157,22 @@ function wsmatchroom() {
 
                             status_emoji.innerHTML = "&#x1F646;";
                             status_text.innerHTML = msg_obj.msg_content.player_response + " responsing";
+                            question_room_div.hidden = false;
+                            pass_response_room_div.hidden = true;
 
                         } else if (msg_obj.msg_content.state_flag.isRoundPass) {
 
                             status_emoji.innerHTML = "&#x1F481;";
                             status_text.innerHTML = msg_obj.msg_content.player_pass + " passing";
+                            question_room_div.hidden = false;
+                            pass_response_room_div.hidden = true;
 
                         } else {
 
                             status_emoji.innerHTML = "&#x1F64E;";
                             status_text.innerHTML = "?";
+                            question_room_div.hidden = false;
+                            pass_response_room_div.hidden = true;
 
                         }
 
@@ -189,6 +196,12 @@ function wsmatchroom() {
             }
 
         }
+
+       scoreboard_update(msg_obj);
+
+    };
+
+    var scoreboard_update = function(msg_obj){
 
         while (scoreboard_list.lastElementChild) {
 
