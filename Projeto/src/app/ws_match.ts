@@ -28,6 +28,7 @@ export class WS_Match {
 
     roundIndex: number = -1;
 
+    wait_to_round_start_timeoutId: NodeJS.Timeout | undefined = undefined;
     wait_to_round_shooting_timeoutId: NodeJS.Timeout | undefined = undefined;
     wait_to_round_response_timeoutId: NodeJS.Timeout | undefined = undefined;
     wait_to_round_pass_timeoutId: NodeJS.Timeout | undefined = undefined;
@@ -533,6 +534,19 @@ export class WS_Match {
 
     }
 
+    private wait_to_round_start(){
+
+        var self = this;
+        this.wait_to_round_start_timeoutId = setTimeout(() => {
+
+            self.round_resume(true);
+
+        }, this.match.rounds[this.roundIndex].shooting_timeout);
+
+        this.state();
+
+    }
+
     private round() {
 
         this.roundIndex++;
@@ -562,17 +576,7 @@ export class WS_Match {
 
         this.isRunning = true;
 
-        // this.state()
-
         this.eventCallback(MatchStatus.started, this);
-
-        // var self = this;
-
-        // setTimeout(() => {
-
-        //     self.round();
-
-        // }, 1000);
 
         this.round();
 
