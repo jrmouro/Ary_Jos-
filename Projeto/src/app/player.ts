@@ -12,6 +12,7 @@ export interface Player {
 
     key: string;
     name:string;
+    avatar:string;
     config:PlayerConfig;   
     scores:Score[];
 

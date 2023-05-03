@@ -1,5 +1,7 @@
 function wsmatchroom() {
 
+    
+
     // Pegando as referências para os elementos da página.
     var wssp = document.getElementById('web_socket_server_port').innerHTML;
     var wsa = document.getElementById('web_server_address').innerHTML;
@@ -21,6 +23,11 @@ function wsmatchroom() {
     var register_room_div = document.getElementById('register_room_div');
     var pass_response_room_div = document.getElementById('pass_response_room_div');
     var scoreboard_list = document.getElementById('scoreboard_list');
+
+    var pas_room_div = document.getElementById('pass_room_div');
+    var pass_list = document.getElementById('pass_list');
+    var cronnos_status = document.getElementById('cronnos_status');
+    var avatares_emojis = document.getElementById('avatares_emojis');
 
     var socket = undefined;
 
@@ -123,84 +130,176 @@ function wsmatchroom() {
 
     };
 
-    var state = function (msg_obj) {
+    var cronnos = function(msg_obj){
 
-        status_update(msg_obj);
+        var ws_wait_time = msg_obj.msg_content.ws_wait_time;
 
-    };
+        // if(cronosIntervalId == undefined){
+        //     clearInterval(cronosIntervalId);
+        // }
 
-    var status_update = function (msg_obj) {
+        const cronosIntervalId = setInterval(()=>{
 
-        if (msg_obj.msg_content.state_flag.isOpenToRegistry) {
+            console.log(ws_wait_time);
 
-            status_emoji.innerHTML = "&#x1F64B;";
-            status_text.innerHTML = "Open to Register";
-            question_room_div.hidden = true;
-            register_room_div.hidden = false;
+            ws_wait_time -= 1000;
 
-        } else {
+            if(ws_wait_time < 0){
 
-            if (msg_obj.msg_content.state_flag.isRunning) {
-
-                if (user_key in msg_obj.msg_content.scoreboard) {
-
-                    if (msg_obj.msg_content.state_flag.isRoundShooting) {
-
-                        status_emoji.innerHTML = "&#x1F647;";
-                        status_text.innerHTML = "players shooting";
-                        question_room_div.hidden = false;
-                        pass_response_room_div.hidden = false;
-
-                    } else {
-
-                        if (msg_obj.msg_content.state_flag.isRoundResponse) {
-
-                            status_emoji.innerHTML = "&#x1F646;";
-                            status_text.innerHTML = msg_obj.msg_content.player_response + " responsing";
-                            question_room_div.hidden = false;
-                            pass_response_room_div.hidden = true;
-
-                        } else if (msg_obj.msg_content.state_flag.isRoundPass) {
-
-                            status_emoji.innerHTML = "&#x1F481;";
-                            status_text.innerHTML = msg_obj.msg_content.player_pass + " passing";
-                            question_room_div.hidden = false;
-                            pass_response_room_div.hidden = true;
-
-                        } else {
-
-                            status_emoji.innerHTML = "&#x1F64E;";
-                            status_text.innerHTML = "?";
-                            question_room_div.hidden = false;
-                            pass_response_room_div.hidden = true;
-
-                        }
-
-                    }
-
-                } else {
-
-                    status_emoji.innerHTML = "&#x1F575;";
-                    status_text.innerHTML = "watching the match";
-
-                }
+                clearInterval(cronosIntervalId);
+                // cronosIntervalId = undefined;
+                cronnos_status.innerHTML = 0;
 
             } else {
-
-                status_emoji.innerHTML = "&#x1F645;";
-                status_text.innerHTML = "Finished Match";
-                pass_response_room_div.hidden = true;
-                question_room_div.hidden = true;
-                register_room_div.hidden = true;
+                
+                cronnos_status.innerHTML = Math.floor(ws_wait_time / 1000);
 
             }
 
+        }, 1000);
+
+    }
+
+    var state = function (msg_obj) {
+
+        var ws_match_state = msg_obj.msg_content.ws_match_state;
+
+        switch(ws_match_state){
+            case 1: //wait_to_registry_match
+            case 2: //player_registed_match
+            case 3: //player_unregisted_match
+                status_emoji.innerHTML = "&#x1F64B;";
+                status_text.innerHTML = "Open game for registration";
+                question_room_div.hidden = true;
+                register_room_div.hidden = false;
+                pas_room_div.hidden = true;   
+                avatares_update();                        
+                break;
+
+            case 4: //wait_to_start_match
+                status_emoji.innerHTML = "&#x23F3;";
+                status_text.innerHTML = "Waiting for the start of the game";
+                question_room_div.hidden = true;
+                register_room_div.hidden = true;
+                pas_room_div.hidden = true;
+                break;
+
+            case 5: //wait_to_start_match
+            case 6: //wait_to_start_next_round: 
+                status_emoji.innerHTML = "&#x1F4E2;";
+                status_text.innerHTML = "Game started";
+                question_room_div.hidden = true;
+                register_room_div.hidden = true;
+                pas_room_div.hidden = true;
+                break;
+
+            case 7: //started_next_round: 
+                status_emoji.innerHTML = "&#x1F4E2;";
+                status_text.innerHTML = "Round started";
+                question_room_div.hidden = false;
+                register_room_div.hidden = true;
+                pas_room_div.hidden = true;
+                break;
+
+            case 8: //wait_to_shooting_round: 
+                status_emoji.innerHTML = "&#x1F579;";
+                status_text.innerHTML = "Choose answer or pass";
+                pass_button.disabled = false;
+                response_button.disabled = false;
+                question_room_div.hidden = false;
+                register_room_div.hidden = true;
+                pas_room_div.hidden = true;
+                break;
+
+            case 9: //wait_to_shooting_pass_round: 
+                status_emoji.innerHTML = "&#x1F579;";
+                status_text.innerHTML = "Pass the question to";
+                question_room_div.hidden = false;
+                pass_response_room_div.hidden = true;
+                register_room_div.hidden = true;
+                pas_room_div.hidden = false;
+                break;
+
+            case 10: //wait_to_shooting_response_round: 
+                status_emoji.innerHTML = "&#x1F4DD;";
+                status_text.innerHTML = "Answering the question";
+                question_room_div.hidden = false;
+                pass_response_room_div.hidden = true;
+                register_room_div.hidden = true;
+                pas_room_div.hidden = true;
+                break;
+
+            case 11: //player_point_pass_round: 
+                status_emoji.innerHTML = "&#x1F4A3;";
+                status_text.innerHTML = "Passing the question";
+                question_room_div.hidden = false;
+                pass_response_room_div.hidden = true;
+                register_room_div.hidden = true;
+                pas_room_div.hidden = true;
+                break;
+
+            case 12: //reponse_round: 
+                status_emoji.innerHTML = "&#x1F4A3;";
+                status_text.innerHTML = "Passing the question";
+                question_room_div.hidden = false;
+                pass_response_room_div.hidden = true;
+                register_room_div.hidden = true;
+                pas_room_div.hidden = true;
+                break;
+
+            case 13: //wait_to_resume_round: 
+                status_emoji.innerHTML = "&#x1F4A3;";
+                status_text.innerHTML = "wait_to_resume_round";
+                question_room_div.hidden = true;
+                pass_response_room_div.hidden = true;
+                register_room_div.hidden = true;
+                pas_room_div.hidden = true;
+                break;
+
+            case 14: //resume_round: 
+                status_emoji.innerHTML = "&#x1F4A3;";
+                status_text.innerHTML = "resume_round";
+                question_room_div.hidden = true;
+                pass_response_room_div.hidden = true;
+                register_room_div.hidden = true;
+                pas_room_div.hidden = true;
+                break;
+
+            case 15: //ended_match: 
+                status_emoji.innerHTML = "&#x1F4A3;";
+                status_text.innerHTML = "ended_match";
+                question_room_div.hidden = true;
+                pass_response_room_div.hidden = true;
+                register_room_div.hidden = true;
+                pas_room_div.hidden = true;
+                break;
+
+            case 16: //wait_to_abort_match: 
+                status_emoji.innerHTML = "&#x1F4A3;";
+                status_text.innerHTML = "wait_to_abort_match";
+                question_room_div.hidden = true;
+                pass_response_room_div.hidden = true;
+                register_room_div.hidden = true;
+                pas_room_div.hidden = true;
+                break;
+
+            case 17: //aborted_match: 
+                status_emoji.innerHTML = "&#x1F4A3;";
+                status_text.innerHTML = "aborted_match";
+                question_room_div.hidden = true;
+                pass_response_room_div.hidden = true;
+                register_room_div.hidden = true;
+                pas_room_div.hidden = true;
+                break;
+
         }
 
-       scoreboard_update(msg_obj);
+        cronnos(msg_obj);     
+        scoreboard_update(msg_obj);
 
     };
 
+    
     var scoreboard_update = function(msg_obj){
 
         while (scoreboard_list.lastElementChild) {
@@ -216,7 +315,7 @@ function wsmatchroom() {
             var div1 = document.createElement("DIV");
             var p1 = document.createElement("P");
             p1.setAttribute("style", "margin: 0px;padding: 0;");
-            p1.innerHTML = msg_obj.msg_content.scoreboard[player_key].name;
+            p1.innerHTML = msg_obj.msg_content.scoreboard[player_key].avatar + " " + msg_obj.msg_content.scoreboard[player_key].name;
             var p2 = document.createElement("P");
             p2.setAttribute("style", "font-size:50%;margin: 0px;padding: 0;");
             p2.innerHTML = player_key;
@@ -234,6 +333,26 @@ function wsmatchroom() {
             li.appendChild(div0);
 
             scoreboard_list.appendChild(li);
+        }
+
+    };
+
+    
+
+    var avatares_update = function(){
+
+        const avatar_list = [
+            128120,128121,128122,128125,128126,128118,128113,
+            128102,128103,128063,128048,128045,128511,129302
+        ];
+
+        for(var av in avatar_list){
+
+            const x = document.createElement("A");
+            x.setAttribute("href", "/match_register_player?ws_match_key=" + ws_match_cluster_key + "&ws_match_owner_user_key=" + ws_match_owner_user_key +"&player_avatar=%26%23"+avatar_list[av]);
+            x.innerHTML = "&#" + avatar_list[av] + ";";
+            x.style.textDecorationLine = "none";
+            avatares_emojis.appendChild(x)
         }
 
     };

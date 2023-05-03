@@ -55,6 +55,9 @@ export class WS_Match {
 
     roundIndex: number = -1;
 
+    wait_time: number = 0;
+    wait_timestamp: number = 0;
+
     wait_to_round_start_timeoutId: NodeJS.Timeout | undefined = undefined;
     wait_to_round_shooting_timeoutId: NodeJS.Timeout | undefined = undefined;
     wait_to_round_response_timeoutId: NodeJS.Timeout | undefined = undefined;
@@ -77,13 +80,13 @@ export class WS_Match {
         }
     }
 
-    private scoreboard(): { [key: string]: { name: string; score: number; } } {
+    private scoreboard(): { [key: string]: { name: string; avatar:string; score: number; } } {
 
-        const sb: { [key: string]: { name: string; score: number } } = {};
+        const sb: { [key: string]: { name: string; avatar:string; score: number } } = {};
 
         for (const player_key in this.players) {
 
-            sb[player_key] = { name: this.players[player_key].name, score: 0 };
+            sb[player_key] = { name: this.players[player_key].name, avatar:this.players[player_key].avatar,score: 0 };
 
             for (let index = 0; index < this.players[player_key].scores.length; index++) {
 
@@ -125,6 +128,7 @@ export class WS_Match {
                     break;
 
                 case Protocol.match_state:
+                    this.wait_time = Math.max(0, this.wait_time - (Date.now() - this.wait_timestamp));
                     this.send_state(sender);
                     break;
 
@@ -146,6 +150,8 @@ export class WS_Match {
             }
 
             this.match_state = WS_Match_State.player_point_pass_round;
+            this.wait_time = 0;
+            this.wait_timestamp = Date.now();
 
             this.player_response = player_pointed;
             this.player_pass = sender;
@@ -222,7 +228,7 @@ export class WS_Match {
             }) {
 
         if (
-            this.match_state ===  WS_Match_State.wait_to_shooting_response_round
+            this.match_state === WS_Match_State.wait_to_shooting_response_round
             && this.roundIndex === content.roundIndex
             && sender in this.players) {
 
@@ -232,6 +238,8 @@ export class WS_Match {
             }
 
             this.match_state = WS_Match_State.reponse_round;
+            this.wait_time = 0;
+            this.wait_timestamp = Date.now();
 
             this.player_response = sender;
             this.player_pass = content.player_pass;
@@ -247,18 +255,20 @@ export class WS_Match {
 
     wait_to_round_resume(timeout: boolean) {
 
-        this.match_state = WS_Match_State.wait_to_resume_round;
-
-        this.score(timeout);
-
         var self = this;
         this.wait_to_round_resume_intervalId = setTimeout(() => {
 
-            if(self.match_state === WS_Match_State.wait_to_resume_round)
+            if (self.match_state === WS_Match_State.wait_to_resume_round)
 
-            self.round_resume();
+                self.round_resume();
 
         }, this.match.config.wait_to_round_resume_time);
+
+        this.score(timeout);
+
+        this.match_state = WS_Match_State.wait_to_resume_round;
+        this.wait_time = this.match.config.wait_to_round_resume_time;
+        this.wait_timestamp = Date.now();
 
         this.send_state();
 
@@ -267,6 +277,8 @@ export class WS_Match {
     round_resume() {
 
         this.match_state = WS_Match_State.resume_round;
+        this.wait_time = 0;
+        this.wait_timestamp = Date.now();
         this.send_state();
         this.wait_to_next_round_start();
 
@@ -274,44 +286,22 @@ export class WS_Match {
 
     wait_to_shooting() {
 
-        this.match_state = WS_Match_State.wait_to_shooting_round;
-
-        var self = this;
-        this.wait_to_round_shooting_timeoutId = setTimeout(() => {
-
-            if(self.match_state === WS_Match_State.wait_to_shooting_round){
-
-                self.wait_to_round_resume(true);
-
-            }
-
-        }, this.match.rounds[this.roundIndex].shooting_timeout);
-
-        this.send_state();
-
-    }
-
-    shooting_response(sender: string, player_pass: string | undefined = undefined) {
-
-        if (this.match_state ===  WS_Match_State.wait_to_shooting_round && sender in this.players) {
-
-            if (this.wait_to_round_shooting_timeoutId !== undefined) {
-                clearTimeout(this.wait_to_round_shooting_timeoutId);
-                this.wait_to_round_shooting_timeoutId = undefined;
-            }
-
-            this.match_state = WS_Match_State.wait_to_shooting_response_round;
-
-            this.player_pass = player_pass;
-            this.player_response = sender;
-            this.round_response = undefined;
+        if (this.roundIndex > -1 && this.roundIndex < this.match.rounds.length) {
 
             var self = this;
-            this.wait_to_round_response_timeoutId = setTimeout(() => {
+            this.wait_to_round_shooting_timeoutId = setTimeout(() => {
 
-                self.wait_to_round_resume(true);
+                if (self.match_state === WS_Match_State.wait_to_shooting_round) {
 
-            }, this.match.rounds[this.roundIndex].response_timeout);
+                    self.wait_to_round_resume(true);
+
+                }
+
+            }, this.match.rounds[this.roundIndex].shooting_timeout);
+
+            this.match_state = WS_Match_State.wait_to_shooting_round;
+            this.wait_time = this.match.rounds[this.roundIndex].shooting_timeout;
+            this.wait_timestamp = Date.now();
 
             this.send_state();
 
@@ -319,31 +309,68 @@ export class WS_Match {
 
     }
 
-    shooting_pass(sender: string) {
+    shooting_response(sender: string, player_pass: string | undefined = undefined) {
 
-        if (this.match_state ===  WS_Match_State.wait_to_shooting_round && sender in this.players) {
+        if (this.roundIndex > -1 && this.roundIndex < this.match.rounds.length) {
 
-            if (this.wait_to_round_shooting_timeoutId !== undefined) {
-                clearTimeout(this.wait_to_round_shooting_timeoutId);
-                this.wait_to_round_shooting_timeoutId = undefined;
+            if (this.match_state === WS_Match_State.wait_to_shooting_round && sender in this.players) {
+
+                if (this.wait_to_round_shooting_timeoutId !== undefined) {
+                    clearTimeout(this.wait_to_round_shooting_timeoutId);
+                    this.wait_to_round_shooting_timeoutId = undefined;
+                }
+
+                var self = this;
+                this.wait_to_round_response_timeoutId = setTimeout(() => {
+
+                    self.wait_to_round_resume(true);
+
+                }, this.match.rounds[this.roundIndex].response_timeout);
+
+                this.match_state = WS_Match_State.wait_to_shooting_response_round;
+                this.wait_time = this.match.rounds[this.roundIndex].response_timeout;
+                this.wait_timestamp = Date.now();
+                this.player_pass = player_pass;
+                this.player_response = sender;
+                this.round_response = undefined;
+
+                this.send_state();
+
             }
 
-            this.match_state = WS_Match_State.wait_to_shooting_pass_round;
+        }
 
-            this.player_pass = sender;
-            this.player_response = undefined;
-            this.round_response = undefined;
+    }
 
-            var self = this;
-            this.wait_to_round_response_timeoutId = setTimeout(() => {
+    shooting_pass(sender: string) {
 
-                self.wait_to_round_resume(true);
+        if (this.roundIndex > -1 && this.roundIndex < this.match.rounds.length) {
 
-            }, this.match.rounds[this.roundIndex].pass_timeout);
+            if (this.match_state === WS_Match_State.wait_to_shooting_round && sender in this.players) {
+
+                if (this.wait_to_round_shooting_timeoutId !== undefined) {
+                    clearTimeout(this.wait_to_round_shooting_timeoutId);
+                    this.wait_to_round_shooting_timeoutId = undefined;
+                }
+
+                var self = this;
+                this.wait_to_round_response_timeoutId = setTimeout(() => {
+
+                    self.wait_to_round_resume(true);
+
+                }, this.match.rounds[this.roundIndex].pass_timeout);
 
 
+                this.match_state = WS_Match_State.wait_to_shooting_pass_round;
+                this.wait_time = this.match.rounds[this.roundIndex].pass_timeout;
+                this.wait_timestamp = Date.now();
+                this.player_pass = sender;
+                this.player_response = undefined;
+                this.round_response = undefined;
 
-            this.send_state();
+                this.send_state();
+
+            }
 
         }
 
@@ -355,12 +382,10 @@ export class WS_Match {
 
             delete this.players[player_key];
 
-            const aux = this.match_state;
+            WS_Match_State.wait_to_registry_match;
+            this.wait_time = Math.max(0, this.wait_time - (Date.now() - this.wait_timestamp));
 
-            WS_Match_State.player_unregisted_match;
             this.send_state();
-
-            this.match_state = aux;
 
             return true;
 
@@ -379,7 +404,9 @@ export class WS_Match {
 
             const isOpenToRegistry = Object.keys(this.players).length < this.match.config.max_amount_players;
 
-            WS_Match_State.player_registed_match;
+            WS_Match_State.wait_to_registry_match;
+            this.wait_time = Math.max(0, this.wait_time - (Date.now() - this.wait_timestamp));
+            
             this.send_state();
 
             if (!isOpenToRegistry && this.match.config.start_match_upon_completing_registration) {
@@ -389,20 +416,15 @@ export class WS_Match {
                     this.wait_to_registry_intervalId = undefined;
                 }
 
-                var self = this;
-
-                setTimeout(() => {
-
-                    self.wait_to_start();
-
-                }, 1000);
-
-            } else {
-
-                WS_Match_State.wait_to_registry_match;
-                this.send_state();
+                this.wait_to_start();
 
             }
+            // else {
+
+            //     WS_Match_State.wait_to_registry_match;
+            //     this.send_state();
+
+            // }
 
             return true;
 
@@ -445,6 +467,8 @@ export class WS_Match {
                     msg_type: Protocol.match_state,
                     msg_content: {
 
+                        ws_macth_min_amount_players: this.match.config.min_amount_players,
+                        ws_macth_max_amount_players: this.match.config.max_amount_players,
                         ws_match_state: this.match_state,
                         player_response: this.player_response,
                         player_pass: this.player_pass,
@@ -453,7 +477,10 @@ export class WS_Match {
                         scoreboard: this.scoreboard(),
                         quiz_theme: theme,
                         question_description: description,
-                        question_opptions: options
+                        question_options: options,
+                        ws_timestamp: Date.now(),
+                        ws_wait_time: this.wait_time,
+                        ws_wait_timestamp: this.wait_timestamp
 
                     }
 
@@ -467,6 +494,8 @@ export class WS_Match {
 
         this.matchInfo = info;
         this.match_state = WS_Match_State.aborted_match;
+        this.wait_timestamp = Date.now();
+        this.wait_time = 0;
 
         this.send_state();
 
@@ -518,6 +547,8 @@ export class WS_Match {
         }
 
         this.match_state = WS_Match_State.unlaunched_match;
+        this.wait_time = 0;
+        this.wait_timestamp = 0;
         this.player_pass = undefined;
         this.player_response = undefined;
         this.round_response = undefined;
@@ -535,8 +566,6 @@ export class WS_Match {
 
     private wait_to_next_round_start() {
 
-        this.match_state = WS_Match_State.wait_to_start_next_round;
-
         var self = this;
         this.wait_to_round_start_timeoutId = setTimeout(() => {
 
@@ -547,6 +576,10 @@ export class WS_Match {
             }
 
         }, this.match.config.wait_to_next_round_start_time);
+
+        this.match_state = WS_Match_State.wait_to_start_next_round;
+        this.wait_time = this.match.config.wait_to_next_round_start_time;
+        this.wait_timestamp = Date.now();
 
         this.send_state();
 
@@ -559,6 +592,8 @@ export class WS_Match {
         if (this.roundIndex < this.match.rounds.length) {
 
             this.match_state = WS_Match_State.started_next_round;
+            this.wait_timestamp = Date.now();
+            this.wait_time = 0;
             this.player_pass = undefined;
             this.player_response = undefined;
             this.round_response = undefined;
@@ -580,18 +615,18 @@ export class WS_Match {
     private start() {
 
         this.match_state = WS_Match_State.started_match;
+        this.wait_timestamp = Date.now();
+        this.wait_time = 0;
+
+        this.send_state();
 
         this.eventCallback(MatchStatus.started, this);
-
-        this.send_state()
 
         this.wait_to_next_round_start();
 
     }
 
     private wait_to_start() {
-
-        this.match_state = WS_Match_State.wait_to_start_match;
 
         var self = this;
         this.wait_to_start_intervalId = setTimeout(() => {
@@ -604,6 +639,10 @@ export class WS_Match {
 
         }, self.match.config.wait_to_start_match_time);
 
+        this.match_state = WS_Match_State.wait_to_start_match;
+        this.wait_time = this.match.config.wait_to_start_match_time;
+        this.wait_timestamp = Date.now();
+
         this.send_state();
 
         self.eventCallback(MatchStatus.wait_to_start, self);
@@ -612,8 +651,6 @@ export class WS_Match {
 
     private wait_to_registry() {
 
-        this.match_state = WS_Match_State.wait_to_registry_match;
-
         var self = this;
         this.wait_to_registry_intervalId = setTimeout(() => {
 
@@ -621,7 +658,7 @@ export class WS_Match {
 
                 if (Object.keys(this.players).length < self.match.config.min_amount_players) {
 
-                    self.end("no min amount players");
+                    self.wait_to_abort("no min amount players");
 
                     return;
 
@@ -634,6 +671,10 @@ export class WS_Match {
             }
 
         }, self.match.config.wait_to_registry_at_match_time);
+
+        this.match_state = WS_Match_State.wait_to_registry_match;
+        this.wait_time = this.match.config.wait_to_registry_at_match_time;
+        this.wait_timestamp = Date.now();
 
         this.send_state();
 
@@ -678,6 +719,8 @@ export class WS_Match {
                 };
 
                 self.match_state = WS_Match_State.launched_match;
+                self.wait_timestamp = Date.now();
+                self.wait_time = 0;
 
                 self.socket.send(
                     JSON.stringify({
@@ -701,8 +744,11 @@ export class WS_Match {
 
     private end(info?: string) {
 
-        this.match_state = WS_Match_State.ended_match;        
+        this.match_state = WS_Match_State.ended_match;
+        this.wait_timestamp = Date.now();
+        this.wait_time = 0;
         this.send_state();
+
         this.eventCallback(MatchStatus.finished, this);
         this.wait_to_abort(info);
 
@@ -713,13 +759,15 @@ export class WS_Match {
         var self = this;
         this.matchInfo = info;
 
-        this.match_state = WS_Match_State.wait_to_abort_match;
-
         setTimeout(() => {
 
             self.abort(info);
 
         }, self.match.config.wait_to_match_abort_time);
+
+        this.match_state = WS_Match_State.wait_to_abort_match;
+        this.wait_time = self.match.config.wait_to_match_abort_time;
+        this.wait_timestamp = Date.now();
 
         this.send_state();
 

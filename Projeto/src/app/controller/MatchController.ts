@@ -151,6 +151,7 @@ class MatchController {
 
             const ws_match_key: string = req.query.ws_match_key as string;
             const owner_user_key: string = req.query.ws_match_owner_user_key as string;
+            const player_avatar: string = req.query.player_avatar as string;
 
             if (ws_match_key !== undefined && owner_user_key !== undefined) {
 
@@ -160,9 +161,12 @@ class MatchController {
 
                     if (wsmatch !== undefined) {
 
+                        console.log("xxxxxxxxxx"+player_avatar);
+
                         const regok = wsmatch.register({
                             key: user.email,
                             name: user.name,
+                            avatar: player_avatar || "&#x1F47D;",
                             config: {},
                             scores: []
                         });

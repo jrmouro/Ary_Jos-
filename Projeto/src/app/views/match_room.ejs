@@ -29,7 +29,7 @@
       <h3 style="margin: 0px;padding: 0;">Match Room</h3>
       <div id="register_room_div" hidden>
         <h3>Register at Match</h3>
-        <h3><a style="text-decoration: none;" href= <%= "/match_register_player?ws_match_key=" + ws_match_cluster_key + "&ws_match_owner_user_key=" + ws_match_owner_user_key %> >&#128587;</a></h3>        
+        <h3 id="avatares_emojis"></h3>        
       </div>   
       <div id="question_room_div" hidden>
         <h3>Question</h3>
@@ -39,16 +39,21 @@
           <ul id="question_options_list" style="list-style-type: none; margin: 10px;padding: 0;"></ul>
         </div>
         <div id="pass_response_room_div" style='float: left;text-align: center;width: 30%;' hidden>
-          <button id="pass_button" class="button button1">Pass</button>
-          <button id="response_button" class="button button2">Response</button>
+          <button id="pass_button" class="button button1" disabled>Pass</button>
+          <button id="response_button" class="button button2" disabled>Response</button>
         </div>
+      </div>
+      <div id="pass_room_div" hidden>
+        <h3>Pass to</h3>
+        <ul id="pass_list" style="list-style-type: none; margin: 10px;padding: 0;"></ul>
       </div>      
     </div>
 
     <div class="left" style="background-color:#dde1be;text-align: center">
 
       <h3>Status</h3>   
-      <span id="ws_match_status_emoji" style='font-size:50px;'></span>
+      <span id="ws_match_status_emoji" style='font-size:50px;'></span><br>
+      <span id="cronnos_status" style='font-size:20px;'></span>
       <h5 id="ws_match_status_text" style="margin: 0px;padding: 0;"></h5>
               
       <h1 id="web_socket_server_port" hidden><%= wssp %></h1>
