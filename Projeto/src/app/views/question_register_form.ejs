@@ -42,7 +42,7 @@
 
     <div class="forms" style="background-color:#90b1df">
       <h3>New Question</h3>
-      <form id="quiz_register" action=<%= "/quiz_view?quiz_key=" + quiz_key %> method="get">
+      <form id="quiz_register" action=<%= "/question_register?quiz_key=" + quiz_key %> method="get">
         <input id="quiz_key" name="quiz_key" type="hidden" value= <%= quiz_key %> >
         <textarea id="description" name="description" placeholder="question description" style="width:50%; margin: 2px" required autofocus></textarea><br>
         <textarea id="true_option" name="true_option" placeholder="true option" style="width:50%; margin: 2px" required></textarea><br>
