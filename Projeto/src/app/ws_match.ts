@@ -440,12 +440,14 @@ export class WS_Match {
 
             let theme: string | undefined = undefined;
             let description: string | undefined = undefined;
-            let options: string[] = [];
+            let options: string[] | undefined = undefined;
 
             if (this.roundIndex > -1 && this.roundIndex < this.match.rounds.length) {
 
                 description = this.match.rounds[this.roundIndex].question.description;
                 theme = this.match.rounds[this.roundIndex].quiz_theme;
+
+                options = [];
 
                 for (let option in this.match.rounds[this.roundIndex].question.fake_options) {
                     options.push(this.match.rounds[this.roundIndex].question.fake_options[option]);
