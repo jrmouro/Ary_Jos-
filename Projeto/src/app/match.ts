@@ -1,5 +1,4 @@
 import { Round } from "./round";
-import { Score } from "./score";
 
 
 export interface MatchConfig {
@@ -14,6 +13,7 @@ export interface MatchConfig {
     wait_to_next_round_start_time:number;
     wait_to_round_resume_time:number;
     wait_to_match_abort_time:number;
+    avatares:number[];
 
 }
 export interface Match {

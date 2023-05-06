@@ -71,6 +71,7 @@ class MatchController {
                             ws_match_cluster_key: wsmatch.key,
                             ws_match_owner_user_key: wsmatch.owner_user_key,
                             ws_match_player_key: user.email,
+                            ws_match_player_name: user.name,
                             fail_msg: fail_msg
                         });
 
@@ -151,7 +152,7 @@ class MatchController {
 
             const ws_match_key: string = req.query.ws_match_key as string;
             const owner_user_key: string = req.query.ws_match_owner_user_key as string;
-            const player_avatar: string = req.query.player_avatar as string;
+            const player_avatar: number = parseInt(req.query.player_avatar as string);
 
             if (ws_match_key !== undefined && owner_user_key !== undefined) {
 
@@ -161,12 +162,10 @@ class MatchController {
 
                     if (wsmatch !== undefined) {
 
-                        console.log("xxxxxxxxxx"+player_avatar);
-
                         const regok = wsmatch.register({
                             key: user.email,
                             name: user.name,
-                            avatar: player_avatar || "&#x1F47D;",
+                            avatar: player_avatar || 128120,
                             config: {},
                             scores: []
                         });

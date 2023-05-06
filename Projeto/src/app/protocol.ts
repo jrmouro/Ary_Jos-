@@ -19,7 +19,7 @@ export const Protocol = {
     match_info: "36",
     match_state: "37",
     match_response: "38",
-    match_point_at_pass:"39",
+    match_pass:"39",
 
     round_wait: "10",
     round_start: "11",
