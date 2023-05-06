@@ -323,6 +323,7 @@ function wsmatchroom() {
 
             var li = document.createElement("LI");
             var div0 = document.createElement("DIV");
+            div0.setAttribute("class", "flex-container");
             var div1 = document.createElement("DIV");
             var p1 = document.createElement("P");
             p1.setAttribute("style", "margin: 0px;padding: 0;");
@@ -333,11 +334,11 @@ function wsmatchroom() {
             var p3 = document.createElement("P");
             p3.setAttribute("style", "margin: 0px;padding: 7px 15px;");
             p3.innerHTML = msg_obj.msg_content.scoreboard[player_key].score;
-            div1.setAttribute("style", "float: left;text-align: center;");
+            div1.setAttribute("style","text-align: center;");
             div1.appendChild(p1);
             div1.appendChild(p2);
             var div2 = document.createElement("DIV");
-            div2.setAttribute("style", "float: left;text-align: right;");
+            div2.setAttribute("style", "dtext-align: right;");
             div2.appendChild(p3);
             div0.appendChild(div1);
             div0.appendChild(div2);
@@ -626,6 +627,7 @@ function wsmatchroom() {
                 pass_response_room_div.hidden = true;
                 register_room_div.hidden = true;
                 pas_room_div.hidden = true;
+                window.location.href = "/";
                 break;
 
         }

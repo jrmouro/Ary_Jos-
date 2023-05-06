@@ -134,3 +134,12 @@ button[disabled]:hover{
 }
 
 
+.flex-container {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+}
+
+.flex-container > div {
+  text-align: center;
+}
