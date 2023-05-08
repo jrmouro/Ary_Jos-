@@ -50,9 +50,6 @@ class MatchController {
 
             const user_matches: { [key: string]: Match } = req.app.get("app_user_data_map")[user.email].matches;
 
-            // console.log("USER_QUIZZES");
-            // console.log(user_quizzes);
-
             res.render('match_register_form', {
                 title: app_name,
                 wsa: wsaddress,

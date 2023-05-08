@@ -489,8 +489,8 @@ export class WS_Match {
             // this.wait_to_next_round_start();
             this.next_round();
         }else{
-            // this.wait_to_end("match ended normally");
-            this.end("match ended normally");
+            this.wait_to_end("match ended normally");
+            // this.end("match ended normally");
         }
 
     }
@@ -854,8 +854,8 @@ export class WS_Match {
 
             this.round_index = -1;
 
-            // this.wait_to_end("match ended normally");
-            this.end("match ended normally");
+            this.wait_to_end("match ended normally");
+            // this.end("match ended normally");
 
         }
 
