@@ -155,10 +155,10 @@ export class WS_Match {
 
     private pass(roundIndex: number, player_response: string, player_pass: string) {
 
-        console.log("PASS");
-        console.log("  -roundIndex: " + roundIndex);
-        console.log("  -player_response: " + player_response);
-        console.log("  -player_pass: " + player_pass);
+        // console.log("PASS");
+        // console.log("  -roundIndex: " + roundIndex);
+        // console.log("  -player_response: " + player_response);
+        // console.log("  -player_pass: " + player_pass);
 
 
         if (this.match_state === WS_Match_State.wait_to_pass_round
@@ -484,7 +484,14 @@ export class WS_Match {
         this.wait_time = 0;
         this.wait_timestamp = Date.now();
         this.send_state();
-        this.wait_to_next_round_start();
+
+        if (this.round_index < this.match.rounds.length  - 1) {
+            // this.wait_to_next_round_start();
+            this.next_round();
+        }else{
+            // this.wait_to_end("match ended normally");
+            this.end("match ended normally");
+        }
 
     }
 
@@ -847,7 +854,8 @@ export class WS_Match {
 
             this.round_index = -1;
 
-            this.wait_to_end("match ended normally");
+            // this.wait_to_end("match ended normally");
+            this.end("match ended normally");
 
         }
 

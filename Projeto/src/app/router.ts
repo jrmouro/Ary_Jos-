@@ -36,6 +36,7 @@ router.get("/match_view", matchController.view);
 router.get("/match_launch", matchController.launch);
 router.get("/match_abort", matchController.abort);
 router.get("/match_room", matchController.room);
+// router.get("/match_register_form", matchController.register);
 router.get("/match_register_player", matchController.register_player);
 router.get("/match_unregister_player", matchController.unregister_player);
 

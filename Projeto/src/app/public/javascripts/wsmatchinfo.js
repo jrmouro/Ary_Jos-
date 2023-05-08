@@ -51,20 +51,20 @@ function wsmatchinfo() {
                 var matchstatus = launched_matches[wsmatchkey].status;
                 var owner_user_key = launched_matches[wsmatchkey].owner_user_key;
 
-                var status_simbol = '&#x1F64B;';
+                var status_simbol = '&#x270D;';
                 var tooltip_text = 'register';
 
                 switch (matchstatus) {
                     case "1":
-                        status_simbol = '&#x1F64D;';
+                        status_simbol = '&#x23F3;';
                         tooltip_text = 'waiting start';
                         break;
                     case "2":
-                        status_simbol = '&#x1F647;';
+                        status_simbol = '&#x1F4E2;';
                         tooltip_text = 'starded';
                         break;
                     case "3":
-                        status_simbol = '&#x1F645;';
+                        status_simbol = '&#x1F4A3;';
                         tooltip_text = 'finished';
                         break;
                 }

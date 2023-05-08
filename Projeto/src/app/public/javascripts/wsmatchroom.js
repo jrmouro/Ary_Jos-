@@ -327,8 +327,12 @@ function wsmatchroom() {
                 var div = document.createElement("DIV");
 
                 var h1 = document.createElement("H1");
-                h1.setAttribute("style", "margin: 0px;padding: 0;");
+                h1.setAttribute("style", "font-size:50px;margin: 0px;padding: 0;");
                 h1.innerHTML = "&#" + scoreboard[player_key].avatar + ";";
+
+                var p1 = document.createElement("P");
+                p1.setAttribute("style", "margin: 0px;padding: 0;");
+                p1.innerHTML = scoreboard[player_key].name;
 
                 var h3 = document.createElement("h3");
                 h3.setAttribute("style", "margin: 0px;padding: 0;");
@@ -336,10 +340,11 @@ function wsmatchroom() {
 
                 var h5 = document.createElement("h3");
                 h5.setAttribute("style", "margin: 0px;padding: 0;");
-                h5.innerHTML = scoreboard[player_key].score;
+                h5.innerHTML = scoreboard[player_key].score + " scores";
 
                 div.appendChild(h3);
                 div.appendChild(h1);
+                div.appendChild(p1);
                 div.appendChild(h5);
 
                 places_div.appendChild(div);
@@ -395,8 +400,6 @@ function wsmatchroom() {
         }
 
     };
-
-
 
     var avatares_update = function (msg_obj) {
 
@@ -772,7 +775,7 @@ function wsmatchroom() {
                 register_room_div.hidden = true;
                 pas_room_div.hidden = true;
                 podium_div.hidden = false;
-                places_update(msg_obj);
+                // places_update(msg_obj);
                 break;
 
             case 16: //ended_match: 
@@ -783,6 +786,7 @@ function wsmatchroom() {
                 register_room_div.hidden = true;
                 podium_div.hidden = false;
                 pas_room_div.hidden = true;
+                places_update(msg_obj);
                 break;
 
             case 17: //wait_to_abort_match: 
