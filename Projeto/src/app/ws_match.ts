@@ -4,7 +4,7 @@ import { WS_MSG } from "./ws_msg";
 import { Protocol } from "./protocol";
 import { MatchStatus } from "./match_status";
 import { Player } from "./player";
-import { ScoreType } from "./score";
+import { Round_Response_State } from "./round_response_state";
 
 export const WS_Match_State = {
 
@@ -22,17 +22,17 @@ export const WS_Match_State = {
     started_next_round: 7,
     wait_to_shooting_round: 8,
     wait_to_pass_round: 9,
-    wait_to_response_round: 10,    
+    wait_to_response_round: 10,
     pass_round: 11,
     response_round: 12,
 
     wait_to_resume_round: 13,// mostra o resultado do round    
     resume_round: 14,// prossegue    
 
-    ended_match: 15,
-    wait_to_abort_match: 16,
-    aborted_match: 17,
-
+    wait_to_end_match: 15,
+    ended_match: 16,
+    wait_to_abort_match: 17,
+    aborted_match: 18,
 
 
 } as const;
@@ -48,12 +48,13 @@ export class WS_Match {
     player_response: string | undefined = undefined;
     player_pass: string | undefined = undefined;
     round_response: string | undefined = undefined;
-    round_right_answer: boolean | undefined = undefined;
+    round_response_state: number = Round_Response_State.timeout_shooting;
     match_info: string | undefined = undefined;
 
     match_state: number = WS_Match_State.unlaunched_match;
 
     round_index: number = -1;
+    round_score: number = 0;
 
     wait_time: number = 0;
     wait_timestamp: number = 0;
@@ -82,7 +83,7 @@ export class WS_Match {
 
     private scoreboard(): { [key: string]: { name: string; avatar: number; score: number; } } {
 
-        const sb: { [key: string]: { name: string; avatar: number; score: number } } = {};
+        let sb: { [key: string]: { name: string; avatar: number; score: number } } = {};
 
         for (const player_key in this.players) {
 
@@ -95,6 +96,10 @@ export class WS_Match {
             }
 
         }
+
+        sb = Object.fromEntries(
+            Object.entries(sb).sort(([,a],[,b]) => b.score - a.score)
+        );
 
         return sb;
 
@@ -150,6 +155,12 @@ export class WS_Match {
 
     private pass(roundIndex: number, player_response: string, player_pass: string) {
 
+        console.log("PASS");
+        console.log("  -roundIndex: " + roundIndex);
+        console.log("  -player_response: " + player_response);
+        console.log("  -player_pass: " + player_pass);
+
+
         if (this.match_state === WS_Match_State.wait_to_pass_round
             && roundIndex === this.round_index
             && player_response in this.players
@@ -166,77 +177,229 @@ export class WS_Match {
             this.player_pass = player_pass;
             this.player_response = player_response;
             this.round_response = undefined;
+            this.round_response_state = Round_Response_State.pass;
             this.send_state();
-            
+
             this.wait_to_response_round(player_response, player_pass);
 
         }
 
     }
 
-    private score(timeout_pass: boolean){
+    private score() {
 
         if (this.round_index > -1 && this.round_index < this.match.rounds.length) {
 
             var score = this.match.rounds[this.round_index].score;
 
-            if (timeout_pass && this.player_pass !== undefined && this.player_response !== undefined) {
+            switch (this.round_response_state) {
 
-                this.players[this.player_response].scores.push({
-                    scoretype: ScoreType.pass_response,
-                    value: score
-                })
+                case Round_Response_State.timeout_shooting:
 
-            } else {
+                    for (const player_key in this.players) {
 
-                if (this.match.rounds[this.round_index].question.true_option === this.round_response) {
-
-                    console.log(this.round_response);
-                    console.log(this.match.rounds[this.round_index].question.true_option);
-
-                    if (this.player_pass !== undefined && this.player_response !== undefined) {
-
-                        this.players[this.player_response].scores.push({
-                            scoretype: ScoreType.response_pass,
-                            value: score * 2
-                        });
-
-                    } else if (this.player_response !== undefined) {
-
-                        this.players[this.player_response].scores.push({
-                            scoretype: ScoreType.response,
-                            value: score
+                        this.players[player_key].scores.push({
+                            round_response_state: Round_Response_State.timeout_shooting,
+                            value: 0
                         });
 
                     }
 
-                    this.round_right_answer = true;
+                    break;
 
-                    return;
+                case Round_Response_State.timeout_response:
+
+                    for (const player_key in this.players) {
+
+                        if (player_key === this.player_response) {
+
+                            this.players[player_key].scores.push({
+                                round_response_state: Round_Response_State.timeout_response,
+                                value: 0
+                            });
+
+                        } else {
+
+                            this.players[player_key].scores.push({
+                                round_response_state: Round_Response_State.timeout_response,
+                                value: score
+                            });
+
+                        }
 
 
-                } else {
-
-                    if (this.player_pass !== undefined) {
-
-                        this.players[this.player_pass].scores.push({
-                            scoretype: ScoreType.pass_response,
-                            value: score
-                        })
 
                     }
 
-                    this.round_right_answer = false;
+                    break;
 
-                    return;
+                case Round_Response_State.timeout_pass:
 
-                }
+                    for (const player_key in this.players) {
+
+                        if (player_key === this.player_pass) {
+
+                            this.players[player_key].scores.push({
+                                round_response_state: Round_Response_State.timeout_pass,
+                                value: 0
+                            });
+
+                        } else {
+
+                            this.players[player_key].scores.push({
+                                round_response_state: Round_Response_State.timeout_pass,
+                                value: score
+                            });
+
+                        }
+
+                    }
+
+                    break;
+
+                case Round_Response_State.timeout_pass_response:
+
+                    for (const player_key in this.players) {
+
+                        if (player_key === this.player_response) {
+
+                            this.players[player_key].scores.push({
+                                round_response_state: Round_Response_State.timeout_pass_response,
+                                value: 0
+                            });
+
+                        } else if (player_key === this.player_pass) {
+
+                            this.players[player_key].scores.push({
+                                round_response_state: Round_Response_State.timeout_pass_response,
+                                value: score
+                            });
+
+                        } else {
+
+                            this.players[player_key].scores.push({
+                                round_response_state: Round_Response_State.timeout_pass_response,
+                                value: 0
+                            });
+
+                        }
+
+                    }
+
+                    break;
+
+                case Round_Response_State.right_response:
+
+                    for (const player_key in this.players) {
+
+                        if (player_key === this.player_response) {
+
+                            this.players[player_key].scores.push({
+                                round_response_state: Round_Response_State.right_response,
+                                value: score
+                            });
+
+                        } else {
+
+                            this.players[player_key].scores.push({
+                                round_response_state: Round_Response_State.right_response,
+                                value: 0
+                            });
+
+                        }
+
+                    }
+
+                    break;
+
+                case Round_Response_State.wrong_response:
+
+                    for (const player_key in this.players) {
+
+                        if (player_key === this.player_response) {
+
+                            this.players[player_key].scores.push({
+                                round_response_state: Round_Response_State.wrong_response,
+                                value: 0
+                            });
+
+                        } else {
+
+                            this.players[player_key].scores.push({
+                                round_response_state: Round_Response_State.wrong_response,
+                                value: 0
+                            });
+
+                        }
+
+                    }
+
+                    break;
+                case Round_Response_State.right_pass_response:
+
+                    for (const player_key in this.players) {
+
+                        if (player_key === this.player_response) {
+
+                            this.players[player_key].scores.push({
+                                round_response_state: Round_Response_State.right_pass_response,
+                                value: 2 * score
+                            });
+
+                        } else if (player_key === this.player_pass) {
+
+                            this.players[player_key].scores.push({
+                                round_response_state: Round_Response_State.right_pass_response,
+                                value: 0
+                            });
+
+                        } else {
+
+                            this.players[player_key].scores.push({
+                                round_response_state: Round_Response_State.right_pass_response,
+                                value: score
+                            });
+
+                        }
+
+                    }
+
+                    break;
+
+                case Round_Response_State.wrong_pass_response:
+
+                    for (const player_key in this.players) {
+
+                        if (player_key === this.player_response) {
+
+                            this.players[player_key].scores.push({
+                                round_response_state: Round_Response_State.wrong_pass_response,
+                                value: 0
+                            });
+
+                        } else if (player_key === this.player_pass) {
+
+                            this.players[player_key].scores.push({
+                                round_response_state: Round_Response_State.wrong_pass_response,
+                                value: score
+                            });
+
+                        } else {
+
+                            this.players[player_key].scores.push({
+                                round_response_state: Round_Response_State.wrong_pass_response,
+                                value: 0
+                            });
+
+                        }
+
+                    }
+
+                    break;
 
             }
 
         }
-
-        this.round_right_answer = undefined;
 
     }
 
@@ -257,8 +420,37 @@ export class WS_Match {
             this.player_pass = player_pass;
             this.player_response = player_response;
             this.round_response = roundResponse;
+
+            if (player_pass !== undefined) {
+
+                if (roundResponse === this.match.rounds[this.round_index].question.true_option) {
+
+                    this.round_response_state = Round_Response_State.right_pass_response;
+
+                } else {
+
+                    this.round_response_state = Round_Response_State.wrong_pass_response;
+
+                }
+
+            } else {
+
+                if (roundResponse === this.match.rounds[this.round_index].question.true_option) {
+
+                    this.round_response_state = Round_Response_State.right_response;
+
+                } else {
+
+                    this.round_response_state = Round_Response_State.wrong_response;
+
+                }
+
+            }
+
+
+
             this.send_state();
-            
+
             this.wait_to_round_resume(false);
 
         }
@@ -276,7 +468,7 @@ export class WS_Match {
 
         }, this.match.config.wait_to_round_resume_time);
 
-        this.score(timeout);
+        this.score();
 
         this.match_state = WS_Match_State.wait_to_resume_round;
         this.wait_time = this.match.config.wait_to_round_resume_time;
@@ -314,6 +506,10 @@ export class WS_Match {
             this.match_state = WS_Match_State.wait_to_shooting_round;
             this.wait_time = this.match.rounds[this.round_index].shooting_timeout;
             this.wait_timestamp = Date.now();
+            this.player_pass = undefined;
+            this.player_response = undefined;
+            this.round_response = undefined;
+            this.round_response_state = Round_Response_State.timeout_shooting;
 
             this.send_state();
 
@@ -337,6 +533,17 @@ export class WS_Match {
         this.player_response = player_response;
         this.round_response = undefined;
 
+        if (player_pass !== undefined) {
+
+            this.round_response_state = Round_Response_State.timeout_pass_response;
+
+        } else {
+
+            this.round_response_state = Round_Response_State.timeout_response;
+
+        }
+
+
         this.send_state();
 
     }
@@ -344,11 +551,11 @@ export class WS_Match {
     wait_to_pass_round(player_pass: string) {
 
         var self = this;
-        this.wait_to_round_response_timeoutId = setTimeout(() => {
+        this.wait_to_round_pass_timeoutId = setTimeout(() => {
 
             self.wait_to_round_resume(true);
 
-        }, this.match.rounds[this.round_index].response_timeout);
+        }, this.match.rounds[this.round_index].pass_timeout);
 
         this.match_state = WS_Match_State.wait_to_pass_round;
         this.wait_time = this.match.rounds[this.round_index].pass_timeout;
@@ -356,6 +563,7 @@ export class WS_Match {
         this.player_pass = player_pass;
         this.player_response = undefined;
         this.round_response = undefined;
+        this.round_response_state = Round_Response_State.timeout_pass;
 
         this.send_state();
 
@@ -486,10 +694,11 @@ export class WS_Match {
                         ws_macth_max_amount_players: this.match.config.max_amount_players,
                         ws_match_state: this.match_state,
                         round_response: this.round_response,
-                        round_right_answer: this.round_right_answer,
+                        round_response_state: this.round_response_state,
                         player_response: this.player_response,
                         player_pass: this.player_pass,
                         round_index: this.round_index,
+                        round_score: this.round_score,
                         match_info: this.match_info,
                         match_show_question_options: this.match.config.show_options,
                         match_avatares: this.match.config.avatares,
@@ -616,16 +825,29 @@ export class WS_Match {
             this.player_pass = undefined;
             this.player_response = undefined;
             this.round_response = undefined;
+            this.round_response_state = Round_Response_State.timeout_shooting;
+            this.round_score = this.match.rounds[this.round_index].score;
 
             this.send_state();
 
-            this.wait_to_shooting_round();
+            if(Object.keys(this.players).length === 1){
+
+                var player = Object.keys(this.players)[0];
+                this.wait_to_response_round(player);
+
+            } else {
+
+                this.wait_to_shooting_round();
+
+            }
+
+            
 
         } else {
 
             this.round_index = -1;
 
-            this.end("match ended normally");
+            this.wait_to_end("match ended normally");
 
         }
 
@@ -771,6 +993,24 @@ export class WS_Match {
 
         this.eventCallback(MatchStatus.finished, this);
         this.wait_to_abort(info);
+
+    }
+
+    private wait_to_end(info?: string) {
+
+        this.match_info = info;
+        var self = this;
+        setTimeout(() => {
+
+            self.end(info);
+
+        }, self.match.config.wait_to_match_end_time);
+
+        this.match_state = WS_Match_State.wait_to_end_match;
+        this.wait_time = self.match.config.wait_to_match_abort_time;
+        this.wait_timestamp = Date.now();
+
+        this.send_state();
 
     }
 

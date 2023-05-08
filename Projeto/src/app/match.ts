@@ -12,6 +12,7 @@ export interface MatchConfig {
     wait_to_shooting_time:number;
     wait_to_next_round_start_time:number;
     wait_to_round_resume_time:number;
+    wait_to_match_end_time:number;
     wait_to_match_abort_time:number;
     avatares:number[];
 
