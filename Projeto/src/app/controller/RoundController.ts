@@ -4,8 +4,9 @@ import { Data } from "../data";
 import { Quiz } from "../quiz";
 import { Question } from "../question";
 import { UID } from "../uid";
+import { Match } from "../match";
 
-class QuestionController {
+class RoundController {
 
     
     public register_form(req: Request, res: Response) {
@@ -18,24 +19,24 @@ class QuestionController {
 
         if (user !== undefined) {
 
-            const quiz_key: string | undefined = req.query.quiz_key as string;
-            const user_quizzes: { [key: string]: Quiz } = req.app.get("app_user_data_map")[user.email].quizzes;
+            const match_key: string | undefined = req.query.match_key as string;
+            const user_matches: { [key: string]: Math } = req.app.get("app_user_data_map")[user.email].matches;
 
-            if (quiz_key !== undefined && quiz_key in user_quizzes) {
+            if (match_key !== undefined && match_key in user_matches) {
 
-                res.render('question_register_form', {
+                res.render('round_register_form', {
                     title: app_name,
                     wsa: wsaddress,
                     wsp: wsport,
                     user: user,
-                    user_quizzes: user_quizzes,
-                    quiz_key: quiz_key,
+                    user_quizzes: user_matches,
+                    quiz_key: match_key,
                     fail_msg: undefined
                 });
 
             } else {
 
-                res.redirect('/quiz_home?fail_msg=invalid quiz_key');
+                res.redirect('/match_home?fail_msg=invalid match_key');
 
             }
 
@@ -57,20 +58,20 @@ class QuestionController {
 
         if (user !== undefined) {
 
-            const quiz_key: string | undefined = req.query.quiz_key as string;
-            const question_key: string | undefined = req.query.question_key as string;
+            const match_key: string | undefined = req.query.match_key as string;
+            const round_key: string | undefined = req.query.round_key as string;
 
-            if (quiz_key !== undefined) {
+            if (match_key !== undefined) {
 
-                if (question_key !== undefined) {
+                if (round_key !== undefined) {
 
-                    const user_quizzes: { [key: string]: Quiz } = req.app.get("app_user_data_map")[user.email].quizzes;
+                    const user_matches: { [key: string]: Match } = req.app.get("app_user_data_map")[user.email].matches;
 
-                    if (quiz_key in user_quizzes) {
+                    if (match_key in user_matches) {
 
-                        const edit_quiz: Quiz = user_quizzes[quiz_key];
+                        const edit_match: Match = user_matches[match_key];
 
-                        if (question_key in edit_quiz.questions) {
+                        if (round_key in edit_match.rounds) {
 
                             // console.log("USER_QUIZZES");
                             // console.log(user_quizzes);
@@ -299,4 +300,4 @@ class QuestionController {
 
 }
 
-export const questionController = new QuestionController();
+export const questionController = new RoundController();

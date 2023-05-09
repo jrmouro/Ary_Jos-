@@ -57,13 +57,12 @@
 
   <div id="status" style="background-color:#90b1df;text-align:center;padding:5px;margin-top:7px;">
     <% if (user != undefined) { %>
-    <p style="margin: 0px;padding: 0;"> <%= user.name %> </p>
-    <p style="font-size:50%;margin: 0px;padding: 0;"> <%= user.email %> </p>
-    <a href="/user_logout"> logout </a>
-    <a href="/quiz_home"> back </a>
-    <%} else { %>
-    <a style="margin: 0px;padding: 0;" href="/user_login_form"> login </a>
-    <% } %>
+      <p style="margin: 0px;padding: 0;"> <%= user.name %> </p>
+      <p style="font-size:50%;margin: 0px;padding: 0;"> <%= user.email %> </p>
+      <a href="/user_logout"> logout </a>
+      <%} else { %>
+      <a style="margin: 0px;padding: 0;" href="/user_login_form"> login </a>
+      <% } %>
   </div>
 
 </body>

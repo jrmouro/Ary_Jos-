@@ -4,14 +4,13 @@
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" type="text/css"  href="/stylesheets/style.css">
-  <script src="/javascripts/chatroom.js"></script>
 </head>
 
-<body style="font-family:Verdana;color:#05252c;" onload="chatroom()">
+<body style="font-family:Verdana;color:#05252c;">
 
   <div style="background-color:#90b1df;padding:5px;text-align:center;">
-    <h2><%= title %></h2>
-    <p style="font-size:50%;"><%= wsa %>:<%= wsp %></p>
+    <h2 style="margin: 0px;padding: 0;"><%= title %></h2>
+    <p style="font-size:50%;margin: 0px;padding: 0;"><%= wsa %>:<%= wsp %></p>
     <% if (fail_msg != undefined) { %>
       <p style="font-family:Verdana;color:#e10e1c;"> <%= fail_msg%> </p>
     <%}%>
@@ -88,7 +87,6 @@
     <p> <%= user.name %> </p>
     <p style="font-size:50%;"> <%= user.email %> </p>
     <a href="/user_logout"> logout </a>
-    <a href="/quiz_view"> back </a>
     <%} else { %>
     <a href="/user_login_form"> login </a>
     <% } %>

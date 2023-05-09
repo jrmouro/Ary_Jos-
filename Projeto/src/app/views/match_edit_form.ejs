@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css"  href="/stylesheets/style.css">
+</head>
+
+<body style="font-family:Verdana;color:#05252c;">
+
+  <div style="background-color:#90b1df;padding:5px;text-align:center;">
+    <h2 style="margin: 0px;padding: 0;"><%= title %></h2>
+    <p style="font-size:50%;margin: 0px;padding: 0;"><%= wsa %>:<%= wsp %></p>
+    <% if (fail_msg != undefined) { %>
+      <p style="font-family:Verdana;color:#e10e1c;"> <%= fail_msg%> </p>
+    <%}%>
+  </div>
+
+  <div style="overflow:auto;background-color:#90b1df;margin-top:7px;">
+
+    <div class="left" style="background-color:#90b1df">
+      <h3>Matches</h3>
+      <ul>
+        <li> 
+          <Div>
+            <a href="/match_register_form" > New... </a>
+          </Div>            
+        </li>
+        <% if (user_matches != undefined) { %>
+          <% for (const key in user_matches) { %>
+            <li> 
+              <Div>
+                <p style="margin-top: 0.0em ; margin-bottom: 0.0em ;"><%= user_matches[key].name %> <a href= <%= "/match_edit_form?match_key=" + key %> style="text-decoration: none;"> &#9998 </a> </p>
+              </Div>                
+            </li>
+          <% } %>
+        <% } %>
+      </ul>    
+    </div>
+
+    <div class="forms" style="background-color:#90b1df">
+      <h3>Edit '<%= user_matches[match_key].name %>' </h3>
+      <form id="match_edit" action=<%= "/match_edit?match_key=" + match_key %> method="get">
+
+        <Div style="text-align: left;">
+          <label for="name"> Match name</label>
+          <input id="name" name="name" placeholder="match name" style="margin: 2px" autofocus required type="text" value= '<%= user_matches[match_key].name %>' ></input><br>
+          
+          <% if(user_matches[match_key].config.show_options){ %>
+            <input type="checkbox" id="checkbox1" name="checkbox1" value="0" checked>
+          <% } else{ %>  
+            <input type="checkbox" id="checkbox1" name="checkbox1" value="0">
+         <% } %>          
+          <label for="checkbox1"> Show options in shooting state</label><br>
+
+          <% if(user_matches[match_key].config.start_match_upon_completing_registration){ %>
+            <input type="checkbox" id="checkbox2" name="checkbox2" value="0" checked>
+          <% } else{ %>  
+            <input type="checkbox" id="checkbox2" name="checkbox2" value="0">
+         <% } %>          
+          <label for="checkbox2"> Start match upon completing registration</label><br>
+
+          <label for="quantity1">Minimum number of players</label>
+          <input type="number" id="quantity1" name="quantity1" min="1" max="50" value='<%= user_matches[match_key].config.min_amount_players %>'><br>
+          <label for="quantity2">Maximum number of players</label>
+          <input type="number" id="quantity2" name="quantity2" min="1" max="50" value='<%= user_matches[match_key].config.max_amount_players %>'><br>
+          <label for="quantity3">Waiting time for registration at match (seconds)</label>
+          <input type="number" id="quantity3" name="quantity3" min="30" max="300" value='<%= user_matches[match_key].config.wait_to_registry_at_match_time/1000 %>'><br>
+          <label for="quantity4">Waiting time for the start of the match (seconds)</label>
+          <input type="number" id="quantity4" name="quantity4" min="30" max="300" value='<%= user_matches[match_key].config.wait_to_start_match_time/1000 %>'><br>
+          <!-- <label for="quantity5">Wait time to shooting (seconds)</label>
+          <input type="number" id="quantity5" name="quantity5" min="30" max="300"><br> -->
+          <label for="quantity6">Waiting time to start the next round (seconds)</label>
+          <input type="number" id="quantity6" name="quantity6" min="30" max="300" value='<%= user_matches[match_key].config.wait_to_next_round_start_time/1000 %>'><br>
+          <label for="quantity7">Waiting time to resume the round (seconds)</label>
+          <input type="number" id="quantity7" name="quantity7" min="30" max="300" value='<%= user_matches[match_key].config.wait_to_round_resume_time/1000 %>'><br>
+          <label for="quantity8">Waiting time to end the match (seconds)</label>
+          <input type="number" id="quantity8" name="quantity8" min="30" max="300" value='<%= user_matches[match_key].config.wait_to_match_end_time/1000 %>'><br>
+          <label for="quantity9">Waiting time to destroy the match (seconds)</label>
+          <input type="number" id="quantity9" name="quantity9" min="30" max="300" value='<%= user_matches[match_key].config.wait_to_match_abort_time/1000 %>'><br>
+        </Div>
+        <button id="register_btn" type="submit" style="width:50%; margin: 5px">Register</button>
+      </form>
+    </div>
+
+    <div class="left"  style="background-color:#90b1df">
+      <h3>Rounds</h3>
+      <ul>
+        <li> 
+          <Div>
+            <a href= <%= "/round_register_form?match_key=" + match_key %>> New... </a>
+          </Div>            
+        </li>
+        <% if (user_matches != undefined && match_key in user_matches) { %>
+          <% for (const round_key in user_matches[match_key].rounds) { %>
+            <li> 
+              <Div>
+                <p style="font-size:75%;margin-top: 0.0em ; margin-bottom: 0.0em ;"> <%= user_matches[match_key].rounds[round_key].question.description %>  <a href= <%= "/round_edit_form?match_key=" + match_key + "&round_key=" + round_key %> style="text-decoration: none;"> &#9998 </a></p>              
+              </Div>                
+            </li>
+          <% } %>
+        <% } %>
+      </ul>   
+
+    </div>
+    
+  </div>
+
+  <div id="status" style="background-color:#90b1df;text-align:center;padding:5px;margin-top:7px;">
+    <% if (user != undefined) { %>
+      <p style="margin: 0px;padding: 0;"> <%= user.name %> </p>
+      <p style="font-size:50%;margin: 0px;padding: 0;"> <%= user.email %> </p>
+      <a href="/user_logout"> logout </a>
+      <%} else { %> 
+        <p style="margin: 0px;padding: 0;">
+          <a style="margin: 0px;padding: 0;" href="/user_login_form"> login </a> or
+          <a style="margin: 0px;padding: 0;" href="/user_register_form"> register </a>
+        </p>
+      <% } %>
+  </div>
+
+</body>
+
+</html>

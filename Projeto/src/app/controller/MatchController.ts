@@ -1,10 +1,11 @@
 import { Request, Response } from "express";
 import { User } from "../user";
-import { Match } from "../match";
+import { Match, MatchConfig } from "../match";
 import { UID } from "../uid";
 import { WS_Match } from "../ws_match";
 import { MatchStatus } from "../match_status";
 import { WS_MatchInfo } from "../ws_match_info";
+import { Data } from "../data";
 
 class MatchController {
 
@@ -35,6 +36,164 @@ class MatchController {
 
         }
 
+
+    }
+
+    public register(req: Request, res: Response) {
+        // const port = req.query.wssport | 3000;
+        const wsaddress = req.app.get("app_web_server_address");
+        const wsport = req.app.get("app_web_server_port");
+        const app_name = req.app.get("app_name");
+
+        const user: User = req.app.get("users_session_login").get(req.session.id);
+
+        if (user !== undefined) {
+
+            const name: string = req.query.name as string;
+
+
+
+            const config: MatchConfig = {
+                show_options: req.query.checkbox1 ? true : false,
+                start_match_upon_completing_registration: req.query.checkbox2 ? true : false,
+                min_amount_players:  parseInt(req.query.quantity1 as string),
+                max_amount_players:  parseInt(req.query.quantity2 as string),
+                wait_to_registry_at_match_time:  1000 * parseInt(req.query.quantity3 as string),
+                wait_to_start_match_time:  1000 * parseInt(req.query.quantity4 as string),
+                // wait_to_shooting_time: parseInt(req.query.quantity5 as string),
+                wait_to_next_round_start_time:  1000 * parseInt(req.query.quantity6 as string),
+                wait_to_round_resume_time:  1000 * parseInt(req.query.quantity7 as string),
+                wait_to_match_end_time:  1000 * parseInt(req.query.quantity8 as string),
+                wait_to_match_abort_time:  1000 * parseInt(req.query.quantity9 as string),
+                avatares: [
+                    128120,128121,128122,128125,128126,128118,128113,128102,128103,
+                    128063,128048,128045,128511,129302,127875,127877,128010,128012,
+                    128018,128027,128030,128034,128035,128045,128047,128128,128373,
+                    128574]
+            }
+
+            const match: Match = {
+                key: UID.get(),
+                name: name,
+                config: config,
+                rounds: []
+            }
+
+            // console.log(JSON.stringify(match));
+
+            const user_matches: { [key: string]: Match } = req.app.get("app_user_data_map")[user.email].matches;
+            user_matches[match.key] = match;
+
+            Data.writeFileSync<User>(req.app.get("app_user_data_path"), req.app.get("app_user_data_map"));
+
+            res.redirect('/match_edit_form?match_key='+ match.key);
+
+        } else {
+
+            res.redirect('/user_login_form?fail_msg=login is required');
+
+        }
+
+    }
+
+    public edit(req: Request, res: Response) {
+        // const port = req.query.wssport | 3000;
+        const wsaddress = req.app.get("app_web_server_address");
+        const wsport = req.app.get("app_web_server_port");
+        const app_name = req.app.get("app_name");
+
+        const user: User = req.app.get("users_session_login").get(req.session.id);
+
+        if (user !== undefined) {
+
+            const match_key: string = req.query.match_key as string;
+            const name: string = req.query.name as string;
+
+            if( match_key in req.app.get("app_user_data_map")[user.email].matches){
+
+                req.app.get("app_user_data_map")[user.email].matches[match_key].name = name;
+
+                req.app.get("app_user_data_map")[user.email].matches[match_key].config.show_options = req.query.checkbox1 ? true : false;
+                req.app.get("app_user_data_map")[user.email].matches[match_key].config.start_match_upon_completing_registration = req.query.checkbox2 ? true : false;
+                req.app.get("app_user_data_map")[user.email].matches[match_key].config.min_amount_players = parseInt(req.query.quantity1 as string);
+                req.app.get("app_user_data_map")[user.email].matches[match_key].config.max_amount_players =  parseInt(req.query.quantity2 as string);
+                req.app.get("app_user_data_map")[user.email].matches[match_key].config.wait_to_registry_at_match_time =  1000 * parseInt(req.query.quantity3 as string);
+                req.app.get("app_user_data_map")[user.email].matches[match_key].config.wait_to_start_match_time =  1000 * parseInt(req.query.quantity4 as string);
+                // req.app.get("app_user_data_map")[user.email].matches[match_key].config.wait_to_shooting_time = parseInt(req.query.quantity5 as string);
+                req.app.get("app_user_data_map")[user.email].matches[match_key].config.wait_to_next_round_start_time =  1000 * parseInt(req.query.quantity6 as string);
+                req.app.get("app_user_data_map")[user.email].matches[match_key].config.wait_to_round_resume_time =  1000 * parseInt(req.query.quantity7 as string);
+                req.app.get("app_user_data_map")[user.email].matches[match_key].config.wait_to_match_end_time =  1000 * parseInt(req.query.quantity8 as string);
+                req.app.get("app_user_data_map")[user.email].matches[match_key].config.wait_to_match_abort_time =  1000 * parseInt(req.query.quantity9 as string);
+
+
+
+            }
+
+            // console.log("EDIT QUIZ");
+            // console.log(req.app.get("app_user_data_map")[user.email].quizzes[quiz_key]);
+
+            Data.writeFileSync<User>(req.app.get("app_user_data_path"), req.app.get("app_user_data_map"));
+
+            res.redirect('/match_edit_form?match_key='+ match_key);
+
+        } else {
+
+            res.redirect('/user_login_form?fail_msg=login is required');
+
+        }
+
+    }
+
+    public edit_form(req: Request, res: Response) {
+
+        const wsaddress = req.app.get("app_web_server_address");
+        const wsport = req.app.get("app_web_server_port");
+        const app_name = req.app.get("app_name");
+
+        const user: User = req.app.get("users_session_login").get(req.session.id);
+
+        if (user !== undefined) {
+
+            const match_key: string = req.query.match_key as string;
+
+            if (match_key !== undefined) {
+
+                const user_matches: { [key: string]: Match } = req.app.get("app_user_data_map")[user.email].matches;
+
+                if (match_key in user_matches) {
+
+                    const edit_quiz: Match = user_matches[match_key];
+
+                    // console.log("USER_QUIZZES");
+                    // console.log(user_quizzes);
+
+                    res.render('match_edit_form', {
+                        title: app_name,
+                        wsa: wsaddress,
+                        wsp: wsport,
+                        user: user,
+                        user_matches: user_matches,
+                        match_key: match_key,
+                        fail_msg: undefined
+                    });
+
+                } else {
+
+                    res.redirect('/match_home?fail_msg=invalid match_key');
+
+                }
+
+            } else {
+
+                res.redirect('/match_home?fail_msg=match_key is required');
+
+            }
+
+        } else {
+
+            res.redirect('/user_login_form?fail_msg=login is required');
+
+        }
 
     }
 
@@ -385,7 +544,6 @@ class MatchController {
         if (user !== undefined) {
 
             const match_key: string = req.query.match_key as string;
-            const match_name: string = req.query.match_name as string || "nameless match";
 
             if (match_key !== undefined) {
 
