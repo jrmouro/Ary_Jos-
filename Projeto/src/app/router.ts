@@ -23,6 +23,7 @@ router.get("/quiz_register", quizController.register);
 router.get("/quiz_edit", quizController.edit);
 router.get("/quiz_edit_form", quizController.edit_form);
 router.get("/quiz_register_form", quizController.register_form);
+router.get("/quiz_delete", quizController.delete);
 
 //Questions
 router.get("/question_register_form", questionController.register_form);

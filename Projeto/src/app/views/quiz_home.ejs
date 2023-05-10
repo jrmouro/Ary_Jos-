@@ -24,7 +24,7 @@
       <h3 style="margin: 0px;padding: 0;"><a href="/" style="text-decoration: none;">&#x1F519</a>  Quizzes</h3>
       <ul style="list-style-type: none; margin: 10px;padding: 0;">
         <li> 
-          <Div  style="padding-bottom: 10px ;">
+          <Div  style="padding-bottom: 10px ;"> 
             &#x1F4C4 <a href="/quiz_register_form" >New...</a>
           </Div>            
         </li>
@@ -32,7 +32,7 @@
           <% for (const key in user_quizzes) { %>
               <li> 
                 <Div>
-                  &#x1F50E <a href= <%= "/quiz_view?quiz_key=" + key %> style="text-decoration: none;"> <%= user_quizzes[key].name %> </a>
+                 <a onclick="confirmationBox()" id="quiz-delete" href=<%= "/quiz_delete?quiz_key=" + key %> style="text-decoration: none;">&#x274C; </a> &#x1F50E <a href= <%= "/quiz_view?quiz_key=" + key %> style="text-decoration: none;"> <%= user_quizzes[key].name %> </a>
                   <p style="font-size:50%;margin-top: 0.0em ; margin-bottom: 0.0em ;"> <%= user_quizzes[key].theme %> </p>
                 </Div>                
               </li>
@@ -60,3 +60,12 @@
 </body>
 
 </html>
+<script>
+  function confirmationBox(){
+    if(window.confirm("Tem certeza que deseja deletar o quiz?")){
+      document.getElementById("quiz-delete").submit();
+    } else {
+      return;
+    }
+}
+</script>

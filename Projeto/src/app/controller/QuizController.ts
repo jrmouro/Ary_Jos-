@@ -238,6 +238,46 @@ class QuizController {
 
     }
 
+    public delete(req: Request, res: Response) {
+
+        const wsaddress = req.app.get("app_web_server_address");
+        const wsport = req.app.get("app_web_server_port");
+        const app_name = req.app.get("app_name");
+
+        const user: User = req.app.get("users_session_login").get(req.session.id);
+
+        if (user !== undefined) {
+
+            const quiz_key: string = req.query.quiz_key as string;
+
+            if (quiz_key !== undefined) {
+
+                const user_quizzes: { [key: string]: Quiz } = req.app.get("app_user_data_map")[user.email].quizzes;
+
+                if (quiz_key in user_quizzes) {
+
+                    delete user_quizzes[quiz_key];
+                    res.redirect('/quiz_home');
+
+                } else {
+
+                    res.redirect('/quiz_home');
+
+                }
+
+            } else {
+
+                res.redirect('/quiz_home');
+
+            }
+
+        } else {
+
+            res.redirect('/user_login_form?fail_msg=login is required');
+
+        }
+
+    }
 
 
 
