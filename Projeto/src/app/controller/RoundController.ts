@@ -59,11 +59,11 @@ class RoundController {
         if (user !== undefined) {
 
             const match_key: string | undefined = req.query.match_key as string;
-            const round_key: string | undefined = req.query.round_key as string;
+            const round_index: string | undefined = req.query.round_index as string;
 
             if (match_key !== undefined) {
 
-                if (round_key !== undefined) {
+                if (round_index !== undefined) {
 
                     const user_matches: { [key: string]: Match } = req.app.get("app_user_data_map")[user.email].matches;
 
@@ -71,43 +71,42 @@ class RoundController {
 
                         const edit_match: Match = user_matches[match_key];
 
-                        if (round_key in edit_match.rounds) {
+                        const index = parseInt(round_index);
 
-                            // console.log("USER_QUIZZES");
-                            // console.log(user_quizzes);
+                        if(index > -1 && index < edit_match.rounds.length){
 
                             res.render('question_edit_form', {
                                 title: app_name,
                                 wsa: wsaddress,
                                 wsp: wsport,
                                 user: user,
-                                user_quizzes: user_quizzes,
-                                quiz_key: quiz_key,
-                                question_key: question_key,
+                                user_matches: user_matches,
+                                match_key: match_key,
+                                round_index: index,
                                 fail_msg: undefined
                             });
 
                         } else {
 
-                            res.redirect('/quiz_home?fail_msg=invalid question key');
+                            res.redirect('/match_home?fail_msg=invalid round_index');
 
                         }
 
                     } else {
 
-                        res.redirect('/quiz_home?fail_msg=invalid quiz key');
+                        res.redirect('/match_home?fail_msg=invalid match_key');
 
                     }
 
                 } else {
 
-                    res.redirect('/quiz_home?fail_msg=question_key is required');
+                    res.redirect('/match_home?fail_msg=round_index is required');
 
                 }
 
             } else {
 
-                res.redirect('/quiz_home?fail_msg=quiz_key is required');
+                res.redirect('/match_home?fail_msg=match_key is required');
 
             }
 
@@ -130,13 +129,13 @@ class RoundController {
 
         if (user !== undefined) {
 
-            const quiz_key: string | undefined = req.query.quiz_key as string;
+            const match_key: string | undefined = req.query.match_key as string;
 
-            if (quiz_key !== undefined) {
+            if (match_key !== undefined) {
 
-                const user_quizzes: { [key: string]: Quiz } = req.app.get("app_user_data_map")[user.email].quizzes;
+                const user_matches: { [key: string]: Match } = req.app.get("app_user_data_map")[user.email].matches;
 
-                if (quiz_key in user_quizzes) {
+                if (match_key in user_matches) {
 
                     const description: string | undefined = req.query.description as string;
                     const true_option: string | undefined = req.query.true_option as string;

@@ -604,7 +604,26 @@ export class WS_Match {
                 this.wait_to_round_shooting_timeoutId = undefined;
             }
 
-            this.wait_to_pass_round(player_pass);
+            if(Object.entries(this.players).length == 2){
+
+                for(const player in this.players){
+
+                    if(player != player_pass){
+
+                        this.wait_to_response_round(player, player_pass);
+                        break;
+
+                    }
+
+                }
+
+            }else{
+
+                this.wait_to_pass_round(player_pass);
+
+            }
+
+            
 
 
         }
