@@ -32,8 +32,8 @@
           <% for (const key in user_quizzes) { %>
               <li> 
                 <Div>
-                 <a onclick="confirmationBox()" id="quiz-delete" href=<%= "/quiz_delete?quiz_key=" + key %> style="text-decoration: none;">&#x274C; </a>
                   &#x1F50E <a href= <%= "/quiz_view?quiz_key=" + key %> style="text-decoration: none;"> <%= user_quizzes[key].name %> </a>
+                  <a onclick="confirmationBox()" id="quiz-delete" href=<%= "/quiz_delete?quiz_key=" + key %> style="text-decoration: none;">&#x274C; </a>
                   <p style="font-size:50%;margin-top: 0.0em ; margin-bottom: 0.0em ;"> <%= user_quizzes[key].theme %> </p>
                 </Div>                
               </li>

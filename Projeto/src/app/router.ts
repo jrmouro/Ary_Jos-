@@ -44,6 +44,7 @@ router.get("/match_edit_form", matchController.edit_form);
 router.get("/match_register_form", matchController.register_form);
 router.get("/match_register_player", matchController.register_player);
 router.get("/match_unregister_player", matchController.unregister_player);
+router.get("/match_delete", matchController.delete);
 
 // router.get("/player_register", registerController.player);
 // router.get("/match_register", registerController.match);

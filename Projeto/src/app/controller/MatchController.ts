@@ -604,6 +604,47 @@ class MatchController {
 
     }
 
+    public delete(req: Request, res: Response) {
+
+        const wsaddress = req.app.get("app_web_server_address");
+        const wsport = req.app.get("app_web_server_port");
+        const app_name = req.app.get("app_name");
+
+        const user: User = req.app.get("users_session_login").get(req.session.id);
+
+        if (user !== undefined) {
+
+            const match_key: string = req.query.match_key as string;
+
+            if (match_key !== undefined) {
+
+                const user_matches: { [key: string]: Match } = req.app.get("app_user_data_map")[user.email].matches;
+
+                if (match_key in user_matches) {
+
+                    delete user_matches[match_key];
+                    res.redirect('/match_home');
+
+
+                } else {
+
+                    res.redirect('/match_home?fail_msg=invalid match_key');
+
+                }
+
+            } else {
+
+                res.redirect('/match_home?fail_msg=match_key is required');
+
+            }
+
+        } else {
+
+            res.redirect('/user_login_form?fail_msg=login is required');
+
+        }
+
+    }
 
 
 
