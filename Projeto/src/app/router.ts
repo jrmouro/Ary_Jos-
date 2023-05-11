@@ -4,6 +4,7 @@ import { userController } from "./controller/UserController";
 import { quizController } from "./controller/QuizController";
 import { questionController } from "./controller/QuestionController";
 import { matchController } from "./controller/MatchController";
+import { roundController } from "./controller/RoundController";
 
 const router: Router = Router()
 
@@ -46,8 +47,11 @@ router.get("/match_register_player", matchController.register_player);
 router.get("/match_unregister_player", matchController.unregister_player);
 router.get("/match_delete", matchController.delete);
 
-// router.get("/player_register", registerController.player);
-// router.get("/match_register", registerController.match);
+//Rounds
+router.get("/round_register_form", roundController.register_form);
+router.get("/round_edit_form", roundController.edit_form);
+router.get("/round_register", roundController.register);
+router.get("/round_edit", roundController.edit);
 
 
 

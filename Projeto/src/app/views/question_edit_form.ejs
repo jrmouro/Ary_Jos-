@@ -10,8 +10,8 @@
 <body style="font-family:Verdana;color:#05252c;" onload="chatroom()">
 
   <div style="background-color:#90b1df;padding:5px;text-align:center;">
-    <h2><%= title %></h2>
-    <p style="font-size:50%;"><%= wsa %>:<%= wsp %></p>
+    <h2 style="margin: 0px;padding: 0;"><%= title %></h2>
+    <p style="font-size:50%;margin: 0px;padding: 0;"><%= wsa %>:<%= wsp %></p>
     <% if (fail_msg != undefined) { %>
       <p style="font-family:Verdana;color:#e10e1c;"> <%= fail_msg%> </p>
     <%}%>
@@ -20,9 +20,13 @@
   <div  style="overflow:auto;background-color:#90b1df;margin-top:7px;">
 
     <div class="left" style="background-color:#90b1df">
-      <h3><a href="/quiz_view" style="text-decoration: none;">&#x1F519</a> <%= user_quizzes[quiz_key].name %></h3>
-      <h4><%= user_quizzes[quiz_key].theme %></h4>
-      <h4">Questões</h4>
+      <h3 style="margin: 0px;padding: 0;">
+        <a href=<%="/quiz_edit_form?quiz_key=" + quiz_key %>   style="text-decoration: none;">&#x1F519</a>
+        <%= " Quiz: " + user_quizzes[quiz_key].name %></h3>
+      <p style="font-size:75%;margin: 0px; margin-bottom: 10px;"> 
+        <%= "Tema: " + user_quizzes[quiz_key].theme %>
+      </p>
+      <!-- <h4">Questions</h4> -->
       <ul>
         <li> 
           <Div>
@@ -33,17 +37,11 @@
           <% for (const question_key in user_quizzes[quiz_key].questions) { %>
             <li> 
               <Div>
-                <p style="font-size:75%;margin-top: 0.0em ; margin-bottom: 0.0em ;"> <%= user_quizzes[quiz_key].questions[question_key].description %>  <a href= <%= "/question_edit_form?quiz_key=" + quiz_key + "&question_key=" + question_key %> style="text-decoration: none;"> &#9998 </a></p>
-                <ul style="list-style-type: none;margin: 0;padding: 0;">
-                  <li>
-                    <p style="font-size:50%;margin-top: 0.0em ; margin-bottom: 0.0em ;">Opção Certa:  <%= user_quizzes[quiz_key].questions[question_key].true_option %> </p>
-                  </li>
-                  <% for(var i=0; i < user_quizzes[quiz_key].questions[question_key].fake_options.length; i++) {%>
-                    <li>
-                      <p style="font-size:50%;margin-top: 0.0em ; margin-bottom: 0.0em; color:#e10e1c;"> Opção Errada <%= i + 1 %>: <%= user_quizzes[quiz_key].questions[question_key].fake_options[i] %> </p>
-                    </li>                    
-                  <% } %>
-                </ul>                
+                <p style="font-size:75%;margin-top: 0.0em ; margin-bottom: 0.0em ;"> 
+                  <%= user_quizzes[quiz_key].questions[question_key].description %>  
+                  <a href= <%= "/question_edit_form?quiz_key=" + quiz_key + "&question_key=" + question_key %> style="text-decoration: none;"> &#9998 </a>
+                </p>
+                
               </Div>                
             </li>
           <% } %>
@@ -55,7 +53,7 @@
 
 
 
-      <h3>Editar Questão</h3>
+      <h3 style="margin: 0px;padding: 0px;">Editar Questão</h3>
       <form id="quiz_register" action=<%= "/question_edit?quiz_key=" + quiz_key + "&question_key=" + question_key%> method="get">
         <input id="quiz_key" name="quiz_key" type="hidden" value= <%= quiz_key %> >
         <input id="question_key" name="question_key" type="hidden" value= <%= question_key %> >

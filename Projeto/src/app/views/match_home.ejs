@@ -34,7 +34,7 @@
                 <Div>
                   &#x1F50E <a href= <%= "/match_view?match_key=" + key %> style="text-decoration: none;"> <%= user_matches[key].name %> </a>
                   <a onclick="return confirm('Tem certeza que deseja deletar essa partida?');" href= <%= "/match_delete?match_key=" + key %> style="text-decoration: none;"> &#x274C; </a>
-                  <p style="font-size:50%;margin-top: 0.0em ; margin-bottom: 0.0em ;"> <%= user_matches[key].theme %> </p>
+                  <p style="font-size:50%;margin-top: 0px; margin-bottom: 5px; margin-left: 25px; "> <%= user_matches[key].theme %> </p>
                 </Div>                
               </li>
           <% } %>

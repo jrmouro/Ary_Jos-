@@ -3,7 +3,7 @@
 
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" type="text/css"  href="/stylesheets/style.css">
+  <link rel="stylesheet" type="text/css" href="/stylesheets/style.css">
   <script src="/javascripts/chatroom.js"></script>
 </head>
 
@@ -13,14 +13,16 @@
     <h2 style="margin: 0px;padding: 0;"><%= title %></h2>
     <p style="font-size:50%;margin: 0px;padding: 0;"><%= wsa %>:<%= wsp %></p>
     <% if (fail_msg != undefined) { %>
-      <p style="font-family:Verdana;color:#e10e1c;"> <%= fail_msg%> </p>
+    <p style="font-family:Verdana;color:#e10e1c;"> <%= fail_msg%> </p>
     <%}%>
   </div>
 
   <div  style="overflow:auto;background-color:#90b1df;margin-top:7px;">
 
     <div class="left" style="background-color:#90b1df">
-      <h3 style="margin: 0px;padding: 0;"><a href="/quiz_home" style="text-decoration: none;">&#x1F519</a>  Quizzes</h3>
+      <h3 style="margin: 0px;padding: 0;">
+        <a href="/quiz_home" style="text-decoration: none;">&#x1F519</a>  Quizzes
+      </h3>
       <ul style="list-style-type: none; margin: 10px;padding: 0;">
         <li> 
           <Div  style="padding-bottom: 10px ;">
@@ -28,65 +30,82 @@
           </Div>            
         </li>
         <% if (user_quizzes != undefined) { %>
-          <% for (const key in user_quizzes) { %>
-              <li> 
-                <Div>
-                  &#x1F50E <a href= <%= "/quiz_view?quiz_key=" + key %> style="text-decoration: none;"> <%= user_quizzes[key].name %> <a href= <%= "/quiz_edit_form?quiz_key=" + key %> style="text-decoration: none;"> &#9998 </a> </a>
-                  <p style="font-size:50%;margin-top: 0.0em ; margin-bottom: 0.0em ;"> <%= user_quizzes[key].theme %> </p>
-                </Div>                
-              </li>
-          <% } %>
-        <% } %>
-      </ul>       
+    <% for (const key in user_quizzes) { %>
+    <li>
+      <Div>
+        &#x1F50E;
+        <a href=<%= "/quiz_view?quiz_key=" + key %> style="text-decoration: none;">
+          <%= user_quizzes[key].name %>          
+        </a>
+        <a href=<%= "/quiz_edit_form?quiz_key=" + key %> style="text-decoration: none;">
+          &#9998;
+        </a>
+        <p style="font-size:50%;margin-top: 0px ; margin-bottom: 5px; margin-left: 25px;">
+          <%= user_quizzes[key].theme %> </p>
+      </Div>
+    </li>
+    <% } %>
+    <% } %>
+    </ul>
+  </div>
+
+  <div class="main">
+    <div style="text-align: center;">
+
+      <h3 style="margin: 0px;"><%= "Quiz: " + user_quizzes[quiz_key].name %></h3>
+      <p style="margin: 0px"><%= "Tema: "+user_quizzes[quiz_key].theme %></p>
+
     </div>
 
-    <div class="main">
-      <h3 style="padding: 0;"><%= user_quizzes[quiz_key].name %></h3>
-      <h4 style="margin: 0px;margin-left: 10px;padding: 0;"><%= user_quizzes[quiz_key].theme %></h4>
-      <h4 style="margin: 0px;margin-left: 10px;padding: 0;">Questões</h4>
-      <ul style="margin: 0px;margin-left: 30px;padding: 0;">
-        <li> 
+    <h4 style="margin: 0px;margin-top: 5px;">Questões</h4>
+    <ul style="margin: 0px;margin-left: 25px; padding: 0;">
+      <li>
+        <Div>
+          <a href=<%= "/question_register_form?quiz_key=" + quiz_key %>> Novo... </a>
+        </Div>
+      </li>
+      <% if (user_quizzes != undefined && quiz_key in user_quizzes) { %>
+      <% for (const question_key in user_quizzes[quiz_key].questions) { %>
+      <Div>
+        <li>
           <Div>
-            <a href= <%= "/question_register_form?quiz_key=" + quiz_key %>> Novo... </a>
-          </Div>            
-        </li>
-        <% if (user_quizzes != undefined && quiz_key in user_quizzes) { %>
-          <% for (const question_key in user_quizzes[quiz_key].questions) { %>
-            <Div  style="column-count: 3;">
-              <li> 
-                <Div>
-                  <p style="margin-top: 0.0em ; margin-bottom: 0.0em ;"> <%= user_quizzes[quiz_key].questions[question_key].description %> 
-                     <a href= <%= "/question_edit_form?quiz_key=" + quiz_key + "&question_key=" + question_key %> style="text-decoration: none;"> &#9998 </a>
+            <p style="margin-top: 0.0em ; margin-bottom: 0.0em ;">
+              <%= user_quizzes[quiz_key].questions[question_key].description %> 
+                    <a
+                href=<%= "/question_edit_form?quiz_key=" + quiz_key + "&question_key=" + question_key %>
+                style="text-decoration: none;"> &#9998 </a>
                      <a onclick="return confirm('Tem certeza que deseja deletar essa questão?');" href= <%= "/question_delete?quiz_key=" + quiz_key + "&question_key=" + question_key %> style="text-decoration: none;"> &#x274C; </a>
                   </p>
-                  <ul style="list-style-type: none;margin: 0;padding: 0;">
-                    <li>
-                      <p style="margin-top: 0.0em ; margin-bottom: 0.0em ;">Opção Certa:  <%= user_quizzes[quiz_key].questions[question_key].true_option %> </p>
-                    </li>
-                    <% for(var i=0; i < user_quizzes[quiz_key].questions[question_key].fake_options.length; i++) {%>
-                      <li>
-                        <p style="margin-top: 0.0em ; margin-bottom: 0.0em; color:#e10e1c;"> Opção Errada <%= i + 1 %>:  <%= user_quizzes[quiz_key].questions[question_key].fake_options[i] %> </p>
-                      </li>                    
-                    <% } %>
-                  </ul>                
-                </Div>                
+            <ul style="list-style-type: none;margin: 0;padding: 0;">
+              <li>
+                <p style="margin-top: 0.0em ; margin-bottom: 0.0em ;">Opção Certa:
+                  <%= user_quizzes[quiz_key].questions[question_key].true_option %> </p>
               </li>
-            </Div>
-          <% } %>
-        <% } %>
-      </ul>  
-    </div>
-    
+              <% for(var i=0; i < user_quizzes[quiz_key].questions[question_key].fake_options.length; i++) {%>
+              <li>
+                <p style="margin-top: 0.0em ; margin-bottom: 0.0em; color:#e10e1c;"> Opção Errada <%= i + 1 %>:
+                  <%= user_quizzes[quiz_key].questions[question_key].fake_options[i] %> </p>
+              </li>
+              <% } %>
+            </ul>
+          </Div>
+        </li>
+      </Div>
+      <% } %>
+      <% } %>
+    </ul>
+  </div>
+
   </div>
 
   <div id="status" style="background-color:#90b1df;text-align:center;padding:5px;margin-top:7px;">
     <% if (user != undefined) { %>
-      <p style="margin: 0px;padding: 0;"> <%= user.name %> </p>
-      <p style="font-size:50%;margin: 0px;padding: 0;"> <%= user.email %> </p>
-      <a href="/user_logout"> Sair </a>
-      <%} else { %>
-      <a style="margin: 0px;padding: 0;" href="/user_login_form"> Faça login </a>
-      <% } %>
+    <p style="margin: 0px;padding: 0;"> <%= user.name %> </p>
+    <p style="font-size:50%;margin: 0px;padding: 0;"> <%= user.email %> </p>
+    <a href="/user_logout"> Sair </a>
+    <%} else { %>
+    <a style="margin: 0px;padding: 0;" href="/user_login_form"> Faça login </a>
+    <% } %>
   </div>
 
 </body>

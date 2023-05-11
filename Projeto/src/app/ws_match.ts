@@ -5,6 +5,7 @@ import { Protocol } from "./protocol";
 import { MatchStatus } from "./match_status";
 import { Player } from "./player";
 import { Round_Response_State } from "./round_response_state";
+import { Round } from "./round";
 
 export const WS_Match_State = {
 
@@ -53,6 +54,7 @@ export class WS_Match {
 
     match_state: number = WS_Match_State.unlaunched_match;
 
+    private readonly match_round_entries:[string, Round][];
     round_index: number = -1;
     round_score: number = 0;
 
@@ -75,6 +77,7 @@ export class WS_Match {
         this.key = key;
         this.owner_user_key = owner_user_key;
         this.match = match;
+        this.match_round_entries = Object.entries(this.match.rounds);
         this.eventCallback = eventCallback;
         if (wss_ip !== undefined && port !== undefined) {
             this.launch(wss_ip, port);
@@ -188,9 +191,10 @@ export class WS_Match {
 
     private score() {
 
-        if (this.round_index > -1 && this.round_index < this.match.rounds.length) {
+        if (this.round_index > -1 && this.round_index < this.match_round_entries.length) {
 
-            var score = this.match.rounds[this.round_index].score;
+            // var score = this.match.rounds[this.roud_index].score;
+            var score = this.match_round_entries[this.round_index][1].score;
 
             switch (this.round_response_state) {
 
@@ -423,7 +427,7 @@ export class WS_Match {
 
             if (player_pass !== undefined) {
 
-                if (roundResponse === this.match.rounds[this.round_index].question.true_option) {
+                if (roundResponse === this.match_round_entries[this.round_index][1].question.true_option) {
 
                     this.round_response_state = Round_Response_State.right_pass_response;
 
@@ -435,7 +439,7 @@ export class WS_Match {
 
             } else {
 
-                if (roundResponse === this.match.rounds[this.round_index].question.true_option) {
+                if (roundResponse === this.match_round_entries[this.round_index][1].question.true_option) {
 
                     this.round_response_state = Round_Response_State.right_response;
 
@@ -485,7 +489,7 @@ export class WS_Match {
         this.wait_timestamp = Date.now();
         this.send_state();
 
-        if (this.round_index < this.match.rounds.length  - 1) {
+        if (this.round_index < this.match_round_entries.length  - 1) {
             // this.wait_to_next_round_start();
             this.next_round();
         }else{
@@ -497,7 +501,7 @@ export class WS_Match {
 
     wait_to_shooting_round() {
 
-        if (this.round_index > -1 && this.round_index < this.match.rounds.length) {
+        if (this.round_index > -1 && this.round_index < this.match_round_entries.length) {
 
             var self = this;
             this.wait_to_round_shooting_timeoutId = setTimeout(() => {
@@ -508,10 +512,10 @@ export class WS_Match {
 
                 }
 
-            }, this.match.rounds[this.round_index].shooting_timeout);
+            }, this.match_round_entries[this.round_index][1].shooting_timeout);
 
             this.match_state = WS_Match_State.wait_to_shooting_round;
-            this.wait_time = this.match.rounds[this.round_index].shooting_timeout;
+            this.wait_time = this.match_round_entries[this.round_index][1].shooting_timeout;
             this.wait_timestamp = Date.now();
             this.player_pass = undefined;
             this.player_response = undefined;
@@ -531,10 +535,10 @@ export class WS_Match {
 
             self.wait_to_round_resume(true);
 
-        }, this.match.rounds[this.round_index].response_timeout);
+        }, this.match_round_entries[this.round_index][1].response_timeout);
 
         this.match_state = WS_Match_State.wait_to_response_round;
-        this.wait_time = this.match.rounds[this.round_index].response_timeout;
+        this.wait_time = this.match_round_entries[this.round_index][1].response_timeout;
         this.wait_timestamp = Date.now();
         this.player_pass = player_pass;
         this.player_response = player_response;
@@ -562,10 +566,10 @@ export class WS_Match {
 
             self.wait_to_round_resume(true);
 
-        }, this.match.rounds[this.round_index].pass_timeout);
+        }, this.match_round_entries[this.round_index][1].pass_timeout);
 
         this.match_state = WS_Match_State.wait_to_pass_round;
-        this.wait_time = this.match.rounds[this.round_index].pass_timeout;
+        this.wait_time = this.match_round_entries[this.round_index][1].pass_timeout;
         this.wait_timestamp = Date.now();
         this.player_pass = player_pass;
         this.player_response = undefined;
@@ -689,18 +693,18 @@ export class WS_Match {
             let description: string | undefined = undefined;
             let options: string[] | undefined = undefined;
 
-            if (this.round_index > -1 && this.round_index < this.match.rounds.length) {
+            if (this.round_index > -1 && this.round_index < this.match_round_entries.length) {
 
-                description = this.match.rounds[this.round_index].question.description;
-                theme = this.match.rounds[this.round_index].quiz_theme;
+                description = this.match_round_entries[this.round_index][1].question.description;
+                theme = this.match_round_entries[this.round_index][1].quiz_theme;
 
                 options = [];
 
-                for (let option in this.match.rounds[this.round_index].question.fake_options) {
-                    options.push(this.match.rounds[this.round_index].question.fake_options[option]);
+                for (let option in this.match_round_entries[this.round_index][1].question.fake_options) {
+                    options.push(this.match_round_entries[this.round_index][1].question.fake_options[option]);
                 }
 
-                options.push(this.match.rounds[this.round_index].question.true_option);
+                options.push(this.match_round_entries[this.round_index][1].question.true_option);
 
                 options.sort(function (a, b) { return 0.5 - Math.random() });
 
@@ -843,7 +847,7 @@ export class WS_Match {
 
         this.round_index++;
 
-        if (this.round_index < this.match.rounds.length) {
+        if (this.round_index < this.match_round_entries.length) {
 
             this.match_state = WS_Match_State.started_next_round;
             this.wait_timestamp = Date.now();
@@ -852,7 +856,7 @@ export class WS_Match {
             this.player_response = undefined;
             this.round_response = undefined;
             this.round_response_state = Round_Response_State.timeout_shooting;
-            this.round_score = this.match.rounds[this.round_index].score;
+            this.round_score = this.match_round_entries[this.round_index][1].score;
 
             this.send_state();
 

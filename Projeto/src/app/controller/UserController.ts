@@ -32,9 +32,6 @@ class UserController {
                 req.query.email  as string, 
                 req.query.password  as string);
 
-            console.log("REGISTER");
-            console.log(req.query);
-
             req.app.get("app_user_data_map")[req.query.email as string] = user;
             Data.writeFileSync<User>(req.app.get("app_user_data_path"), req.app.get("app_user_data_map"));
 

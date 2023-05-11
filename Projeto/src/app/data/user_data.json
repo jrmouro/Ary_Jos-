@@ -11,6 +11,125 @@
     "email": "jronaldomouro@gmail.com",
     "password": "1wq23re4",
     "quizzes": {
+      "lh9fuuwe0d4blkfhga3t": {
+        "name": "ES: Histórico/Mitos",
+        "theme": "Histórico e Mitos da Engenharia de Software",
+        "questions": {
+          "lh9gq7j43dfwwlc2t9h": {
+            "key": "lh9gq7j43dfwwlc2t9h",
+            "description": "O ano de 1968 é marcado pela crise de software e o nascimento da Engenharia de Software. Verdadeiro ou falso?",
+            "fake_options": ["Falso"],
+            "true_option": "Verdadeiro"
+          },
+          "lh9h8nvzv81ot60lfgl": {
+            "key": "lh9h8nvzv81ot60lfgl",
+            "description": "A crise de software foi marcada por alguns problemas listados abaixo e que são encontrados no desenvolvimento de software, exceto:\r\n",
+            "fake_options": [
+              "Software que não funcionam.",
+              "Manutenção de um volume crescente de software existente.",
+              "Atendimento a uma demanda cada vez maior."
+            ],
+            "true_option": "Os hardwares não funcionam bem."
+          },
+          "lh9hcbgvh0wmn2id7w": {
+            "key": "lh9hcbgvh0wmn2id7w",
+            "description": "O Ciclo de vida Cascata surgiu no ano de:",
+            "fake_options": ["1980", "1969", "1968"],
+            "true_option": "1970"
+          },
+          "lh9hegs214gyvtgk8zoe": {
+            "key": "lh9hegs214gyvtgk8zoe",
+            "description": "O Ciclo de Vida espiral surgiu no ano de:",
+            "fake_options": ["1975", "1985", "1990"],
+            "true_option": "1980"
+          },
+          "lh9hlnir8y8mvm4dd3g": {
+            "key": "lh9hlnir8y8mvm4dd3g",
+            "description": "Tudo que o Engenheiro de Software precisa saber para a construção de sw está nos manuais de padrões e procedimentos. Mito ou Realidade?",
+            "fake_options": ["Realidade"],
+            "true_option": "Mito"
+          },
+          "lh9ho69ks4vtqyvcgo": {
+            "key": "lh9ho69ks4vtqyvcgo",
+            "description": "Meu pessoal tem ferramentas de desenvolvimento de sw de última geração, afinal de contas compramos os mais novos computadores. Mito ou Realidade?\r\n",
+            "fake_options": ["Realidade"],
+            "true_option": "Mito"
+          },
+          "lh9hr0cppxti1wdr6vd": {
+            "key": "lh9hr0cppxti1wdr6vd",
+            "description": "É preciso muito mais do que o último modelo de computador para se fazer um desenvolvimento com alta qualidade. Mito ou Realidade?",
+            "fake_options": ["Mito"],
+            "true_option": "Realidade"
+          },
+          "lh9hsb1y4x198ozclrx": {
+            "key": "lh9hsb1y4x198ozclrx",
+            "description": "Se nós estamos atrasados nos prazos, podemos adicionar mais programadores e tirar o atraso. Mito ou Realidade?\r\n",
+            "fake_options": ["Realidade"],
+            "true_option": "Mito"
+          },
+          "lh9hupvru94fv2qg7yp": {
+            "key": "lh9hupvru94fv2qg7yp",
+            "description": "Acrescentar pessoas em projetos atrasados pode torná-lo ainda mais atrasado. Mito ou realidade?",
+            "fake_options": ["Mito"],
+            "true_option": "Realidade"
+          },
+          "lh9hxrp2nlfqidkqo0k": {
+            "key": "lh9hxrp2nlfqidkqo0k",
+            "description": "Uma definição formal e detalhada do domínio da informação, função, interfaces, validação são fundamentais para a criação de programas. Mito ou realidade?",
+            "fake_options": ["Mito"],
+            "true_option": "Realidade"
+          },
+          "lh9i0xksr8tbmfdu91": {
+            "key": "lh9i0xksr8tbmfdu91",
+            "description": "A cuidadosa comunicação entre o cliente e o desenvolvedor é essencial para o bom levantamento dos dados a serem usados no desenvolvimento do software. Mito ou realidade?",
+            "fake_options": ["Mito"],
+            "true_option": "Realidade"
+          },
+          "lh9i2ng6ptdn2abaf8g": {
+            "key": "lh9i2ng6ptdn2abaf8g",
+            "description": "Os requisitos de projeto modificam-se continuamente, mas as mudanças podem ser facilmente acomodadas pois o sw é flexível. Mito ou realidade?\r\n",
+            "fake_options": ["Realidade"],
+            "true_option": "Mito"
+          },
+          "lh9i5l1geam68s7roi": {
+            "key": "lh9i5l1geam68s7roi",
+            "description": "Assim que o desenvolvedor escreve o programa e o coloca em funcionamento, o seu trabalho estará completo. Mito ou realidade?",
+            "fake_options": ["Realidade"],
+            "true_option": "Mito"
+          },
+          "lh9i6tp0i75sj60dbui": {
+            "key": "lh9i6tp0i75sj60dbui",
+            "description": "Alguns dados indicam que entre 50 e 70% de todo o esforço gasto num programa serão despendidos depois que ele for entregue  pela primeira vez ao cliente. Verdadeiro ou falso?",
+            "fake_options": ["Falso"],
+            "true_option": "Verdadeiro"
+          },
+          "lh9i8i14cv0uyql9dpo": {
+            "key": "lh9i8i14cv0uyql9dpo",
+            "description": "Enquanto não se tiver o programa “funcionando”, não se terá maneira de avaliar sua qualidade. Mito ou realidade?",
+            "fake_options": ["Realidade"],
+            "true_option": "Mito"
+          },
+          "lh9iafys0vnin29y5ybn": {
+            "key": "lh9iafys0vnin29y5ybn",
+            "description": "A revisão técnica formal, que tem sido considerada mais eficiente do que a realização de testes para a descoberta de certas classes de defeitos de sw. Mito ou realidade?",
+            "fake_options": ["Mito"],
+            "true_option": "Realidade"
+          },
+          "lh9ibn8kjc9i452xnl": {
+            "key": "lh9ibn8kjc9i452xnl",
+            "description": "A única coisa a ser entregue em um projeto bem sucedido é o programa funcionando. Mito ou realidade?\r\n",
+            "fake_options": ["Realidade"],
+            "true_option": "Mito"
+          },
+          "lh9id2n9f3oqi2099an": {
+            "key": "lh9id2n9f3oqi2099an",
+            "description": "A documentação forma os alicerces para um desenvolvimento bem sucedido e, o que é mais importante, fornece um guia para a  tarefa de manutenção de sw. Mito ou realidade?",
+            "fake_options": ["Mito"],
+            "true_option": "Realidade"
+          }
+        },
+        "key": "lh9fuuwe0d4blkfhga3t"
+      },
       "lh9ihli4sx8914f9uol": {
         "name": "ES: Modelo de Processo SW",
         "theme": "Modelos de Processo de Software",
@@ -243,18 +362,18 @@
         },
         "key": "lh9ihli4sx8914f9uol"
       },
-      "lhj7lo05azbt2d1asn8": {
-        "name": "fawfa",
-        "theme": "fwafwf",
+      "lhj1iakyhgpjbvdvea": {
+        "name": "Teste",
+        "theme": "Testando questions",
         "questions": {
-          "lhj9vajx4gcqtnjtqyb": {
-            "key": "lhj9vajx4gcqtnjtqyb",
-            "description": "daw",
-            "fake_options": ["daw", "awd", "awdawd"],
-            "true_option": "dw"
+          "lhj1ivjka1djjgc6cj7": {
+            "key": "lhj1ivjka1djjgc6cj7",
+            "description": "1 + 1 = 2",
+            "fake_options": ["false"],
+            "true_option": "True"
           }
         },
-        "key": "lhj7lo05azbt2d1asn8"
+        "key": "lhj1iakyhgpjbvdvea"
       }
     },
     "matches": {
@@ -279,8 +398,8 @@
             128047, 128128, 128373, 128574
           ]
         },
-        "rounds": [
-          {
+        "rounds": {
+          "lh10x8ted0swam0m1wi": {
             "key": "lh10x8ted0swam0m1wi",
             "quiz_theme": "arithmetic",
             "question": {
@@ -294,7 +413,7 @@
             "pass_timeout": 10000,
             "score": 10
           },
-          {
+          "lh10x8tenn6blbwvu3h": {
             "key": "lh10x8tenn6blbwvu3h",
             "quiz_theme": "typescript",
             "question": {
@@ -307,23 +426,217 @@
             "response_timeout": 10000,
             "pass_timeout": 10000,
             "score": 10
+          },
+          "lhj538s0ckw0zsjjumi": {
+            "key": "lhj538s0ckw0zsjjumi",
+            "quiz_theme": "Testando questions",
+            "question": {
+              "key": "lhj1ivjka1djjgc6cj7",
+              "description": "1 + 1 = 2",
+              "fake_options": ["false"],
+              "true_option": "True"
+            },
+            "shooting_timeout": 5000,
+            "response_timeout": 5000,
+            "pass_timeout": 5000,
+            "score": 1
           }
-        ]
+        }
+      },
+      "lhjfqgyrzkpybk69nd": {
+        "key": "lhjfqgyrzkpybk69nd",
+        "name": "Engenharia de Software_1",
+        "config": {
+          "show_options": true,
+          "start_match_upon_completing_registration": true,
+          "min_amount_players": 1,
+          "max_amount_players": 50,
+          "wait_to_registry_at_match_time": 60000,
+          "wait_to_start_match_time": 10000,
+          "wait_to_next_round_start_time": 5000,
+          "wait_to_round_resume_time": 5000,
+          "wait_to_match_end_time": 10000,
+          "wait_to_match_abort_time": 60000,
+          "avatares": [
+            128120, 128121, 128122, 128125, 128126, 128118, 128113, 128102,
+            128103, 128063, 128048, 128045, 128511, 129302, 127875, 127877,
+            128010, 128012, 128018, 128027, 128030, 128034, 128035, 128045,
+            128047, 128128, 128373, 128574
+          ]
+        },
+        "rounds": {
+          "lhjfrlwh92wz4pu4lfg": {
+            "key": "lhjfrlwh92wz4pu4lfg",
+            "quiz_theme": "Histórico e Mitos da Engenharia de Software",
+            "question": {
+              "key": "lh9gq7j43dfwwlc2t9h",
+              "description": "O ano de 1968 é marcado pela crise de software e o nascimento da Engenharia de Software. Verdadeiro ou falso?",
+              "fake_options": ["Falso"],
+              "true_option": "Verdadeiro"
+            },
+            "shooting_timeout": 20000,
+            "response_timeout": 20000,
+            "pass_timeout": 5000,
+            "score": 5
+          },
+          "lhjmykfpw9k1cyx29z": {
+            "key": "lhjmykfpw9k1cyx29z",
+            "quiz_theme": "Histórico e Mitos da Engenharia de Software",
+            "question": {
+              "key": "lh9h8nvzv81ot60lfgl",
+              "description": "A crise de software foi marcada por alguns problemas listados abaixo e que são encontrados no desenvolvimento de software, exceto:\r\n",
+              "fake_options": [
+                "Software que não funcionam.",
+                "Manutenção de um volume crescente de software existente.",
+                "Atendimento a uma demanda cada vez maior."
+              ],
+              "true_option": "Os hardwares não funcionam bem."
+            },
+            "shooting_timeout": 20000,
+            "response_timeout": 20000,
+            "pass_timeout": 5000,
+            "score": 7
+          },
+          "lhjmzhbijdxqgtntn7l": {
+            "key": "lhjmzhbijdxqgtntn7l",
+            "quiz_theme": "Histórico e Mitos da Engenharia de Software",
+            "question": {
+              "key": "lh9hcbgvh0wmn2id7w",
+              "description": "O Ciclo de vida Cascata surgiu no ano de:",
+              "fake_options": ["1980", "1969", "1968"],
+              "true_option": "1970"
+            },
+            "shooting_timeout": 20000,
+            "response_timeout": 20000,
+            "pass_timeout": 5000,
+            "score": 5
+          },
+          "lhjn0c6icirej5yoe0k": {
+            "key": "lhjn0c6icirej5yoe0k",
+            "quiz_theme": "Histórico e Mitos da Engenharia de Software",
+            "question": {
+              "key": "lh9hegs214gyvtgk8zoe",
+              "description": "O Ciclo de Vida espiral surgiu no ano de:",
+              "fake_options": ["1975", "1985", "1990"],
+              "true_option": "1980"
+            },
+            "shooting_timeout": 20000,
+            "response_timeout": 20000,
+            "pass_timeout": 5000,
+            "score": 10
+          },
+          "lhjn1ybzu085sw1qgmt": {
+            "key": "lhjn1ybzu085sw1qgmt",
+            "quiz_theme": "Histórico e Mitos da Engenharia de Software",
+            "question": {
+              "key": "lh9ho69ks4vtqyvcgo",
+              "description": "Meu pessoal tem ferramentas de desenvolvimento de sw de última geração, afinal de contas compramos os mais novos computadores. Mito ou Realidade?\r\n",
+              "fake_options": ["Realidade"],
+              "true_option": "Mito"
+            },
+            "shooting_timeout": 20000,
+            "response_timeout": 20000,
+            "pass_timeout": 5000,
+            "score": 5
+          },
+          "lhjn2tuo422v1hwzutp": {
+            "key": "lhjn2tuo422v1hwzutp",
+            "quiz_theme": "Histórico e Mitos da Engenharia de Software",
+            "question": {
+              "key": "lh9i6tp0i75sj60dbui",
+              "description": "Alguns dados indicam que entre 50 e 70% de todo o esforço gasto num programa serão despendidos depois que ele for entregue  pela primeira vez ao cliente. Verdadeiro ou falso?",
+              "fake_options": ["Falso"],
+              "true_option": "Verdadeiro"
+            },
+            "shooting_timeout": 20000,
+            "response_timeout": 20000,
+            "pass_timeout": 5000,
+            "score": 10
+          },
+          "lhjn4cya7b5b8uj2no3": {
+            "key": "lhjn4cya7b5b8uj2no3",
+            "quiz_theme": "Modelos de Processo de Software",
+            "question": {
+              "key": "lh9lbhzwoig54gj9uae",
+              "description": "CVC se desenvolve sequencialmente e ordenadamente em fases conforme a opção correta abaixo: ",
+              "fake_options": [
+                "Comunicação -> Modelagem -> Planejamento -> Construção -> Implantação",
+                "Planejamento -> Comunicação -> Modelagem -> Construção -> Implantação",
+                "Comunicação -> Planejamento -> Modelagem -> Construção -> Implantação"
+              ],
+              "true_option": "Comunicação -> Planejamento -> Modelagem -> Construção -> Implantação"
+            },
+            "shooting_timeout": 20000,
+            "response_timeout": 20000,
+            "pass_timeout": 5000,
+            "score": 10
+          },
+          "lhjn65i63aotc2u65it": {
+            "key": "lhjn65i63aotc2u65it",
+            "quiz_theme": "Modelos de Processo de Software",
+            "question": {
+              "key": "lh9lto7m93cztzv0mm",
+              "description": "RAD é difícil de ser utilizado em domínios novos ou instáveis. Verdadeiro ou falso?",
+              "fake_options": ["Falso"],
+              "true_option": "Verdadeiro"
+            },
+            "shooting_timeout": 20000,
+            "response_timeout": 20000,
+            "pass_timeout": 5000,
+            "score": 5
+          },
+          "lhjn8dvg6wwau4uo37": {
+            "key": "lhjn8dvg6wwau4uo37",
+            "quiz_theme": "Modelos de Processo de Software",
+            "question": {
+              "key": "lh9ls0u8h0mtpqrtrfp",
+              "description": "No ciclo de vida RAD, Múltiplas equipes trabalham em paralelo na (_____) e (_____).\r\n",
+              "fake_options": [
+                "comunicação, planejamento",
+                "construção, implantação",
+                "planejamento, modelagem"
+              ],
+              "true_option": "modelagem, construção"
+            },
+            "shooting_timeout": 20000,
+            "response_timeout": 20000,
+            "pass_timeout": 5000,
+            "score": 5
+          },
+          "lhjn9njvuf96kas65k": {
+            "key": "lhjn9njvuf96kas65k",
+            "quiz_theme": "Modelos de Processo de Software",
+            "question": {
+              "key": "lh9kh3rk7jaddyeskoj",
+              "description": "Atividades (_______) são tranversais às demais etapas e envolvem: acompanhamento e controle do projeto de (_______); (_______) formais; garantia de (_______); gestão de configuração de software; preparação e produção de (_______); gestão de (_______); medição; gestão de (_______). Observando a ordem dos termos, complete as lacunas dando sentido correto ao texto. \r\n",
+              "fake_options": [
+                "guarda chuva, software, revisões técnicas, qualidade de software, riscos, reutilização, documentos",
+                "guarda chuva, documentos, revisões técnicas, qualidade de software, software, reutilização, riscos",
+                "guarda chuva, reutilização, revisões técnicas, qualidade de software, riscos, software, documentos"
+              ],
+              "true_option": "guarda chuva, software, revisões técnicas, qualidade de software, documentos, reutilização, riscos"
+            },
+            "shooting_timeout": 90000,
+            "response_timeout": 30000,
+            "pass_timeout": 5000,
+            "score": 10
+          }
+        }
       }
+    },
+    "eu@vitor.com": {
+      "name": "Vitor",
+      "email": "eu@vitor.com",
+      "password": "123321",
+      "quizzes": {},
+      "matches": {}
+    },
+    "renata.jf@bol.com.br": {
+      "name": "Renata",
+      "email": "renata.jf@bol.com.br",
+      "password": "123456",
+      "quizzes": {},
+      "matches": {}
     }
-  },
-  "eu@vitor.com": {
-    "name": "Vitor",
-    "email": "eu@vitor.com",
-    "password": "123321",
-    "quizzes": {},
-    "matches": {}
-  },
-  "renata.jf@bol.com.br": {
-    "name": "Renata",
-    "email": "renata.jf@bol.com.br",
-    "password": "123456",
-    "quizzes": {},
-    "matches": {}
   }
 }

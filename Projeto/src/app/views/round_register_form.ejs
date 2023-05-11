@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="/stylesheets/style.css">
+  <script>
+    function question(quiz_key) {
+
+      var quiz_radio = document.getElementById(quiz_key);
+      var quiz_div = document.getElementById(quiz_key + "_div");
+      const quiz_radios = document.querySelectorAll('input[name="quiz_key"]');
+
+
+      if (quiz_radio.checked) {
+        quiz_div.hidden = false;
+        for (const radioButton of quiz_radios) {
+          const value = radioButton.value;
+          if (value != quiz_key) {
+            quiz_div = document.getElementById(value + "_div");
+            quiz_div.hidden = true;
+          }
+        }
+      } else {
+        quiz_div.hidden = true;
+        for (const radioButton of quiz_radios) {
+          const value = radioButton.value;
+          if (value != quiz_key) {
+            quiz_div = document.getElementById(value + "_div");
+            quiz_div.hidden = false;
+          }
+        }
+      }
+
+      const question_radios = document.querySelectorAll('input[id="'+quiz_key+'_question"]');
+
+      for (const questionButton of question_radios) {
+
+        questionButton.checked = true;
+
+        break;
+        
+      }
+
+    }
+  </script>
+</head>
+
+<body style="font-family:Verdana;color:#05252c;">
+
+  <div style="background-color:#90b1df;padding:5px;text-align:center;">
+    <h2><%= title %></h2>
+    <p style="font-size:50%;"><%= wsa %>:<%= wsp %></p>
+    <% if (fail_msg != undefined) { %>
+    <p style="font-family:Verdana;color:#e10e1c;"> <%= fail_msg%> </p>
+    <%}%>
+  </div>
+
+  <div  style="overflow:auto;background-color:#90b1df;margin-top:7px;">
+
+    <div class="left" style="background-color:#90b1df">
+      
+      <h3 style="margin: 0px;padding: 0;"><a href="/" style="text-decoration: none;">&#x1F519</a>  Matches</h3>
+      <ul style="list-style-type: none; margin: 10px;padding: 0;">
+        <li> 
+          <Div  style="padding-bottom: 10px ;">
+            &#x1F4C4; <a href="/match_register_form" >New...</a>
+          </Div>            
+        </li>
+        <% if (user_matches != undefined) { %>
+    <% for (const key in user_matches) { %>
+    <li>
+      <Div>
+        &#x1F50E <a href=<%= "/match_view?match_key=" + key %> style="text-decoration: none;">
+          <%= user_matches[key].name %> </a>
+        <p style="font-size:50%;margin-top: 0.0em ; margin-bottom: 0.0em ;"> <%= user_matches[key].theme %> </p>
+      </Div>
+    </li>
+    <% } %>
+    <% } %>
+    </ul>
+  </div>
+
+  <div class="forms" style="background-color:#90b1df">
+    <h3>New Round</h3>
+    <form id="round_register" action=/round_register method="get">
+
+      <input id="match_key" name="match_key" type="hidden" value=<%= match_key %>>
+
+      <Div style="text-align: left;">
+
+        <label for="quantity1">Wait time to shooting (seconds)</label>
+        <input type="number" id="quantity1" name="quantity1" min="3" max="300"><br>
+        <label for="quantity2">Wait time to response (seconds)</label>
+        <input type="number" id="quantity2" name="quantity2" min="3" max="300"><br>
+        <label for="quantity3">Wait time to pass (seconds)</label>
+        <input type="number" id="quantity3" name="quantity3" min="3" max="300"><br>
+        <label for="quantity4">Score</label>
+        <input type="number" id="quantity4" name="quantity4" min="1" max="10"><br>
+
+
+      </Div>
+
+      <Div style="text-align: left;">
+
+        <h4>Quizzes</h4>
+        <ul style="list-style-type: none; margin: 10px;padding: 0;">
+          <% if (user_quizzes != undefined) { %>
+          <% 
+            var hidden_v = '';
+            var checked_v = 'checked';
+          %>
+          <%for (const key in user_quizzes) { %>
+          <li>
+            <input <%=checked_v%> onclick=<%="question('"+key+"');"%> type="radio" id=<%= key %> name="quiz_key"
+              value=<%= key %>>
+            <label for="quiz_key"><%=user_quizzes[key].name%></label><br>
+            <p style="font-size:50%;margin-left: 25px;margin-top:0px;padding: 0;"><%=user_quizzes[key].theme%></p>
+            <Div id=<%= key + '_div'%> style="text-align: left;" <%=hidden_v%>>
+              <!-- <h5>Questions</h5> -->
+              <ul style="list-style-type: none; margin: 10px;padding: 0;">
+                <% for (const question_key in user_quizzes[key].questions) { %>
+
+                <input <%=checked_v%> type="radio" id=<%= key + '_question' %> name="question_key" value=<%= question_key %>>
+                <label for="question_key"><%=user_quizzes[key].questions[question_key].description%></label><br>
+                <% checked_v = ''; %>
+                <% } %>
+              </ul>
+            </Div>
+          </li>
+
+          <% hidden_v = 'hidden';%>
+
+          <% } %>
+          <% } %>
+        </ul>
+
+      </Div>
+
+
+
+
+      <button id="register_btn" type="submit" style="width:50%; margin: 5px">Register</button>
+
+    </form>
+  </div>
+
+  <div class="left"></div>
+
+  </div>
+
+  <div id="status" style="background-color:#90b1df;text-align:center;padding:5px;margin-top:7px;">
+    <% if (user != undefined) { %>
+    <p style="margin: 0px;padding: 0;"> <%= user.name %> </p>
+    <p style="font-size:50%;margin: 0px;padding: 0;"> <%= user.email %> </p>
+    <a href="/user_logout"> logout </a>
+    <%} else { %>
+    <a style="margin: 0px;padding: 0;" href="/user_login_form"> login </a>
+    <% } %>
+  </div>
+
+</body>
+
+</html>

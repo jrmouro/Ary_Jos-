@@ -10,8 +10,8 @@
 <body style="font-family:Verdana;color:#05252c;" onload="chatroom()">
 
   <div style="background-color:#90b1df;padding:5px;text-align:center;">
-    <h2><%= title %></h2>
-    <p style="font-size:50%;"><%= wsa %>:<%= wsp %></p>
+    <h2 style="margin: 0px;padding: 0;"><%= title %></h2>
+    <p style="font-size:50%;margin: 0px;padding: 0;"><%= wsa %>:<%= wsp %></p>
     <% if (fail_msg != undefined) { %>
       <p style="font-family:Verdana;color:#e10e1c;"> <%= fail_msg%> </p>
     <%}%>
@@ -20,29 +20,37 @@
   <div  style="overflow:auto;background-color:#90b1df;margin-top:7px;">
 
     <div class="left" style="background-color:#90b1df">
-      <h3><a href="/quiz_view" style="text-decoration: none;">&#x1F519</a> Quizzes</h3>
+      <h3 style="margin: 0px;padding: 0;">
+        <a href=<%="/quiz_edit_form?quiz_key=" + quiz_key %>   style="text-decoration: none;">&#x1F519</a>  
+        <%= " Quiz: " + user_quizzes[quiz_key].name %></h3>
+      <p style="font-size:75%;margin: 0px; margin-bottom: 10px;"> 
+        <%= "Tema: " + user_quizzes[quiz_key].theme %>
+      </p>
+      <!-- <h4">Questions</h4> -->
       <ul>
-        <li> 
+        <!-- <li> 
           <Div>
-            <a href="/quiz_register_form" > Novo... </a>
+            <a href= <%= "/question_register_form?quiz_key=" + quiz_key %>> New... </a>
           </Div>            
-        </li>
-        <% if (user_quizzes != undefined) { %>
-          <% for (const key in user_quizzes) { %>
+        </li> -->
+        <% if (user_quizzes != undefined && quiz_key in user_quizzes) { %>
+          <% for (const question_key in user_quizzes[quiz_key].questions) { %>
             <li> 
               <Div>
-                <p style="margin-top: 0.0em ; margin-bottom: 0.0em ;"><%= user_quizzes[key].name %> <a href= <%= "/quiz_view?quiz_key=" + key %> style="text-decoration: none;"> &#9998 </a> </p>
-                <p style="font-size:50%;margin-top: 0.0em ; margin-bottom: 0.0em ;"> <%= user_quizzes[key].theme %> </p>
+                <p style="font-size:75%;margin-top: 0.0em ; margin-bottom: 0.0em ;"> 
+                  <%= user_quizzes[quiz_key].questions[question_key].description %>  
+                  <a href= <%= "/question_edit_form?quiz_key=" + quiz_key + "&question_key=" + question_key %> style="text-decoration: none;"> &#9998 </a>
+                </p>                
               </Div>                
             </li>
           <% } %>
         <% } %>
-      </ul>    
+      </ul> 
     </div>
 
     <div class="forms" style="background-color:#90b1df">
-      <h3>Nova Questão</h3>
-      <form id="quiz_register" action=<%= "/question_register?quiz_key=" + quiz_key %> method="get">
+      <h3 style="margin: 0px;padding: 0px;">Nova Questão</h3>
+      <form id="question_register" action=/question_register method="get">
         <input id="quiz_key" name="quiz_key" type="hidden" value= <%= quiz_key %> >
         <textarea id="description" name="description" placeholder="Descrição da questão" style="width:50%; margin: 2px" required autofocus></textarea><br>
         <textarea id="true_option" name="true_option" placeholder="Opção certa" style="width:50%; margin: 2px" required></textarea><br>
