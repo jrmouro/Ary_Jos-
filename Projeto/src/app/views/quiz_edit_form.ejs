@@ -63,7 +63,7 @@
               <Div>
                 <p style="font-size:75%;margin-top: 0.0em ; margin-bottom: 0.0em ;"> <%= user_quizzes[quiz_key].questions[question_key].description %>  
                   <a href= <%= "/question_edit_form?quiz_key=" + quiz_key + "&question_key=" + question_key %> style="text-decoration: none;"> &#9998 </a>
-                  <a onclick="confirmationBox()" href= <%= "/question_delete?quiz_key=" + quiz_key + "&question_key=" + question_key %> style="text-decoration: none;"> &#x274C; </a>
+                  <a onclick="return confirm('Tem certeza que deseja deletar essa questão?');" href= <%= "/question_delete?quiz_key=" + quiz_key + "&question_key=" + question_key %> style="text-decoration: none;"> &#x274C; </a>
                 </p>
                 <ul style="list-style-type: none;margin: 0;padding: 0;">
                   <li>
@@ -98,12 +98,3 @@
 </body>
 
 </html>
-<script>
-  function confirmationBox(){
-    if(window.confirm("Tem certeza que deseja deletar essa questão?")){
-      document.getElementById("quiz-delete").submit();
-    } else {
-      return;
-    }
-}
-</script>
