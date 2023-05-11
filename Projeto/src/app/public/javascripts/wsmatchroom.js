@@ -296,18 +296,18 @@ function wsmatchroom() {
 
                 if (question_description !== undefined) {
 
-                    question_description.innerHTML = "(" + round_score + " score) Question: " + ws_question_description;
+                    question_description.innerHTML = "(" + round_score + " score) Questão: " + ws_question_description;
 
                     if (ws_quiz_theme !== undefined) {
 
-                        quiz_theme.innerHTML = "Theme: " + ws_quiz_theme;
+                        quiz_theme.innerHTML = "Tema: " + ws_quiz_theme;
 
                     }
 
                 } else {
 
-                    question_description.innerHTML = "no question";
-                    quiz_theme.innerHTML = "no question";
+                    question_description.innerHTML = "Não há questão";
+                    quiz_theme.innerHTML = "Não há tema";
 
                 }
 
@@ -358,7 +358,7 @@ function wsmatchroom() {
 
                         var h5 = document.createElement("h3");
                         h5.setAttribute("style", "margin: 0px;padding: 0;");
-                        h5.innerHTML = scoreboard[player_key].score + " scores";
+                        h5.innerHTML = scoreboard[player_key].score + " pontos";
 
                         div.appendChild(h3);
                         div.appendChild(h1);
@@ -596,7 +596,7 @@ function wsmatchroom() {
                     if(time === 0){
                         cronnos_status.innerHTML = "&nbsp;";
                     }else{
-                        cronnos_status.innerHTML = "Time left: " + Math.floor(time / 1000);
+                        cronnos_status.innerHTML = "Tempo restante: " + Math.floor(time / 1000);
                     }
                     
                 });
@@ -612,7 +612,7 @@ function wsmatchroom() {
                     case 0: //Round_Response_State.timeout_shooting:
 
                         status_emoji.innerHTML = "&#10060;";
-                        status_text.innerHTML = "&#8987; timed out for shooting";
+                        status_text.innerHTML = "&#8987; Tempo de chute esgotado";
                         alert2.play();
 
                         break;
@@ -621,7 +621,7 @@ function wsmatchroom() {
 
 
                         status_emoji.innerHTML = "&#" + player_response_avatar(msg_obj) + ";";
-                        status_text.innerHTML = "&#8987; timed out for reply";
+                        status_text.innerHTML = "&#8987; Tempo de resposta esgotado";
                         alert2.play();
 
                         break;
@@ -629,7 +629,7 @@ function wsmatchroom() {
                     case 2: // Round_Response_State.timeout_pass:
 
                         status_emoji.innerHTML = "&#" + player_pass_avatar(msg_obj) + ";";
-                        status_text.innerHTML = "&#8987; timed out for pass";
+                        status_text.innerHTML = "&#8987; Tempo esgotado para passar";
                         alert2.play();
 
                         break;
@@ -637,14 +637,14 @@ function wsmatchroom() {
                     case 3: //Round_Response_State.timeout_pass_response:
 
                         status_emoji.innerHTML = "&#" + player_response_avatar(msg_obj) + ";";
-                        status_text.innerHTML = "&#8987; timed out for pass reply";
+                        status_text.innerHTML = "&#8987; Tempo esgotado de resposta";
                         alert2.play();
 
                         break;
                     case 4: //Round_Response_State.right_response:
 
                         status_emoji.innerHTML = "&#" + player_response_avatar(msg_obj) + ";";
-                        status_text.innerHTML = "&#128079; right answer";
+                        status_text.innerHTML = "&#128079; Resposta certa!";
                         right.play();
 
                         break;
@@ -652,14 +652,14 @@ function wsmatchroom() {
                     case 5: //Round_Response_State.wrong_response:
 
                         status_emoji.innerHTML = "&#" + player_response_avatar(msg_obj) + ";";
-                        status_text.innerHTML = "&#128078; wrong answer";
+                        status_text.innerHTML = "&#128078; Resposta errada";
                         wrong.play();
 
                         break;
                     case 6: //Round_Response_State.right_pass_response:
 
                         status_emoji.innerHTML = "&#" + player_response_avatar(msg_obj) + ";";
-                        status_text.innerHTML = "&#128079; right answer (pass reply)";
+                        status_text.innerHTML = "&#128079; Resposta certa!";
                         right.play();
 
                         break;
@@ -667,7 +667,7 @@ function wsmatchroom() {
                     case 7: //Round_Response_State.wrong_pass_response:
 
                         status_emoji.innerHTML = "&#" + player_response_avatar(msg_obj) + ";";
-                        status_text.innerHTML = "&#128078; wrong answer";
+                        status_text.innerHTML = "&#128078; Resposta errada";
                         wrong.play();
 
                         break;
@@ -690,7 +690,7 @@ function wsmatchroom() {
                     case 2: //player_registed_match
                     case 3: //player_unregisted_match
                         status_emoji.innerHTML = "&#x1F64B;";
-                        status_text.innerHTML = "Open game for registration";
+                        status_text.innerHTML = "Aberto para registrar";
                         question_room_div.hidden = true;
                         register_room_div.hidden = false;
                         pas_room_div.hidden = true;
@@ -701,7 +701,7 @@ function wsmatchroom() {
 
                     case 4: //wait_to_start_match
                         status_emoji.innerHTML = "&#x23F3;";
-                        status_text.innerHTML = "Waiting for the start of the game";
+                        status_text.innerHTML = "Esperando pelo início da match";
                         question_room_div.hidden = true;
                         register_room_div.hidden = true;
                         pas_room_div.hidden = true;
@@ -711,7 +711,7 @@ function wsmatchroom() {
 
                     case 5: //start_match
                         status_emoji.innerHTML = "&#x1F4E2;";
-                        status_text.innerHTML = "start_match";
+                        status_text.innerHTML = "Início da match";
                         question_room_div.hidden = true;
                         register_room_div.hidden = true;
                         pas_room_div.hidden = true;
@@ -721,7 +721,7 @@ function wsmatchroom() {
 
                     case 6: //wait_to_start_next_round: 
                         status_emoji.innerHTML = "&#x1F4E2;";
-                        status_text.innerHTML = "wait_to_start_next_round";
+                        status_text.innerHTML = "Esperando próximo round";
                         question_room_div.hidden = true;
                         register_room_div.hidden = true;
                         pas_room_div.hidden = true;
@@ -732,7 +732,7 @@ function wsmatchroom() {
                     case 7: //started_next_round: 
                         if(Object.entries(msg_obj.msg_content.scoreboard).length > 1)alert1.play();
                         status_emoji.innerHTML = "&#x1F4E2;";
-                        status_text.innerHTML = "Round started";
+                        status_text.innerHTML = "Início do round";
                         question_room_div.hidden = false;
                         register_room_div.hidden = true;
                         pas_room_div.hidden = true;
@@ -742,7 +742,7 @@ function wsmatchroom() {
 
                     case 8: //wait_to_shooting_round: 
                         status_emoji.innerHTML = "&#x1F579;";
-                        status_text.innerHTML = "Choose answer or pass";
+                        status_text.innerHTML = "Escolha a resposta ou passe";
                         pass_button.disabled = false;
                         response_button.disabled = false;
                         question_room_div.hidden = false;
@@ -754,7 +754,7 @@ function wsmatchroom() {
 
                     case 9: //wait_to_pass_round: 
                         status_emoji.innerHTML = "&#" + player_pass_avatar(msg_obj) + ";";
-                        status_text.innerHTML = "Passing the question to";
+                        status_text.innerHTML = "Passando a pergunta para";
                         question_room_div.hidden = false;
                         pass_response_room_div.hidden = true;
                         register_room_div.hidden = true;
@@ -765,7 +765,7 @@ function wsmatchroom() {
 
                     case 10: //wait_to_response_round: 
                         status_emoji.innerHTML = "&#" + player_response_avatar(msg_obj) + ";";
-                        status_text.innerHTML = "Answering the question";
+                        status_text.innerHTML = "Respondendo a questão";
                         question_room_div.hidden = false;
                         pass_response_room_div.hidden = true;
                         register_room_div.hidden = true;
@@ -777,7 +777,7 @@ function wsmatchroom() {
 
                     case 11: //player_point_pass_round: 
                         status_emoji.innerHTML = "&#x1F4A3;";
-                        status_text.innerHTML = "Passing the question";
+                        status_text.innerHTML = "Passando a questão";
                         question_room_div.hidden = false;
                         pass_response_room_div.hidden = true;
                         register_room_div.hidden = true;
@@ -787,7 +787,7 @@ function wsmatchroom() {
 
                     case 12: //reponse_round: 
                         status_emoji.innerHTML = "&#x1F4A3;";
-                        status_text.innerHTML = "Passing the question";
+                        status_text.innerHTML = "Passando a questão";
                         question_room_div.hidden = false;
                         pass_response_room_div.hidden = true;
                         register_room_div.hidden = true;
@@ -816,7 +816,7 @@ function wsmatchroom() {
 
                     case 15: //wait_to_end_match: 
                         status_emoji.innerHTML = "&#x1F6A7;";
-                        status_text.innerHTML = "wait_to_end_match";
+                        status_text.innerHTML = "Esperando para terminar match";
                         question_room_div.hidden = true;
                         pass_response_room_div.hidden = true;
                         register_room_div.hidden = true;
@@ -830,7 +830,7 @@ function wsmatchroom() {
 
                     case 16: //ended_match: 
                         status_emoji.innerHTML = "&#x1F6A7;";
-                        status_text.innerHTML = "ended_match";
+                        status_text.innerHTML = "Match concluída";
                         question_room_div.hidden = true;
                         pass_response_room_div.hidden = true;
                         register_room_div.hidden = true;
@@ -841,7 +841,7 @@ function wsmatchroom() {
 
                     case 17: //wait_to_abort_match: 
                         status_emoji.innerHTML = "&#x1F4A3;";
-                        status_text.innerHTML = "Waiting to destroy the match";
+                        status_text.innerHTML = "Esperando para apagar a match";
                         question_room_div.hidden = true;
                         pass_response_room_div.hidden = true;
                         register_room_div.hidden = true;
@@ -852,7 +852,7 @@ function wsmatchroom() {
 
                     case 18: //aborted_match: 
                         status_emoji.innerHTML = "&#x1F4A3;";
-                        status_text.innerHTML = "aborted_match";
+                        status_text.innerHTML = "Match abortada";
                         question_room_div.hidden = true;
                         pass_response_room_div.hidden = true;
                         register_room_div.hidden = true;

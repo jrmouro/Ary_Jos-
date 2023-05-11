@@ -25,7 +25,7 @@
       <ul style="list-style-type: none; margin: 10px;padding: 0;">
         <li> 
           <Div  style="padding-bottom: 10px ;"> 
-            &#x1F4C4 <a href="/quiz_register_form" >New...</a>
+            &#x1F4C4 <a href="/quiz_register_form" >Novo...</a>
           </Div>            
         </li>
         <% if (user_quizzes != undefined) { %>
@@ -43,7 +43,7 @@
     </div>
 
     <div class="main">
-      <p>In this site, you can manage your quizzes.</p>
+      <p>Nessa página, você pode gerenciar seus quizzes.</p>
     </div>
     
   </div>
@@ -52,9 +52,9 @@
     <% if (user != undefined) { %>
     <p style="margin: 0px;padding: 0;"> <%= user.name %> </p>
     <p style="font-size:50%;margin: 0px;padding: 0;"> <%= user.email %> </p>
-    <a href="/user_logout"> logout </a>
+    <a href="/user_logout"> Sair </a>
     <%} else { %>
-    <a style="margin: 0px;padding: 0;" href="/user_login_form"> login </a>
+    <a style="margin: 0px;padding: 0;" href="/user_login_form"> Faça login </a>
     <% } %>
   </div>
 

@@ -23,7 +23,7 @@
       <ul>
         <li> 
           <Div>
-            <a href="/quiz_register_form" > New... </a>
+            <a href="/quiz_register_form" > Novo... </a>
           </Div>            
         </li>
         <% if (user_quizzes != undefined) { %>
@@ -40,21 +40,21 @@
     </div>
 
     <div class="forms" style="background-color:#90b1df">
-      <h3>Edit '<%= user_quizzes[quiz_key].name %>' </h3>
+      <h3>Editar '<%= user_quizzes[quiz_key].name %>' </h3>
       <form id="quiz_register" action=<%= "/quiz_view?quiz_key=" + quiz_key %> method="get">
         <input id="quiz_key" name="quiz_key" type="hidden" value= <%= quiz_key %> >
         <input id="name" name="name"  style="width:50%; margin: 2px" required autofocus type="text" value= '<%= user_quizzes[quiz_key].name %>' ></input><br>
         <textarea id="theme" name="theme" style="width:50%; margin: 2px" required ><%= user_quizzes[quiz_key].theme %></textarea><br>
-        <button id="register_btn" type="submit" style="width:50%; margin: 5px">Register</button>
+        <button id="register_btn" type="submit" style="width:50%; margin: 5px">Registrar</button>
       </form>
     </div>
 
     <div class="left"  style="background-color:#90b1df">
-      <h3>Questions</h3>
+      <h3>Questões</h3>
       <ul>
         <li> 
           <Div>
-            <a href= <%= "/question_register_form?quiz_key=" + quiz_key %>> New... </a>
+            <a href= <%= "/question_register_form?quiz_key=" + quiz_key %>> Novo... </a>
           </Div>            
         </li>
         <% if (user_quizzes != undefined && quiz_key in user_quizzes) { %>
@@ -67,11 +67,11 @@
                 </p>
                 <ul style="list-style-type: none;margin: 0;padding: 0;">
                   <li>
-                    <p style="font-size:50%;margin-top: 0.0em ; margin-bottom: 0.0em ;">True Option:  <%= user_quizzes[quiz_key].questions[question_key].true_option %> </p>
+                    <p style="font-size:50%;margin-top: 0.0em ; margin-bottom: 0.0em ;">Opção Certa:  <%= user_quizzes[quiz_key].questions[question_key].true_option %> </p>
                   </li>
                   <% for(var i=0; i < user_quizzes[quiz_key].questions[question_key].fake_options.length; i++) {%>
                     <li>
-                      <p style="font-size:50%;margin-top: 0.0em ; margin-bottom: 0.0em; color:#e10e1c;"> Fake Option<%= i + 1 %> :  <%= user_quizzes[quiz_key].questions[question_key].fake_options[i] %> </p>
+                      <p style="font-size:50%;margin-top: 0.0em ; margin-bottom: 0.0em; color:#e10e1c;"> Opção Errada <%= i + 1 %> :  <%= user_quizzes[quiz_key].questions[question_key].fake_options[i] %> </p>
                     </li>                    
                   <% } %>
                 </ul>                

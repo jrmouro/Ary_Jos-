@@ -20,7 +20,7 @@
   <div  style="overflow:auto;background-color:#90b1df;margin-top:7px;">
 
     <div class="left" style="background-color:#90b1df">
-      <h3 style="margin: 0px;padding: 0;">User Data</h3>
+      <h3 style="margin: 0px;padding: 0;">Explorar</h3>
       <ul style="list-style-type: none; margin: 10px;padding: 0;">
         <li> 
           <Div  style="padding-bottom: 10px ;">
@@ -43,8 +43,8 @@
 
 
     <div class="main">
-      <h3>Welcome!!</h3>
-      <p>On this site, you can create quizzes, games and educational challenges, as well as participate in games and challenges proposed by other users. Good studies!</p>
+      <h3>Bem-vindo!!</h3>
+      <p>Nesse sistema, você pode criar quizzes, partidas (matches) e desafios (challenges) educacionais, além de participar dessas partidas e desafios propostos por outros usuários. Bons estudos!</p>
     </div>
 
     <div class="left" style="background-color:#90b1df">
@@ -59,7 +59,7 @@
         <h1 id="user_key" hidden></h1>
       <% } %>
 
-      <h3 style="margin: 0px;padding: 0;">Launched Matches</h3>
+      <h3 style="margin: 0px;padding: 0;">Matches lançados</h3>
       <ul id="launched_matches_list" style="list-style-type: none; margin: 10px;padding: 0;"></ul>       
     </div>
     
@@ -69,11 +69,11 @@
     <% if (user != undefined) { %>
     <p style="margin: 0px;padding: 0;"> <%= user.name %> </p>
     <p style="font-size:50%;margin: 0px;padding: 0;"> <%= user.email %> </p>
-    <a href="/user_logout"> logout </a>
+    <a href="/user_logout"> Sair </a>
     <%} else { %> 
       <p style="margin: 0px;padding: 0;">
-        <a style="margin: 0px;padding: 0;" href="/user_login_form"> login </a> or
-        <a style="margin: 0px;padding: 0;" href="/user_register_form"> register </a>
+        <a style="margin: 0px;padding: 0;" href="/user_login_form"> Faça login </a> ou
+        <a style="margin: 0px;padding: 0;" href="/user_register_form"> Registre-se </a>
       </p>
     <% } %>
   </div>

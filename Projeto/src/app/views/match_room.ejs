@@ -38,7 +38,7 @@
   <div  style="overflow:auto;background-color:#dde1be;margin-top:7px;">
 
     <div class="left" style="background-color:#dde1be">
-      <h3 style="margin: 0px;padding: 0;">Scoreboard</h3>    
+      <h3 style="margin: 0px;padding: 0;">Placar</h3>    
       <ul id="scoreboard_list" style="list-style-type: none; margin: 10px;padding: 0;"></ul>
     </div>
 
@@ -48,11 +48,11 @@
       <h1  style="margin: 0px;padding: 0;"><%= match.name %></h1>
       <h6 id="cronnos_status" style='margin: 0px;padding: 0;'>&nbsp;</h6>
     <div id="podium_div" hidden style="padding: 10px;">
-      <h3>Podium</h3>
+      <h3>Pódio</h3>
       <div id="places_div" class="flex-container2" style="padding: 10px;"></div>
     </div>
     <div id="register_room_div" hidden>
-      <h3>Register to play by choosing an avatar</h3>
+      <h3>Escolha um avatar para entrar na match</h3>
       <h3 id="avatares_emojis"></h3>
     </div>
     <div id="question_room_div" hidden>
@@ -63,12 +63,12 @@
         <ul id="question_options_list" style="margin: 10px;padding: 0;"></ul>
       </div>
       <div id="pass_response_room_div" style='text-align: center;' hidden>
-        <button id="pass_button" class="button button1" disabled>Pass</button>
-        <button id="response_button" class="button button2" disabled>Response</button>
+        <button id="pass_button" class="button button1" disabled>Passar</button>
+        <button id="response_button" class="button button2" disabled>Responder</button>
       </div>
     </div>
     <div id="pass_room_div" hidden>
-      <h3>Pass to another player by choosing an avatar</h3>
+      <h3>Passe para outro jogador escolhendo o avatar</h3>
       <h3 id="avatares_pass"></h3>
       <!-- <ul id="pass_list" style="list-style-type: none; margin: 10px;padding: 0;"></ul> -->
     </div>
@@ -109,11 +109,11 @@
     <% if (user != undefined) { %>
     <p style="margin: 0px;padding: 0;"> <%= user.name %> </p>
     <p style="font-size:50%;margin: 0px;padding: 0;"> <%= user.email %> </p>
-    <a href="/user_logout"> logout </a>
+    <a href="/user_logout"> Sair </a>
     <%} else { %>
     <p style="margin: 0px;padding: 0;">
-      <a style="margin: 0px;padding: 0;" href="/user_login_form"> login </a> or
-      <a style="margin: 0px;padding: 0;" href="/user_register_form"> register </a>
+      <a style="margin: 0px;padding: 0;" href="/user_login_form"> Faça login </a> or
+      <a style="margin: 0px;padding: 0;" href="/user_register_form"> Registre-se </a>
     </p>
     <% } %>
   </div>

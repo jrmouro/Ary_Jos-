@@ -22,15 +22,15 @@
     <div class="left"></div>
 
     <div class="forms" style="background-color:#90b1df">
-      <h3>User Login Form</h3>
+      <h3>Login do usuário</h3>
       
       <form id="connection-form" action="/user_login" method="get">
         <!--<input type="hidden" id="webserver-ip-input" name="webserver-ip-input" value=<%= wsa %>>-->
       <!--<input type="hidden" id="webserver-port-input" name="webserver-port-input" value=<%= wsp %>>-->
 
-      <input id="email" name="email"  placeholder="email" style="width:50%; margin: 2px" autofocus required type="email"></input><br>
-      <input id="password" name="password" placeholder="password" style="width:50%; margin: 2px" required type="password" minlength="5"></input><br>
-      <button id="connection-btn" type="submit" style="width:50%; margin: 5px">Login</button>
+      <input id="email" name="email"  placeholder="E-mail" style="width:50%; margin: 2px" autofocus required type="email"></input><br>
+      <input id="password" name="password" placeholder="Senha" style="width:50%; margin: 2px" required type="password" minlength="5"></input><br>
+      <button id="connection-btn" type="submit" style="width:50%; margin: 5px">Entrar</button>
       </form>
     </div>
 
@@ -43,9 +43,9 @@
     <% if (user != undefined) { %>
       <p> <%= user.name %> </p>
       <p> <%= user.email %> </p>
-      <a href="/user_logout"> logout </a>
+      <a href="/user_logout"> Sair </a>
     <%} else { %>
-      <a href="/user_register_form"> register </a>
+      <a href="/user_register_form"> Registre-se </a>
     <% } %>
   </div>
 

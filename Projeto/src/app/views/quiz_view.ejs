@@ -24,7 +24,7 @@
       <ul style="list-style-type: none; margin: 10px;padding: 0;">
         <li> 
           <Div  style="padding-bottom: 10px ;">
-            &#x1F4C4 <a href="/quiz_register_form" >New...</a>
+            &#x1F4C4 <a href="/quiz_register_form" >Novo...</a>
           </Div>            
         </li>
         <% if (user_quizzes != undefined) { %>
@@ -43,11 +43,11 @@
     <div class="main">
       <h3 style="padding: 0;"><%= user_quizzes[quiz_key].name %></h3>
       <h4 style="margin: 0px;margin-left: 10px;padding: 0;"><%= user_quizzes[quiz_key].theme %></h4>
-      <h4 style="margin: 0px;margin-left: 10px;padding: 0;">Questions</h4>
+      <h4 style="margin: 0px;margin-left: 10px;padding: 0;">Questões</h4>
       <ul style="margin: 0px;margin-left: 30px;padding: 0;">
         <li> 
           <Div>
-            <a href= <%= "/question_register_form?quiz_key=" + quiz_key %>> New... </a>
+            <a href= <%= "/question_register_form?quiz_key=" + quiz_key %>> Novo... </a>
           </Div>            
         </li>
         <% if (user_quizzes != undefined && quiz_key in user_quizzes) { %>
@@ -61,11 +61,11 @@
                   </p>
                   <ul style="list-style-type: none;margin: 0;padding: 0;">
                     <li>
-                      <p style="margin-top: 0.0em ; margin-bottom: 0.0em ;">True Option:  <%= user_quizzes[quiz_key].questions[question_key].true_option %> </p>
+                      <p style="margin-top: 0.0em ; margin-bottom: 0.0em ;">Opção Certa:  <%= user_quizzes[quiz_key].questions[question_key].true_option %> </p>
                     </li>
                     <% for(var i=0; i < user_quizzes[quiz_key].questions[question_key].fake_options.length; i++) {%>
                       <li>
-                        <p style="margin-top: 0.0em ; margin-bottom: 0.0em; color:#e10e1c;"> Fake Option<%= i + 1 %> :  <%= user_quizzes[quiz_key].questions[question_key].fake_options[i] %> </p>
+                        <p style="margin-top: 0.0em ; margin-bottom: 0.0em; color:#e10e1c;"> Opção Errada <%= i + 1 %>:  <%= user_quizzes[quiz_key].questions[question_key].fake_options[i] %> </p>
                       </li>                    
                     <% } %>
                   </ul>                
@@ -83,9 +83,9 @@
     <% if (user != undefined) { %>
       <p style="margin: 0px;padding: 0;"> <%= user.name %> </p>
       <p style="font-size:50%;margin: 0px;padding: 0;"> <%= user.email %> </p>
-      <a href="/user_logout"> logout </a>
+      <a href="/user_logout"> Sair </a>
       <%} else { %>
-      <a style="margin: 0px;padding: 0;" href="/user_login_form"> login </a>
+      <a style="margin: 0px;padding: 0;" href="/user_login_form"> Faça login </a>
       <% } %>
   </div>
 

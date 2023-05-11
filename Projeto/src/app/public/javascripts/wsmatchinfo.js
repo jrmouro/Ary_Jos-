@@ -52,25 +52,26 @@ function wsmatchinfo() {
                 var owner_user_key = launched_matches[wsmatchkey].owner_user_key;
 
                 var status_simbol = '&#x270D;';
-                var tooltip_text = 'register';
+                var tooltip_text = 'Entrar';
+                var match_name = " " + matchname;
 
                 switch (matchstatus) {
                     case "1":
                         status_simbol = '&#x23F3;';
-                        tooltip_text = 'waiting start';
+                        tooltip_text = 'Esperando início';
                         break;
                     case "2":
                         status_simbol = '&#x1F4E2;';
-                        tooltip_text = 'starded';
+                        tooltip_text = 'Jogando';
                         break;
                     case "3":
                         status_simbol = '&#x1F4A3;';
-                        tooltip_text = 'finished';
+                        tooltip_text = 'Finalizado';
                         break;
                 }
 
                 const x = document.createElement("A");
-                x.setAttribute("href", "/match_room?ws_match_key=" + wsmatchkey + "&ws_match_owner_user_key="+owner_user_key);
+
                 x.setAttribute("class", "tooltip");
                 x.style.textDecorationLine = "none";
                 x.innerHTML = status_simbol;
@@ -81,9 +82,13 @@ function wsmatchinfo() {
                 x.appendChild(s);
 
                 var y = document.createElement("LI");
-                var v = document.createTextNode(" " + matchname);
+                const n = document.createElement("A");
+                n.setAttribute("href", "/match_room?ws_match_key=" + wsmatchkey + "&ws_match_owner_user_key="+owner_user_key);
+                n.style.textDecorationLine = "none";
+                n.innerHTML = match_name;
+
                 y.appendChild(x);
-                y.appendChild(v);
+                y.appendChild(n);
 
                 if (owner_user_key == user_key) {
 
