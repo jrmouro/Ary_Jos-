@@ -30,6 +30,7 @@ router.get("/question_register_form", questionController.register_form);
 router.get("/question_edit_form", questionController.edit_form);
 router.get("/question_register", questionController.register);
 router.get("/question_edit", questionController.edit);
+router.get("/question_delete", questionController.delete);
 
 //Matches
 router.get("/match_home", matchController.home);
