@@ -13,15 +13,9 @@ class QuizController {
 
         const user: User = req.app.get("users_session_login").get(req.session.id);
 
-        // console.log("QUIZ HOME");
-        // console.log(user);
-
         if (user !== undefined) {
 
             const user_quizzes: { [key: string]: Quiz } = req.app.get("app_user_data_map")[user.email].quizzes;
-
-            // console.log("USER_QUIZZES");
-            // console.log(user_quizzes);
 
             res.render('quiz_home', {
                 title: app_name,
@@ -47,9 +41,6 @@ class QuizController {
         const app_name = req.app.get("app_name");
 
         const user: User = req.app.get("users_session_login").get(req.session.id);
-
-        // console.log("QUIZ HOME");
-        // console.log(user);
 
         if (user !== undefined) {
 
@@ -95,9 +86,6 @@ class QuizController {
 
             const user_quizzes: { [key: string]: Quiz } = req.app.get("app_user_data_map")[user.email].quizzes;
 
-            // console.log("USER_QUIZZES");
-            // console.log(user_quizzes);
-
             res.render('quiz_register_form', {
                 title: app_name,
                 wsa: wsaddress,
@@ -135,9 +123,6 @@ class QuizController {
 
                     const edit_quiz: Quiz = user_quizzes[quiz_key];
 
-                    // console.log("USER_QUIZZES");
-                    // console.log(user_quizzes);
-
                     res.render('quiz_edit_form', {
                         title: app_name,
                         wsa: wsaddress,
@@ -170,7 +155,7 @@ class QuizController {
 
 
     public register(req: Request, res: Response) {
-        // const port = req.query.wssport | 3000;
+
         const wsaddress = req.app.get("app_web_server_address");
         const wsport = req.app.get("app_web_server_port");
         const app_name = req.app.get("app_name");
@@ -187,9 +172,6 @@ class QuizController {
             const user_quizzes: { [key: string]: Quiz } = req.app.get("app_user_data_map")[user.email].quizzes;
             user_quizzes[quiz.key] = quiz;
 
-            // console.log("QUIZZES");
-            // console.log(user_quizzes);
-
             Data.writeFileSync<User>(req.app.get("app_user_data_path"), req.app.get("app_user_data_map"));
 
             res.redirect('/quiz_edit_form?quiz_key='+ quiz.key);
@@ -203,7 +185,7 @@ class QuizController {
     }
 
     public edit(req: Request, res: Response) {
-        // const port = req.query.wssport | 3000;
+        
         const wsaddress = req.app.get("app_web_server_address");
         const wsport = req.app.get("app_web_server_port");
         const app_name = req.app.get("app_name");
@@ -222,9 +204,6 @@ class QuizController {
                 req.app.get("app_user_data_map")[user.email].quizzes[quiz_key].theme = theme;
 
             }
-
-            // console.log("EDIT QUIZ");
-            // console.log(req.app.get("app_user_data_map")[user.email].quizzes[quiz_key]);
 
             Data.writeFileSync<User>(req.app.get("app_user_data_path"), req.app.get("app_user_data_map"));
 

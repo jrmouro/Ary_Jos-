@@ -22,7 +22,7 @@ export interface Match {
     key: string;
     name: string;
     config: MatchConfig;
-    rounds: Round[];    
+    rounds: { [key: string]: Round };  
 
 }
 

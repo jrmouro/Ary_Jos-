@@ -19,38 +19,40 @@
   <div style="overflow:auto;background-color:#90b1df;margin-top:7px;">
 
     <div class="left" style="background-color:#90b1df">
-      <h3>Quizzes</h3>
-      <ul>
+      <h3 style="margin: 0px;padding: 0px;">
+        <a href=<%="/quiz_view?quiz_key=" + quiz_key %>   style="text-decoration: none;">&#x1F519</a>  Quizzes
+      </h3>
+      <ul style="list-style-type: none; margin: 10px;padding: 0;">
         <li> 
-          <Div>
-            <a href="/quiz_register_form" > New... </a>
+          <Div  style="padding-bottom: 10px ;">
+            &#x1F4C4 <a href="/quiz_register_form" >New...</a>
           </Div>            
         </li>
         <% if (user_quizzes != undefined) { %>
           <% for (const key in user_quizzes) { %>
-            <li> 
-              <Div>
-                <p style="margin-top: 0.0em ; margin-bottom: 0.0em ;"><%= user_quizzes[key].name %> <a href= <%= "/quiz_edit_form?quiz_key=" + key %> style="text-decoration: none;"> &#9998 </a> </p>
-                <p style="font-size:50%;margin-top: 0.0em ; margin-bottom: 0.0em ;"> <%= user_quizzes[key].theme %> </p>
-              </Div>                
-            </li>
+              <li> 
+                <Div>
+                  &#x1F50E <a href= <%= "/quiz_view?quiz_key=" + key %> style="text-decoration: none;"> <%= user_quizzes[key].name %> <a href= <%= "/quiz_edit_form?quiz_key=" + key %> style="text-decoration: none;"> &#9998 </a> </a>
+                  <p style="font-size:50%;margin-top: 0px ; margin-bottom: 5px; margin-left: 25px;"> <%= user_quizzes[key].theme %> </p>
+                </Div>                
+              </li>
           <% } %>
         <% } %>
-      </ul>    
+      </ul>   
     </div>
 
     <div class="forms" style="background-color:#90b1df">
-      <h3>Edit '<%= user_quizzes[quiz_key].name %>' </h3>
+      <h3 style="margin: 0px;padding: 0px;">Edit '<%= user_quizzes[quiz_key].name %>' </h3>
       <form id="quiz_register" action=<%= "/quiz_view?quiz_key=" + quiz_key %> method="get">
         <input id="quiz_key" name="quiz_key" type="hidden" value= <%= quiz_key %> >
-        <input id="name" name="name"  style="width:50%; margin: 2px" required autofocus type="text" value= '<%= user_quizzes[quiz_key].name %>' ></input><br>
+        <input id="name" name="name"  style="width:50%; margin: 5px" required autofocus type="text" value= '<%= user_quizzes[quiz_key].name %>' ></input><br>
         <textarea id="theme" name="theme" style="width:50%; margin: 2px" required ><%= user_quizzes[quiz_key].theme %></textarea><br>
         <button id="register_btn" type="submit" style="width:50%; margin: 5px">Register</button>
       </form>
     </div>
 
     <div class="left"  style="background-color:#90b1df">
-      <h3>Questions</h3>
+      <h3 style="margin: 0px;padding: 0px;">Questions</h3>
       <ul>
         <li> 
           <Div>
@@ -76,8 +78,7 @@
             </li>
           <% } %>
         <% } %>
-      </ul>   
-
+      </ul>
     </div>
     
   </div>

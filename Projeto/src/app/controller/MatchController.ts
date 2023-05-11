@@ -76,10 +76,8 @@ class MatchController {
                 key: UID.get(),
                 name: name,
                 config: config,
-                rounds: []
+                rounds: {}
             }
-
-            // console.log(JSON.stringify(match));
 
             const user_matches: { [key: string]: Match } = req.app.get("app_user_data_map")[user.email].matches;
             user_matches[match.key] = match;
@@ -97,11 +95,7 @@ class MatchController {
     }
 
     public edit(req: Request, res: Response) {
-        // const port = req.query.wssport | 3000;
-        const wsaddress = req.app.get("app_web_server_address");
-        const wsport = req.app.get("app_web_server_port");
-        const app_name = req.app.get("app_name");
-
+        
         const user: User = req.app.get("users_session_login").get(req.session.id);
 
         if (user !== undefined) {
@@ -125,16 +119,17 @@ class MatchController {
                 req.app.get("app_user_data_map")[user.email].matches[match_key].config.wait_to_match_end_time =  1000 * parseInt(req.query.quantity8 as string);
                 req.app.get("app_user_data_map")[user.email].matches[match_key].config.wait_to_match_abort_time =  1000 * parseInt(req.query.quantity9 as string);
 
+                Data.writeFileSync<User>(req.app.get("app_user_data_path"), req.app.get("app_user_data_map"));
 
+                res.redirect('/match_edit_form?match_key='+ match_key);
+
+            } else {
+
+                res.redirect('/user_login_form?fail_msg=invalid match_key');
 
             }
 
-            // console.log("EDIT QUIZ");
-            // console.log(req.app.get("app_user_data_map")[user.email].quizzes[quiz_key]);
-
-            Data.writeFileSync<User>(req.app.get("app_user_data_path"), req.app.get("app_user_data_map"));
-
-            res.redirect('/match_edit_form?match_key='+ match_key);
+            
 
         } else {
 
@@ -163,9 +158,6 @@ class MatchController {
                 if (match_key in user_matches) {
 
                     const edit_quiz: Match = user_matches[match_key];
-
-                    // console.log("USER_QUIZZES");
-                    // console.log(user_quizzes);
 
                     res.render('match_edit_form', {
                         title: app_name,

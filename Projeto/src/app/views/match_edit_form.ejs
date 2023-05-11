@@ -19,7 +19,7 @@
   <div style="overflow:auto;background-color:#90b1df;margin-top:7px;">
 
     <div class="left" style="background-color:#90b1df">
-      <h3>Matches</h3>
+      <h3 style="margin: 0px;padding: 0px;">Matches</h3>
       <ul>
         <li> 
           <Div>
@@ -39,10 +39,14 @@
     </div>
 
     <div class="forms" style="background-color:#90b1df">
-      <h3>Edit '<%= user_matches[match_key].name %>' </h3>
-      <form id="match_edit" action=<%= "/match_edit?match_key=" + match_key %> method="get">
+      <h3 style="margin: 0px;padding: 0px;">Edit '<%= user_matches[match_key].name %>' </h3>
+      <form id="match_edit" action="/match_edit" method="get">
 
         <Div style="text-align: left;">
+
+          <input id="match_key" name="match_key" type="hidden" value= <%= match_key %> >
+
+
           <label for="name"> Match name</label>
           <input id="name" name="name" placeholder="match name" style="margin: 2px" autofocus required type="text" value= '<%= user_matches[match_key].name %>' ></input><br>
           
@@ -65,26 +69,26 @@
           <label for="quantity2">Maximum number of players</label>
           <input type="number" id="quantity2" name="quantity2" min="1" max="50" value='<%= user_matches[match_key].config.max_amount_players %>'><br>
           <label for="quantity3">Waiting time for registration at match (seconds)</label>
-          <input type="number" id="quantity3" name="quantity3" min="30" max="300" value='<%= user_matches[match_key].config.wait_to_registry_at_match_time/1000 %>'><br>
+          <input type="number" id="quantity3" name="quantity3" min="5" max="300" value='<%= user_matches[match_key].config.wait_to_registry_at_match_time/1000 %>'><br>
           <label for="quantity4">Waiting time for the start of the match (seconds)</label>
-          <input type="number" id="quantity4" name="quantity4" min="30" max="300" value='<%= user_matches[match_key].config.wait_to_start_match_time/1000 %>'><br>
+          <input type="number" id="quantity4" name="quantity4" min="5" max="300" value='<%= user_matches[match_key].config.wait_to_start_match_time/1000 %>'><br>
           <!-- <label for="quantity5">Wait time to shooting (seconds)</label>
           <input type="number" id="quantity5" name="quantity5" min="30" max="300"><br> -->
           <label for="quantity6">Waiting time to start the next round (seconds)</label>
-          <input type="number" id="quantity6" name="quantity6" min="30" max="300" value='<%= user_matches[match_key].config.wait_to_next_round_start_time/1000 %>'><br>
+          <input type="number" id="quantity6" name="quantity6" min="5" max="300" value='<%= user_matches[match_key].config.wait_to_next_round_start_time/1000 %>'><br>
           <label for="quantity7">Waiting time to resume the round (seconds)</label>
-          <input type="number" id="quantity7" name="quantity7" min="30" max="300" value='<%= user_matches[match_key].config.wait_to_round_resume_time/1000 %>'><br>
+          <input type="number" id="quantity7" name="quantity7" min="5" max="300" value='<%= user_matches[match_key].config.wait_to_round_resume_time/1000 %>'><br>
           <label for="quantity8">Waiting time to end the match (seconds)</label>
-          <input type="number" id="quantity8" name="quantity8" min="30" max="300" value='<%= user_matches[match_key].config.wait_to_match_end_time/1000 %>'><br>
+          <input type="number" id="quantity8" name="quantity8" min="5" max="300" value='<%= user_matches[match_key].config.wait_to_match_end_time/1000 %>'><br>
           <label for="quantity9">Waiting time to destroy the match (seconds)</label>
-          <input type="number" id="quantity9" name="quantity9" min="30" max="300" value='<%= user_matches[match_key].config.wait_to_match_abort_time/1000 %>'><br>
+          <input type="number" id="quantity9" name="quantity9" min="5" max="300" value='<%= user_matches[match_key].config.wait_to_match_abort_time/1000 %>'><br>
         </Div>
         <button id="register_btn" type="submit" style="width:50%; margin: 5px">Register</button>
       </form>
     </div>
 
     <div class="left"  style="background-color:#90b1df">
-      <h3>Rounds</h3>
+      <h3 style="margin: 0px;padding: 0px;">Rounds</h3>
       <ul>
         <li> 
           <Div>
