@@ -13,11 +13,14 @@ class MatchController {
 
         const wsaddress = req.app.get("app_web_server_address");
         const wsport = req.app.get("app_web_server_port");
+        const wss_port = req.app.get("app_websockt_server_port");
         const app_name = req.app.get("app_name");
 
         const user: User = req.app.get("users_session_login").get(req.session.id);
 
         if (user !== undefined) {
+
+            const wsmatchinfo: WS_MatchInfo = req.app.get("app_ws_match_info_client") as WS_MatchInfo;
 
             const user_matches: { [key: string]: Match } = req.app.get("app_user_data_map")[user.email].matches;
 
@@ -25,8 +28,11 @@ class MatchController {
                 title: app_name,
                 wsa: wsaddress,
                 wsp: wsport,
+                wssp: wss_port,
                 user: user,
                 user_matches: user_matches,
+                wsmatchinfoclusterkey: wsmatchinfo.key,
+                wsmatchinfokey: UID.get(),
                 fail_msg: undefined
             });
 
@@ -536,6 +542,7 @@ class MatchController {
         if (user !== undefined) {
 
             const match_key: string = req.query.match_key as string;
+            // const user_key: string = req.query.user_key as string;
 
             if (match_key !== undefined) {
 
@@ -580,7 +587,9 @@ class MatchController {
 
                 wsmatch.launch(req.app.get("app_web_server_address"), req.app.get("app_websockt_server_port"));
 
-                res.redirect('/');
+
+
+                res.redirect('/match_home');
 
             } else {
 

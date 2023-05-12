@@ -1,4 +1,4 @@
-function wsmatchinfo() {
+function wsmatchinfo(filter=false) {
 
     // Pegando as referências para os elementos da página.
     var wssp = document.getElementById('web_socket_server_port').innerHTML;
@@ -47,9 +47,12 @@ function wsmatchinfo() {
 
             for (const wsmatchkey in launched_matches) {
 
+                var owner_user_key = launched_matches[wsmatchkey].owner_user_key;
+
+                if((filter && owner_user_key === user_key)||!filter ){
+
                 var matchname = launched_matches[wsmatchkey].name;
                 var matchstatus = launched_matches[wsmatchkey].status;
-                var owner_user_key = launched_matches[wsmatchkey].owner_user_key;
 
                 var status_simbol = '&#x270D;';
                 var tooltip_text = 'register';
@@ -105,6 +108,8 @@ function wsmatchinfo() {
 
 
                 launched_matches_list.appendChild(y);
+
+            }
 
             }
 
