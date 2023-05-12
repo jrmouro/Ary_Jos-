@@ -19,30 +19,36 @@
   <div style="overflow:auto;background-color:#90b1df;margin-top:7px;">
 
     <div class="left" style="background-color:#90b1df">
-      <h3 style="margin: 0px;padding: 0px;">Matches</h3>
-      <ul>
+      <h3 style="margin: 0px;padding: 0px;"><a href="/match_home" style="text-decoration: none;">&#x1F519;</a> Matches</h3>
+      <ul style="list-style-type: none; margin: 10px;padding: 0;">
         <li> 
-          <Div>
-            <a href="/match_register_form" > New... </a>
+          <Div  style="padding-bottom: 10px ;">
+            &#x1F4C4 <a href="/match_register_form" >New...</a>
           </Div>            
         </li>
         <% if (user_matches != undefined) { %>
-          <% for (const key in user_matches) { %>
-            <li> 
-              <Div>
-                <p style="margin-top: 0.0em ; margin-bottom: 0.0em ;"><%= user_matches[key].name %> <a href= <%= "/match_edit_form?match_key=" + key %> style="text-decoration: none;"> &#9998 </a> </p>
-              </Div>                
-            </li>
-          <% } %>
-        <% } %>
-      </ul>    
+    <% for (const key in user_matches) { %>
+    <li>
+      <Div>
+        &#x1F50E <a href=<%= "/match_view?match_key=" + key %> style="text-decoration: none;">
+          <%= user_matches[key].name %> </a>
+        <a href=<%= "/match_edit_form?match_key=" + key %> style="text-decoration: none;">
+          &#9998;
+        </a>
+        <p style="font-size:50%;margin-top: 0px ; margin-bottom: 5px; margin-left: 25px;">
+          <%= user_matches[key].theme %> </p>
+      </Div>
+    </li>
+    <% } %>
+    <% } %>
+    </ul>  
     </div>
 
     <div class="forms" style="background-color:#90b1df">
       <h3 style="margin: 0px;padding: 0px;">Edit '<%= user_matches[match_key].name %>' </h3>
       <form id="match_edit" action="/match_edit" method="get">
 
-        <Div style="text-align: left;">
+        <Div style="text-align: left;margin-top: 10px;">
 
           <input id="match_key" name="match_key" type="hidden" value= <%= match_key %> >
 
@@ -83,12 +89,60 @@
           <label for="quantity9">Waiting time to destroy the match (seconds)</label>
           <input type="number" id="quantity9" name="quantity9" min="5" max="300" value='<%= user_matches[match_key].config.wait_to_match_abort_time/1000 %>'><br>
         </Div>
+        <div style="text-align: left;">
+          <h4 style="margin: 0px;margin-top: 10px;">Rounds</h4>
+          <ul style="margin: 0px;margin-left: 25px; padding: 0;">
+            <li>
+              <Div>
+                <a href=<%= "/round_register_form?match_key=" + match_key %>> New... </a>
+              </Div>
+            </li>
+            <% if (user_matches != undefined && match_key in user_matches) { %>
+            <% for (const round_key in user_matches[match_key].rounds) { %>
+    
+            <li>
+              <!-- <h4 style="margin: 0px;">Question</h4> -->
+              <Div>
+                <p style="margin-top: 5px ; margin-bottom: 0.0em ;">Theme:
+                  <%= user_matches[match_key].rounds[round_key].quiz_theme %> <a
+                    href=<%= "/round_edit_form?match_key=" + match_key + "&round_key=" + round_key %>
+                    style="text-decoration: none;"> &#9998 </a></p>
+                <h5 style="margin: 0px;">Question</h5>
+                <p style="margin-top: 0.0em ; margin-bottom: 0.0em ;">
+                  <%= user_matches[match_key].rounds[round_key].question.description %></p>
+              </Div>
+              <ul style="list-style-type: none;margin: 0;padding: 0;">
+                <li>
+                  <p style="margin-top: 0.0em ; margin-bottom: 0.0em ;color:#134d11;">True Option:
+                    <%= user_matches[match_key].rounds[round_key].question.true_option %> </p>
+                </li>
+                <% for(var i=0; i < user_matches[match_key].rounds[round_key].question.fake_options.length; i++) {%>
+                <li>
+                  <p style="margin-top: 0.0em ; margin-bottom: 0.0em; color:#e10e1c;"> Fake Option<%= i + 1 %> :
+                    <%= user_matches[match_key].rounds[round_key].question.fake_options[i] %> </p>
+                </li>
+                <% } %>
+              </ul>
+              <h5 style="margin: 0px;">Config</h5>
+              <p style="margin: 0px;">Wait time to shooting (seconds):
+                <%=user_matches[match_key].rounds[round_key].shooting_timeout/1000%></p>
+              <p style="margin: 0px;">Wait time to response (seconds):
+                <%=user_matches[match_key].rounds[round_key].response_timeout/1000%></p>
+              <p style="margin: 0px;">Wait time to pass (seconds):
+                <%=user_matches[match_key].rounds[round_key].pass_timeout/1000%></p>
+              <p style="margin: 0px;">Score: <%=user_matches[match_key].rounds[round_key].score%></p>
+    
+            </li>
+            <% } %>
+            <% } %>
+          </ul>
+        </div>
         <button id="register_btn" type="submit" style="width:50%; margin: 5px">Register</button>
       </form>
     </div>
 
     <div class="left"  style="background-color:#90b1df">
-      <h3 style="margin: 0px;padding: 0px;">Rounds</h3>
+      <!-- <h3 style="margin: 0px;padding: 0px;">Rounds</h3>
       <ul>
         <li> 
           <Div>
@@ -104,7 +158,7 @@
             </li>
           <% } %>
         <% } %>
-      </ul>   
+      </ul>    -->
 
     </div>
     

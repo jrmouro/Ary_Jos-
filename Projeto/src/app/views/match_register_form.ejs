@@ -22,11 +22,11 @@
   <div  style="overflow:auto;background-color:#90b1df;margin-top:7px;">
 
     <div class="left" style="background-color:#90b1df">
-      <h3 style="margin: 0px;padding: 0;"><a href="/quiz_view" style="text-decoration: none;">&#x1F519</a>  Quizzes</h3>
+      <h3 style="margin: 0px;padding: 0px;"><a href="/match_home" style="text-decoration: none;">&#x1F519;</a> Matches</h3>
       <ul style="list-style-type: none; margin: 10px;padding: 0;">
         <li> 
           <Div  style="padding-bottom: 10px ;">
-            &#x1F4C4; <a href="/match_register_form" >New...</a>
+            &#x1F4C4 <a href="/match_register_form" >New...</a>
           </Div>            
         </li>
         <% if (user_matches != undefined) { %>
@@ -35,7 +35,11 @@
       <Div>
         &#x1F50E <a href=<%= "/match_view?match_key=" + key %> style="text-decoration: none;">
           <%= user_matches[key].name %> </a>
-        <p style="font-size:50%;margin-top: 0.0em ; margin-bottom: 0.0em ;"> <%= user_matches[key].theme %> </p>
+        <a href=<%= "/match_edit_form?match_key=" + key %> style="text-decoration: none;">
+          &#9998;
+        </a>
+        <p style="font-size:50%;margin-top: 0px ; margin-bottom: 5px; margin-left: 25px;">
+          <%= user_matches[key].theme %> </p>
       </Div>
     </li>
     <% } %>

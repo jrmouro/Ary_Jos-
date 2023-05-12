@@ -33,6 +33,8 @@
               <li> 
                 <Div>
                   &#x1F50E <a href= <%= "/match_view?match_key=" + key %> style="text-decoration: none;"> <%= user_matches[key].name %> </a>
+                  <a href=<%= "/match_launch?match_key=" + key%>
+                    style="text-decoration: none;">&#x1F680;</a>
                   <p  style="font-size:50%;margin-top: 0px ; margin-bottom: 5px; margin-left: 25px;"> <%= user_matches[key].theme %> </p>
                 </Div>                
               </li>

@@ -35,7 +35,7 @@
       <Div>
         &#x1F50E;
         <a href=<%= "/quiz_view?quiz_key=" + key %> style="text-decoration: none;">
-          <%= user_quizzes[key].name %>          
+          <%= user_quizzes[key].name %>
         </a>
         <a href=<%= "/quiz_edit_form?quiz_key=" + key %> style="text-decoration: none;">
           &#9998;
@@ -69,13 +69,13 @@
       <Div>
         <li>
           <Div>
-            <p style="margin-top: 0.0em ; margin-bottom: 0.0em ;">
+            <p style="margin-top: 5px ; margin-bottom: 0.0em ;">
               <%= user_quizzes[quiz_key].questions[question_key].description %> <a
                 href=<%= "/question_edit_form?quiz_key=" + quiz_key + "&question_key=" + question_key %>
                 style="text-decoration: none;"> &#9998 </a></p>
             <ul style="list-style-type: none;margin: 0;padding: 0;">
               <li>
-                <p style="margin-top: 0.0em ; margin-bottom: 0.0em ;">True Option:
+                <p style="margin-top: 0.0em ; margin-bottom: 0.0em ;color:#134d11;">True Option:
                   <%= user_quizzes[quiz_key].questions[question_key].true_option %> </p>
               </li>
               <% for(var i=0; i < user_quizzes[quiz_key].questions[question_key].fake_options.length; i++) {%>

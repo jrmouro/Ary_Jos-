@@ -3,7 +3,7 @@
 
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" type="text/css"  href="/stylesheets/style.css">
+  <link rel="stylesheet" type="text/css" href="/stylesheets/style.css">
 </head>
 
 <body style="font-family:Verdana;color:#05252c;">
@@ -12,7 +12,7 @@
     <h2 style="margin: 0px;padding: 0;"><%= title %></h2>
     <p style="font-size:50%;margin: 0px;padding: 0;"><%= wsa %>:<%= wsp %></p>
     <% if (fail_msg != undefined) { %>
-      <p style="font-family:Verdana;color:#e10e1c;"> <%= fail_msg%> </p>
+    <p style="font-family:Verdana;color:#e10e1c;"> <%= fail_msg%> </p>
     <%}%>
   </div>
 
@@ -27,29 +27,103 @@
           </Div>            
         </li>
         <% if (user_matches != undefined) { %>
-          <% for (const key in user_matches) { %>
-              <li> 
-                <Div>
-                  &#x1F50E <a href= <%= "/match_view?match_key=" + key %> style="text-decoration: none;"> <%= user_matches[key].name %> </a>
-                  <a href=<%= "/match_edit_form?match_key=" + key %> style="text-decoration: none;">
-                    &#9998;
-                  </a>
-                  <p  style="font-size:50%;margin-top: 0px ; margin-bottom: 5px; margin-left: 25px;"> <%= user_matches[key].theme %> </p>
-                </Div>                
-              </li>
-          <% } %>
-        <% } %>
-      </ul>       
-    </div>
-
-    <div class="main">
-      <h3 style="margin: 0px;padding: 0px;"><%= "Match: " + user_matches[match_key].name %></h3>
-      <Div  style="padding-bottom: 10px ;">
-        <a href=<%= "/match_launch?match_key=" + match_key + "&match_name=" %> style="text-decoration: none;" >&#x1F680;</a>
-        <a href=<%= "/match_edit_form?match_key=" + match_key %> style="text-decoration: none;">&#x1F4DD;</a>
+    <% for (const key in user_matches) { %>
+    <li>
+      <Div>
+        &#x1F50E <a href=<%= "/match_view?match_key=" + key %> style="text-decoration: none;">
+          <%= user_matches[key].name %> </a>
+        <a href=<%= "/match_edit_form?match_key=" + key %> style="text-decoration: none;">
+          &#9998;
+        </a>
+        <a href=<%= "/match_launch?match_key=" + key%>
+          style="text-decoration: none;">&#x1F680;</a>
+        <p style="font-size:50%;margin-top: 0px ; margin-bottom: 5px; margin-left: 25px;">
+          <%= user_matches[key].theme %> </p>
       </Div>
+    </li>
+    <% } %>
+    <% } %>
+    </ul>
+  </div>
+
+  <div class="main">
+    <div style="text-align: center;padding-bottom: 10px ">
+      <h3 style="margin: 0px;padding: 0px;"><%= "Match: " + user_matches[match_key].name %></h3>
     </div>
     
+    <!-- <Div style="padding-bottom: 10px ;">
+      <a href=<%= "/match_launch?match_key=" + match_key + "&match_name=" %>
+        style="text-decoration: none;">&#x1F680;</a>
+    </Div> -->
+    <Div style="text-align: left;">
+      <p style="margin: 0px;">Show options in shooting state: <%=user_matches[match_key].config.show_options%></p>
+      <p style="margin: 0px;">Start match upon completing registration:
+        <%=user_matches[match_key].config.start_match_upon_completing_registration%></p>
+      <p style="margin: 0px;">Minimum number of players: <%=user_matches[match_key].config.min_amount_players%></p>
+      <p style="margin: 0px;">Maximum number of players: <%=user_matches[match_key].config.max_amount_players%></p>
+      <p style="margin: 0px;">Waiting time for registration at match (seconds:
+        <%=user_matches[match_key].config.wait_to_registry_at_match_time/1000%></p>
+      <p style="margin: 0px;">Waiting time for the start of the match (seconds):
+        <%=user_matches[match_key].config.wait_to_start_match_time/1000%></p>
+      <p style="margin: 0px;">Waiting time to start the next round (seconds):
+        <%=user_matches[match_key].config.wait_to_next_round_start_time/1000%></p>
+      <p style="margin: 0px;">Waiting time to resume the round (seconds):
+        <%=user_matches[match_key].config.wait_to_round_resume_time/1000%></p>
+      <p style="margin: 0px;">Waiting time to end the match (seconds):
+        <%=user_matches[match_key].config.wait_to_match_end_time/1000%></p>
+      <p style="margin: 0px;margin-bottom: 10px;">Waiting time to destroy the match (seconds):
+        <%=user_matches[match_key].config.wait_to_match_abort_time/1000%></p>
+    </Div>
+    <div>
+      <h4 style="margin: 0px;">Rounds</h4>
+      <ul style="margin: 0px;margin-left: 25px; padding: 0;">
+        <li>
+          <Div>
+            <a href=<%= "/round_register_form?match_key=" + match_key %>> New... </a>
+          </Div>
+        </li>
+        <% if (user_matches != undefined && match_key in user_matches) { %>
+        <% for (const round_key in user_matches[match_key].rounds) { %>
+
+        <li>
+          <!-- <h4 style="margin: 0px;">Question</h4> -->
+          <Div>
+            <p style="margin-top: 5px ; margin-bottom: 0.0em ;">Theme:
+              <%= user_matches[match_key].rounds[round_key].quiz_theme %> <a
+                href=<%= "/round_edit_form?match_key=" + match_key + "&round_key=" + round_key %>
+                style="text-decoration: none;"> &#9998 </a></p>
+            <h5 style="margin: 0px;">Question</h5>
+            <p style="margin-top: 0.0em ; margin-bottom: 0.0em ;">
+              <%= user_matches[match_key].rounds[round_key].question.description %></p>
+          </Div>
+          <ul style="list-style-type: none;margin: 0;padding: 0;">
+            <li>
+              <p style="margin-top: 0.0em ; margin-bottom: 0.0em ;color:#134d11;">True Option:
+                <%= user_matches[match_key].rounds[round_key].question.true_option %> </p>
+            </li>
+            <% for(var i=0; i < user_matches[match_key].rounds[round_key].question.fake_options.length; i++) {%>
+            <li>
+              <p style="margin-top: 0.0em ; margin-bottom: 0.0em; color:#e10e1c;"> Fake Option<%= i + 1 %> :
+                <%= user_matches[match_key].rounds[round_key].question.fake_options[i] %> </p>
+            </li>
+            <% } %>
+          </ul>
+          <h5 style="margin: 0px;">Config</h5>
+          <p style="margin: 0px;">Wait time to shooting (seconds):
+            <%=user_matches[match_key].rounds[round_key].shooting_timeout/1000%></p>
+          <p style="margin: 0px;">Wait time to response (seconds):
+            <%=user_matches[match_key].rounds[round_key].response_timeout/1000%></p>
+          <p style="margin: 0px;">Wait time to pass (seconds):
+            <%=user_matches[match_key].rounds[round_key].pass_timeout/1000%></p>
+          <p style="margin: 0px;">Score: <%=user_matches[match_key].rounds[round_key].score%></p>
+
+        </li>
+        <% } %>
+        <% } %>
+      </ul>
+    </div>
+  </div>
+
   </div>
 
   <div id="status" style="background-color:#90b1df;text-align:center;padding:5px;margin-top:7px;">
