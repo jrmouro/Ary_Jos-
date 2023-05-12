@@ -52,6 +52,7 @@ router.get("/round_register_form", roundController.register_form);
 router.get("/round_edit_form", roundController.edit_form);
 router.get("/round_register", roundController.register);
 router.get("/round_edit", roundController.edit);
+router.get("/round_delete", roundController.delete);
 
 
 

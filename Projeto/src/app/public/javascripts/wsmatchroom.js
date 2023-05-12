@@ -320,7 +320,7 @@ function wsmatchroom() {
                 player_pass = msg_obj.msg_content.player_pass;
                 player_response = msg_obj.msg_content.player_response;
                 round_response = msg_obj.msg_content.round_response;
-                round_h.innerHTML = "Round: " + round_index;
+                round_h.innerHTML = "Round: " + (round_index+1);
                 question_update(msg_obj);
             };
 

@@ -337,6 +337,63 @@ class RoundController {
 
     }
 
+    public delete(req: Request, res: Response) {
+
+        const user: User = req.app.get("users_session_login").get(req.session.id);
+
+        if (user !== undefined) {
+
+            const match_key: string | undefined = req.query.match_key as string;
+
+            if (match_key !== undefined) {
+
+                const round_key: string | undefined = req.query.round_key as string;
+
+                if (round_key !== undefined) {
+
+                    const user_matches: { [key: string]: Match } = req.app.get("app_user_data_map")[user.email].matches;
+
+                    if (match_key in user_matches) {
+
+                        if (round_key in user_matches[match_key].rounds) {
+
+                            delete user_matches[match_key].rounds[round_key];
+                            res.redirect('/match_edit_form?match_key=' + match_key);
+
+                        } else {
+
+                            res.redirect('/match_home?fail_msg=invalid round_key');
+
+                        }
+
+                    } else {
+
+                        res.redirect('/match_home?fail_msg=invalid match_key');
+
+                    }
+
+                } else {
+
+                    res.redirect('/match_home?fail_msg=round_key is required');
+
+                }
+
+
+            } else {
+
+                res.redirect('/match_home?fail_msg=match_key is required');
+
+            }
+
+        } else {
+
+            res.redirect('/user_login_form?fail_msg=login is required');
+
+        }
+
+    }
+
+
 }
 
 export const roundController = new RoundController();

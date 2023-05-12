@@ -98,7 +98,10 @@
           <% for (const round_key in user_matches[match_key].rounds) { %>
             <li> 
               <Div>
-                <p style="font-size:75%;margin-top: 0.0em ; margin-bottom: 0.0em ;"> <%= user_matches[match_key].rounds[round_key].question.description %>  <a href= <%= "/round_edit_form?match_key=" + match_key + "&round_key=" + round_key %> style="text-decoration: none;"> &#9998 </a></p>              
+                <p style="font-size:75%;margin-top: 0.0em ; margin-bottom: 0.0em ;"> <%= user_matches[match_key].rounds[round_key].question.description %> 
+                   <a href= <%= "/round_edit_form?match_key=" + match_key + "&round_key=" + round_key %> style="text-decoration: none;"> &#9998 </a>
+                   <a onclick="return confirm('Tem certeza que deseja deletar esse round?');" href= <%= "/round_delete?match_key=" + match_key + "&round_key=" + round_key %> style="text-decoration: none;"> &#x274C; </a>
+                </p>              
               </Div>                
             </li>
           <% } %>

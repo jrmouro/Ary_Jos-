@@ -57,32 +57,32 @@
       <form id="quiz_register" action=<%= "/question_edit?quiz_key=" + quiz_key + "&question_key=" + question_key%> method="get">
         <input id="quiz_key" name="quiz_key" type="hidden" value= <%= quiz_key %> >
         <input id="question_key" name="question_key" type="hidden" value= <%= question_key %> >
-        <textarea id="description" name="description" placeholder="question description" style="width:50%; margin: 2px" required autofocus><%= user_quizzes[quiz_key].questions[question_key].description %></textarea><br>
-        <textarea id="true_option" name="true_option" placeholder="true option" style="width:50%; margin: 2px" required><%= user_quizzes[quiz_key].questions[question_key].true_option %></textarea><br>
+        <textarea id="description" name="description" placeholder="Descrição da questão" style="width:50%; margin: 2px" required autofocus><%= user_quizzes[quiz_key].questions[question_key].description %></textarea><br>
+        <textarea id="true_option" name="true_option" placeholder="Opção Certa" style="width:50%; margin: 2px" required><%= user_quizzes[quiz_key].questions[question_key].true_option %></textarea><br>
        
         <% if(user_quizzes[quiz_key].questions[question_key].fake_options.length > 0){ %>
 
-          <textarea id="fake_option1" name="fake_option1" placeholder="fake option1" style="width:50%; margin: 2px" required><%= user_quizzes[quiz_key].questions[question_key].fake_options[0] %></textarea><br>
+          <textarea id="fake_option1" name="fake_option1" placeholder="Opção errada1" style="width:50%; margin: 2px" required><%= user_quizzes[quiz_key].questions[question_key].fake_options[0] %></textarea><br>
 
         <% } %>
 
         <% if(user_quizzes[quiz_key].questions[question_key].fake_options.length > 1){ %>
 
-          <textarea id="fake_option2" name="fake_option2" placeholder="fake option2" style="width:50%; margin: 2px"><%= user_quizzes[quiz_key].questions[question_key].fake_options[1] %></textarea><br>
+          <textarea id="fake_option2" name="fake_option2" placeholder="Opção errada2" style="width:50%; margin: 2px"><%= user_quizzes[quiz_key].questions[question_key].fake_options[1] %></textarea><br>
 
         <% } else {%>
 
-          <textarea id="fake_option2" name="fake_option2" placeholder="fake option2" style="width:50%; margin: 2px"></textarea><br>
+          <textarea id="fake_option2" name="fake_option2" placeholder="Opção errada2" style="width:50%; margin: 2px"></textarea><br>
 
         <% } %>
 
         <% if(user_quizzes[quiz_key].questions[question_key].fake_options.length > 2){ %>
 
-          <textarea id="fake_option3" name="fake_option3" placeholder="fake option3" style="width:50%; margin: 2px"><%= user_quizzes[quiz_key].questions[question_key].fake_options[2] %></textarea><br>
+          <textarea id="fake_option3" name="fake_option3" placeholder="Opção errada3" style="width:50%; margin: 2px"><%= user_quizzes[quiz_key].questions[question_key].fake_options[2] %></textarea><br>
 
         <% } else {%>
 
-          <textarea id="fake_option3" name="fake_option3" placeholder="fake option3" style="width:50%; margin: 2px"></textarea><br>
+          <textarea id="fake_option3" name="fake_option3" placeholder="Opção errada3" style="width:50%; margin: 2px"></textarea><br>
 
         <% } %>
 
