@@ -180,7 +180,9 @@ class RoundController {
 
                                 Data.writeFileSync<User>(req.app.get("app_user_data_path"), req.app.get("app_user_data_map"));
 
-                                res.redirect('/round_edit_form?match_key=' + match_key + '&round_key=' + round.key);
+                                // res.redirect('/round_edit_form?match_key=' + match_key + '&round_key=' + round.key);
+
+                                res.redirect('/round_register_form?match_key=' + match_key);
 
                             } else {
 

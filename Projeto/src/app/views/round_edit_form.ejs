@@ -54,8 +54,8 @@
 <body style="font-family:Verdana;color:#05252c;">
 
   <div style="background-color:#90b1df;padding:5px;text-align:center;">
-    <h2><%= title %></h2>
-    <p style="font-size:50%;"><%= wsa %>:<%= wsp %></p>
+    <h2 style="margin: 0px;padding: 0;"><%= title %></h2>
+    <p style="font-size:50%;margin: 0px;padding: 0;"><%= wsa %>:<%= wsp %></p>
     <% if (fail_msg != undefined) { %>
     <p style="font-family:Verdana;color:#e10e1c;"> <%= fail_msg%> </p>
     <%}%>
@@ -64,7 +64,7 @@
   <div  style="overflow:auto;background-color:#90b1df;margin-top:7px;">
 
     <div class="left" style="background-color:#90b1df">
-      <h3 style="margin: 0px;padding: 0px;"><%= user_matches[match_key].name %></h3>
+      <h3 style="margin: 0px;padding: 0px;"><a href=<%="/match_edit_form?match_key=" + match_key %> style="text-decoration: none;">&#x1F519;</a> <%= user_matches[match_key].name %></h3>
     <h4">Rounds</h4>
       <ul>
         <li>
@@ -89,7 +89,7 @@
 
   <div class="forms" style="background-color:#90b1df">
 
-    <h3  style="margin: 0px;padding: 0px;">Edit Round</h3>
+    <h3  style="margin: 0px;margin-bottom: 10px;padding: 0px;">Edit Round</h3>
     <form id="round_edit" action="/round_edit" method="get">
 
       <input id="match_key" name="match_key" type="hidden" value=<%= match_key %>>
