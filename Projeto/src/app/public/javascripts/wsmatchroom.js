@@ -40,11 +40,6 @@ function wsmatchroom() {
     var player_pass = undefined;
     var player_response = undefined;
 
-    // var alert1 = document.getElementById('alert1_audio');
-    // var applause = document.getElementById('applause_audio');
-    // var wrong = document.getElementById('wrong_audio');
-    // var right = document.getElementById('right_audio');
-
     var register = new Audio("/audio/register.wav");
     var alert1 = new Audio("/audio/alert1.wav");
     var alert2 = new Audio("/audio/alert2.wav");
@@ -154,7 +149,11 @@ function wsmatchroom() {
 
                 switch (msg_obj.msg_type) {
 
+                    
+
                     case "37": // Protocol.match_state
+
+                    console.log(JSON.stringify(msg_obj.msg_content));
 
                         state(msg_obj);
 
@@ -729,7 +728,7 @@ function wsmatchroom() {
                         status_div.hidden = true;
                         break;
 
-                    case 7: //started_next_round: 
+                    case 7: //next_round: 
                         if(Object.entries(msg_obj.msg_content.scoreboard).length > 1)alert1.play();
                         status_emoji.innerHTML = "&#x1F4E2;";
                         status_text.innerHTML = "Round started";
