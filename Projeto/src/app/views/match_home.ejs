@@ -4,10 +4,10 @@
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" type="text/css"  href="/stylesheets/style.css">
-  <script src="/javascripts/chatroom.js"></script>
+  <script src="/javascripts/wsmatchinfo.js"></script>
 </head>
 
-<body style="font-family:Verdana;color:#05252c;" onload="chatroom()">
+<body style="font-family:Verdana;color:#05252c;"  onload="wsmatchinfo()">
 
   <div style="background-color:#90b1df;padding:5px;text-align:center;">
     <h2 style="margin: 0px;padding: 0;"><%= title %></h2>
@@ -33,6 +33,8 @@
               <li> 
                 <Div>
                   &#x1F50E <a href= <%= "/match_view?match_key=" + key %> style="text-decoration: none;"> <%= user_matches[key].name %> </a>
+                  <a href=<%= "/match_launch?match_key=" + key + "&user_key=" + user.email%>
+                    style="text-decoration: none;">&#x1F680;</a>
                   <a onclick="return confirm('Tem certeza que deseja deletar essa partida?');" href= <%= "/match_delete?match_key=" + key %> style="text-decoration: none;"> &#x274C; </a>
                   <p style="font-size:50%;margin-top: 0px; margin-bottom: 5px; margin-left: 25px; "> <%= user_matches[key].theme %> </p>
                 </Div>                
@@ -46,7 +48,25 @@
       <p>Nessa página, você pode gerenciar suas matches (partidas).</p>
     </div>
 
-   
+    <div class="left">
+
+      <h1 id="web_socket_server_port" hidden><%= wssp %></h1>
+      <h1 id="web_server_address" hidden><%= wsa %></h1>
+      <h1 id="ws_matchinfo_cluster_key" hidden><%= wsmatchinfoclusterkey %></h1>
+      <h1 id="ws_matchtinfo_key" hidden><%= wsmatchinfokey %></h1>
+      <% if (user != undefined) { %>
+        <h1 id="user_key" hidden><%= user.email %></h1>
+      <%} else { %> 
+        <h1 id="user_key" hidden></h1>
+      <% } %>
+
+      <% if (user != undefined) { %>
+        <h3 style="margin: 0px;padding: 0;">Matches Lançadas de <%= user.name %></h3>
+        <ul id="launched_matches_list" style="list-style-type: none; margin: 10px;padding: 0;"></ul>  
+      <% } %>
+
+
+    </div>
     
   </div>
 
