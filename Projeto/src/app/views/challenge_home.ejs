@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css"  href="/stylesheets/style.css">
+  <script src="/javascripts/wschallengeinfo.js"></script>
+</head>
+
+<body style="font-family:Verdana;color:#05252c;"  onload="wschallengeinfo()">
+
+  <div style="background-color:#90b1df;padding:5px;text-align:center;">
+    <h2 style="margin: 0px;padding: 0;"><%= title %></h2>
+    <p style="font-size:50%;margin: 0px;padding: 0;"><%= wsa %>:<%= wsp %></p>
+    <% if (fail_msg != undefined) { %>
+      <p style="font-family:Verdana;color:#e10e1c;"> <%= fail_msg%> </p>
+    <%}%>
+  </div>
+
+  <div  style="overflow:auto;background-color:#90b1df;margin-top:7px;">
+
+    <div class="left" style="background-color:#90b1df">
+      
+      <h3 style="margin: 0px;padding: 0;"><a href="/" style="text-decoration: none;">&#x1F519</a>  Challenges</h3>
+      <ul style="list-style-type: none; margin: 10px;padding: 0;">
+        <li> 
+          <Div  style="padding-bottom: 10px ;">
+            &#x1F4C4; <a href="/challenge_register_form" >New...</a>
+          </Div>            
+        </li>
+        <% if (user_challenges != undefined) { %>
+          <% for (const key in user_challenges) { %>
+              <li> 
+                <Div>
+                  &#x1F50E <a href= <%= "/challenge_view?challenge_key=" + key %> style="text-decoration: none;"> <%= user_challenges[key].name %> </a>
+                  <a href=<%= "/challenge_launch?challenge_key=" + key + "&user_key=" + user.email%>
+                    style="text-decoration: none;">&#x1F680;</a>
+                  <p  style="font-size:50%;margin-top: 0px ; margin-bottom: 5px; margin-left: 25px;"> <%= user_challenges[key].theme %> </p>
+                </Div>                
+              </li>
+          <% } %>
+        <% } %>
+      </ul>       
+    </div>
+
+    <div class="main">
+      <p>In this site, you can manage your challenges.</p>
+    </div>
+
+    <div class="left">
+
+      <h1 id="web_socket_server_port" hidden><%= wssp %></h1>
+      <h1 id="web_server_address" hidden><%= wsa %></h1>
+      <h1 id="ws_challengeinfo_cluster_key" hidden><%= wschallengeinfoclusterkey %></h1>
+      <h1 id="ws_challengeinfo_key" hidden><%= wschallengeinfokey %></h1>
+      <% if (user != undefined) { %>
+        <h1 id="user_key" hidden><%= user.email %></h1>
+      <%} else { %> 
+        <h1 id="user_key" hidden></h1>
+      <% } %>
+
+      <h3 style="margin: 0px;padding: 0;">User Launched Challenges</h3>
+      <ul id="launched_challenges_list" style="list-style-type: none; margin: 10px;padding: 0;"></ul>  
+
+    </div>
+
+   
+    
+  </div>
+
+  <div id="status" style="background-color:#90b1df;text-align:center;padding:5px;margin-top:7px;">
+    <% if (user != undefined) { %>
+    <p style="margin: 0px;padding: 0;"> <%= user.name %> </p>
+    <p style="font-size:50%;margin: 0px;padding: 0;"> <%= user.email %> </p>
+    <a href="/user_logout"> logout </a>
+    <%} else { %>
+    <a style="margin: 0px;padding: 0;" href="/user_login_form"> login </a>
+    <% } %>
+  </div>
+
+</body>
+
+</html>

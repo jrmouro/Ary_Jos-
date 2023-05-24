@@ -12,6 +12,7 @@ import { WSS } from "./wss";
 import { WS_Match } from "./ws_match";
 import { WS_MatchInfo } from "./ws_match_info";
 import { UID } from "./uid";
+import { WS_ChallengeInfo } from "./ws_challenge_info";
 
 export class App {
 
@@ -34,6 +35,11 @@ export class App {
     this.server.set('app_ws_match_info_client', new WS_MatchInfo(UID.get(), (ev: string, ws_match_info: WS_MatchInfo) => {
 
       console.log(`wsmatchinfo at port ${ws_match_info.port} event: ${ev}`);
+
+    }));
+    this.server.set('app_ws_challenge_info_client', new WS_ChallengeInfo(UID.get(), (ev: string, ws_challenge_info: WS_ChallengeInfo) => {
+
+      console.log(`wschallengeinfo at port ${ws_challenge_info.port} event: ${ev}`);
 
     }));
     this.server.set('app_user_data_path', path.join(__dirname, 'data', 'user_data.json'));

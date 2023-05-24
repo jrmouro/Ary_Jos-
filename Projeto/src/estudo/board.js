@@ -343,10 +343,9 @@ function board(size) {
             var self = this;
 
             this.canvas.addEventListener('click', function (event) {
-                const value = self.dice.onClick();
-
                 
-
+                const value = self.dice.onClick();
+                
                 if (value > 0) {
 
                     const place = Math.min(self.players[self.turn].place + value, self.board.path.length - 1);
