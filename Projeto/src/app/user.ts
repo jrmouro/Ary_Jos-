@@ -6,19 +6,22 @@ export class User {
     readonly name:string;
     readonly email:string;
     readonly password:string;
+    readonly key_password:string;
     readonly quizzes: { [key: string]: Quiz };
     readonly matches: { [key: string]: Match };
 
     constructor(
         name:string, 
         email:string, 
-        password:string,  
+        password:string,
+        key_password:string,  
         quizzes: { [key: string] : Quiz} = {}, 
         matches: { [key: string] : Match} = {}){
 
         this.name = name;
         this.email = email;
         this.password = password;
+        this.key_password = key_password;
         this.quizzes = quizzes;
         this.matches = matches;
 

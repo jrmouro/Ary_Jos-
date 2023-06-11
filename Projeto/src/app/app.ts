@@ -12,7 +12,7 @@ import { WSS } from "./wss";
 import { WS_Match } from "./ws_match";
 import { WS_MatchInfo } from "./ws_match_info";
 import { UID } from "./uid";
-
+import { v4 as uuidv4 } from 'uuid';
 export class App {
 
   public server: express.Application;
@@ -53,10 +53,11 @@ export class App {
 
   private app_user_data_load() {
 
+    let key = uuidv4();
     // users
     const umap = Data.readFileSync<User>(this.server.get("app_user_data_path"));
     this.server.set("app_user_data_map", umap)
-    this.server.get("app_user_data_map")["admin@passorpass.com"] = new User("admin", "admin@passorpass.com", "admin");
+    this.server.get("app_user_data_map")["admin@passorpass.com"] = new User("admin", "admin@passorpass.com", "admin", key);
     Data.writeFileSync<User>(this.server.get("app_user_data_path"), umap);
 
   }
