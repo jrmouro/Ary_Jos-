@@ -1,0 +1,26 @@
+{
+  "name": "birds",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "ts-node-dev --inspect --transpile-only --ignore-watch node_modules src/webserver.ts",
+    "build": "tsc"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "ip": "^1.1.8",
+    "matter-js": "^0.19.0",
+    "p5": "^1.6.0",
+    "ts-node-dev": "^2.0.0",
+    "ws": "^8.13.0"
+  },
+  "devDependencies": {
+    "@types/ip": "^1.1.0",
+    "@types/ws": "^8.5.5"
+  }
+}
