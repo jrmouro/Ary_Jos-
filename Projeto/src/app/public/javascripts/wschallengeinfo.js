@@ -3,7 +3,7 @@ function wschallengeinfo(filter=false) {
     var wssp = document.getElementById('web_socket_server_port').innerHTML;
     var wsa = document.getElementById('web_server_address').innerHTML;
     var wschallengeinfoclusterkey = document.getElementById('ws_challengeinfo_cluster_key').innerHTML;
-    var wschallengeinfokey = document.getElementById('ws_challengetinfo_key').innerHTML;
+    var wschallengeinfokey = document.getElementById('ws_challengeinfo_key').innerHTML;
     var user_key = document.getElementById('user_key').innerHTML;
     var launched_challenges_list = document.getElementById('launched_challenges_list');
 
@@ -32,6 +32,8 @@ function wschallengeinfo(filter=false) {
     socket.onopen = function (event) {
 
         socket.onmessage = function (event) {
+
+            // console.log(event.data);
 
             var msg_obj = JSON.parse(event.data);
             var launched_challenges = msg_obj.msg_content;
@@ -110,13 +112,10 @@ function wschallengeinfo(filter=false) {
 
             }
 
-            // alert(event.data);
-
         };
 
         socket.onclose = function (event) {
             console.log('Websocket Closed');
-            // alert('Websocket Closed');
         };
 
         socket.send(JSON.stringify({

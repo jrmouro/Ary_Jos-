@@ -23,7 +23,11 @@ export class WS_ChallengeInfo {
 
     eventCallback:(event:string, challengeInfo:WS_ChallengeInfo)=>void;
 
-    constructor(key:string, eventCallback:(event:string, challengeInfo:WS_ChallengeInfo)=>void, wss_ip?: string, port?: number) {
+    constructor(
+        key:string, 
+        eventCallback:(event:string, challengeInfo:WS_ChallengeInfo)=>void, 
+        wss_ip?: string,
+        port?: number) {
         this.key = key;
         this.eventCallback = eventCallback;
         if (wss_ip !== undefined && port !== undefined) {
@@ -77,24 +81,25 @@ export class WS_ChallengeInfo {
         const receiver = msg_obj.receiver;
         const sender = msg_obj.sender;
         const msg_type = msg_obj.msg_type;
-        const msg_content = msg_obj.msg_content;
+
+        console.log(JSON.stringify(msg_obj));
 
         if (receiver === this.key && sender !== undefined) {
 
             switch (msg_type) {
 
                 case Protocol.challenge_info:
-
-                    const msg_obj:WS_MSG = {
-                        sender: this.key,
-                        sender_cluster: this.key,
-                        receiver: sender,
-                        receiver_cluster: this.key,
-                        msg_type: Protocol.challenge_info,
-                        msg_content: this.challengesInfo
-                    }
         
-                    this.socket?.send(JSON.stringify(msg_obj));
+                    this.socket?.send(JSON.stringify(                        
+                        {
+                            sender: this.key,
+                            sender_cluster: this.key,
+                            receiver: sender,
+                            receiver_cluster: this.key,
+                            msg_type: Protocol.challenge_info,
+                            msg_content: this.challengesInfo
+                        }
+                    ));
 
                     break;
                                 

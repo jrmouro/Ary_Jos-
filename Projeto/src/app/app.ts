@@ -13,6 +13,7 @@ import { WS_Match } from "./ws_match";
 import { WS_MatchInfo } from "./ws_match_info";
 import { UID } from "./uid";
 import { WS_ChallengeInfo } from "./ws_challenge_info";
+import { WS_Challenge } from "./ws_challenge";
 
 export class App {
 
@@ -32,18 +33,24 @@ export class App {
     this.server.set('app_web_server_address', IP.address());
     this.server.set('app_web_server_port', webPort);
     this.server.set('app_websockt_server_port', wssPort);
-    this.server.set('app_ws_match_info_client', new WS_MatchInfo(UID.get(), (ev: string, ws_match_info: WS_MatchInfo) => {
 
-      console.log(`wsmatchinfo at port ${ws_match_info.port} event: ${ev}`);
+    this.server.set('app_ws_match_info_client', 
+      new WS_MatchInfo(UID.get(), (ev: string, ws_match_info: WS_MatchInfo) => {
 
-    }));
-    this.server.set('app_ws_challenge_info_client', new WS_ChallengeInfo(UID.get(), (ev: string, ws_challenge_info: WS_ChallengeInfo) => {
-
-      console.log(`wschallengeinfo at port ${ws_challenge_info.port} event: ${ev}`);
+      console.log(`LOG: wsmatchinfo at port ${ws_match_info.port} event: ${ev}`);
 
     }));
+
+    this.server.set('app_ws_challenge_info_client', 
+      new WS_ChallengeInfo(UID.get(), (ev: string, ws_challenge_info: WS_ChallengeInfo) => {
+
+      console.log(`LOG wschallengeinfo at port ${ws_challenge_info.port} event: ${ev}`);
+
+    }));
+
     this.server.set('app_user_data_path', path.join(__dirname, 'data', 'user_data.json'));
     this.server.set('app_launched_matches', new Map<string, Map<string, WS_Match>>()); // userkey->(wsmatchkey->wsmatch)
+    this.server.set('app_launched_challenges', new Map<string, Map<string, WS_Challenge>>()); // userkey->(wschallengekey->wschallenge)
     this.server.set('users_session_login', new Map<string, User>()); // session.id->user
     this.server.set('views', path.join(__dirname, 'views'));
     this.server.set('view engine', 'ejs');
@@ -59,7 +66,6 @@ export class App {
 
   private app_user_data_load() {
 
-    // users
     const umap = Data.readFileSync<User>(this.server.get("app_user_data_path"));
     this.server.set("app_user_data_map", umap)
     this.server.get("app_user_data_map")["admin@passorpass.com"] = new User("admin", "admin@passorpass.com", "admin");
@@ -73,7 +79,6 @@ export class App {
     this.server.use(express.json());
     this.server.use(bodyParser.json());
     this.server.use(bodyParser.urlencoded({ extended: true }));
-    // this.server.use(upload.array()); 
     this.server.use(express.urlencoded({ extended: false }));
     this.server.use(cookieParser());
     this.server.use(express.urlencoded({ extended: true }));
@@ -100,6 +105,9 @@ export class App {
     const wsMatchInfo = this.server.get("app_ws_match_info_client") as WS_MatchInfo;
     wsMatchInfo.launch(this.server.get("app_web_server_address"), this.server.get("app_websockt_server_port"));
 
+    const wsChallengeInfo = this.server.get("app_ws_challenge_info_client") as WS_ChallengeInfo;
+    wsChallengeInfo.launch(this.server.get("app_web_server_address"), this.server.get("app_websockt_server_port"));
+
     console.log(`web server listening on port:${this.server.get("app_web_server_port")}`);
     console.log(`websocket server listening on port:${this.server.get("app_websockt_server_port")}`);
 
@@ -113,6 +121,7 @@ export class App {
         });
         console.log("Closing websock server and wsmatchinfo client.");
         wsMatchInfo.close();
+        wsChallengeInfo.close();
         wss.close();
       });
   }

@@ -3,7 +3,9 @@ import { User } from "../user";
 import { UID } from "../uid";
 import { Data } from "../data";
 import { WS_ChallengeInfo } from "../ws_challenge_info";
-import { Challenge, ChallengeConfig } from "../challenge";
+import { Challenge } from "../challenge";
+import { WS_Challenge } from "../ws_challenge";
+import { ChallengeStatus } from "../challenge_status";
 
 class ChallengeController {
 
@@ -46,7 +48,7 @@ class ChallengeController {
     }
 
     public register(req: Request, res: Response) {
-        // const port = req.query.wssport | 3000;
+        
         const wsaddress = req.app.get("app_web_server_address");
         const wsport = req.app.get("app_web_server_port");
         const app_name = req.app.get("app_name");
@@ -57,29 +59,10 @@ class ChallengeController {
 
             const name: string = req.query.name as string;
 
-            const config: ChallengeConfig = {
-                show_options: req.query.checkbox1 ? true : false,
-                start_match_upon_completing_registration: req.query.checkbox2 ? true : false,
-                min_amount_players:  parseInt(req.query.quantity1 as string),
-                max_amount_players:  parseInt(req.query.quantity2 as string),
-                wait_to_registry_at_match_time:  1000 * parseInt(req.query.quantity3 as string),
-                wait_to_start_match_time:  1000 * parseInt(req.query.quantity4 as string),
-                // wait_to_shooting_time: parseInt(req.query.quantity5 as string),
-                wait_to_next_round_start_time:  1000 * parseInt(req.query.quantity6 as string),
-                wait_to_round_resume_time:  1000 * parseInt(req.query.quantity7 as string),
-                wait_to_match_end_time:  1000 * parseInt(req.query.quantity8 as string),
-                wait_to_match_abort_time:  1000 * parseInt(req.query.quantity9 as string),
-                avatares: [
-                    128120,128121,128122,128125,128126,128118,128113,128102,128103,
-                    128063,128048,128045,128511,129302,127875,127877,128010,128012,
-                    128018,128027,128030,128034,128035,128045,128047,128128,128373,
-                    128574]
-            }
-
+            
             const challenge: Challenge = {
                 key: UID.get(),
                 name: name,
-                config: config,
                 rounds: {}
             }
 
@@ -98,50 +81,38 @@ class ChallengeController {
 
     }
 
-    // public edit(req: Request, res: Response) {
+    public edit(req: Request, res: Response) {
         
-    //     const user: User = req.app.get("users_session_login").get(req.session.id);
+        const user: User = req.app.get("users_session_login").get(req.session.id);
 
-    //     if (user !== undefined) {
+        if (user !== undefined) {
 
-    //         const match_key: string = req.query.match_key as string;
-    //         const name: string = req.query.name as string;
+            const challenge_key: string = req.query.challenge_key as string;
+            const name: string = req.query.name as string;
 
-    //         if( match_key in req.app.get("app_user_data_map")[user.email].matches){
+            if( challenge_key in req.app.get("app_user_data_map")[user.email].challenges){
 
-    //             req.app.get("app_user_data_map")[user.email].matches[match_key].name = name;
+                req.app.get("app_user_data_map")[user.email].challenges[challenge_key].name = name;
+                
+                Data.writeFileSync<User>(req.app.get("app_user_data_path"), req.app.get("app_user_data_map"));
 
-    //             req.app.get("app_user_data_map")[user.email].matches[match_key].config.show_options = req.query.checkbox1 ? true : false;
-    //             req.app.get("app_user_data_map")[user.email].matches[match_key].config.start_match_upon_completing_registration = req.query.checkbox2 ? true : false;
-    //             req.app.get("app_user_data_map")[user.email].matches[match_key].config.min_amount_players = parseInt(req.query.quantity1 as string);
-    //             req.app.get("app_user_data_map")[user.email].matches[match_key].config.max_amount_players =  parseInt(req.query.quantity2 as string);
-    //             req.app.get("app_user_data_map")[user.email].matches[match_key].config.wait_to_registry_at_match_time =  1000 * parseInt(req.query.quantity3 as string);
-    //             req.app.get("app_user_data_map")[user.email].matches[match_key].config.wait_to_start_match_time =  1000 * parseInt(req.query.quantity4 as string);
-    //             // req.app.get("app_user_data_map")[user.email].matches[match_key].config.wait_to_shooting_time = parseInt(req.query.quantity5 as string);
-    //             req.app.get("app_user_data_map")[user.email].matches[match_key].config.wait_to_next_round_start_time =  1000 * parseInt(req.query.quantity6 as string);
-    //             req.app.get("app_user_data_map")[user.email].matches[match_key].config.wait_to_round_resume_time =  1000 * parseInt(req.query.quantity7 as string);
-    //             req.app.get("app_user_data_map")[user.email].matches[match_key].config.wait_to_match_end_time =  1000 * parseInt(req.query.quantity8 as string);
-    //             req.app.get("app_user_data_map")[user.email].matches[match_key].config.wait_to_match_abort_time =  1000 * parseInt(req.query.quantity9 as string);
+                res.redirect('/challenge_edit_form?challenge_key='+ challenge_key);
 
-    //             Data.writeFileSync<User>(req.app.get("app_user_data_path"), req.app.get("app_user_data_map"));
+            } else {
 
-    //             res.redirect('/match_edit_form?match_key='+ match_key);
+                res.redirect('/user_login_form?fail_msg=invalid challenge_key');
 
-    //         } else {
-
-    //             res.redirect('/user_login_form?fail_msg=invalid match_key');
-
-    //         }
+            }
 
             
 
-    //     } else {
+        } else {
 
-    //         res.redirect('/user_login_form?fail_msg=login is required');
+            res.redirect('/user_login_form?fail_msg=login is required');
 
-    //     }
+        }
 
-    // }
+    }
 
     public edit_form(req: Request, res: Response) {
 
@@ -336,149 +307,150 @@ class ChallengeController {
 
   
 
-    // public abort(req: Request, res: Response) {
+    public abort(req: Request, res: Response) {
 
-    //     const user: User = req.app.get("users_session_login").get(req.session.id);
+        const user: User = req.app.get("users_session_login").get(req.session.id);
 
-    //     if (user !== undefined) {
+        if (user !== undefined) {
 
-    //         const ws_match_key: string = req.query.ws_match_key as string;
+            const ws_challenge_key: string = req.query.ws_challenge_key as string;
 
-    //         if (ws_match_key !== undefined) {
+            if (ws_challenge_key !== undefined) {
 
-    //             if (req.app.get("app_launched_matches").has(user.email)) {
+                if (req.app.get("app_launched_challenges").has(user.email)) {
 
-    //                 const wsmatch = req.app.get("app_launched_matches").get(user.email).get(ws_match_key) as WS_Match;
+                    const wschallenge = req.app.get("app_launched_challenges").get(user.email).get(ws_challenge_key) as WS_Challenge;
 
-    //                 if (wsmatch !== undefined) {
+                    if (wschallenge !== undefined) {
 
-    //                     const match: Match = req.app.get("app_user_data_map")[user.email].matches[wsmatch.match.key];
+                        const match: Challenge = req.app.get("app_user_data_map")[user.email].challenges[wschallenge.challenge.key];
 
-    //                     // console.log("AQUI...0:" + wsmatch.match.key);
-    //                     // console.log(req.app.get("app_user_data_map")[user.email].matches[wsmatch.match.key]);
+                        // console.log("AQUI...0:" + wsmatch.match.key);
+                        // console.log(req.app.get("app_user_data_map")[user.email].matches[wsmatch.match.key]);
 
-    //                     if (match !== undefined) {
+                        if (match !== undefined) {
 
-    //                         // console.log("AQUI...0");
+                            // console.log("AQUI...0");
 
-    //                         wsmatch.abort();
+                            wschallenge.abort();
 
-    //                         const wsmatchinfo: WS_MatchInfo = req.app.get("app_ws_match_info_client") as WS_MatchInfo;
+                            const wschallengeinfo: WS_ChallengeInfo = req.app.get("app_ws_challenge_info_client") as WS_ChallengeInfo;
 
-    //                         wsmatchinfo.setInfo({
-    //                             name: wsmatch.match.name,
-    //                             key: ws_match_key,
-    //                             status: MatchStatus.aborted,
-    //                             owner_user_key: wsmatch.owner_user_key,
-    //                             players: wsmatch.players
-    //                         });
+                            wschallengeinfo.setInfo({
+                                name: wschallenge.challenge.name,
+                                key: ws_challenge_key,
+                                status: ChallengeStatus.aborted,
+                                owner_user_key: wschallenge.owner_user_key,
+                                players: wschallenge.players
+                            });
 
-    //                         req.app.get("app_launched_matches").get(user.email).delete(ws_match_key);
+                            req.app.get("app_launched_challenges").get(user.email).delete(ws_challenge_key);
 
-    //                         res.redirect('/');
+                            res.redirect('/');
 
-    //                     }
+                        }
 
-    //                 } else {
+                    } else {
 
-    //                     res.redirect('/?fail_msg=invalid ws_match_key');
+                        res.redirect('/?fail_msg=invalid ws_challenge_key');
 
-    //                 }
-
-
-    //             } else {
-
-    //                 res.redirect('/?fail_msg=invalid owner_user_key');
-
-    //             }
-
-    //         } else {
-
-    //             res.redirect('/?fail_msg=no provided ws_match_key');
-
-    //         }
-
-    //     } else {
-
-    //         res.redirect('/user_login_form?fail_msg=login is required');
-
-    //     }
-
-    // }
-
-    // public launch(req: Request, res: Response) {
-
-    //     const wsaddress = req.app.get("app_web_server_address");
-    //     const wsport = req.app.get("app_web_server_port");
-    //     const app_name = req.app.get("app_name");
-
-    //     const user: User = req.app.get("users_session_login").get(req.session.id);
-
-    //     if (user !== undefined) {
-
-    //         const match_key: string = req.query.match_key as string;
-    //         // const user_key: string = req.query.user_key as string;
-
-    //         if (match_key !== undefined) {
-
-    //             const wsmatchinfo: WS_MatchInfo = req.app.get("app_ws_match_info_client") as WS_MatchInfo;
-
-    //             const match: Match = req.app.get("app_user_data_map")[user.email].matches[match_key];
-
-    //             const wsmatchkey = UID.get();
-
-    //             const wsmatch: WS_Match = new WS_Match(wsmatchkey, user.email, match, (ev: string, wsmatch: WS_Match) => {
-
-    //                 switch (ev) {
-
-    //                     case MatchStatus.aborted:
-    //                     case MatchStatus.ended:
-    //                     case MatchStatus.started:
-    //                     case MatchStatus.wait_to_start:
-    //                     case MatchStatus.wait_to_registry:
-
-    //                         wsmatchinfo.setInfo({
-    //                             name: wsmatch.match.name,
-    //                             key: wsmatch.key,
-    //                             status: ev,
-    //                             owner_user_key: wsmatch.owner_user_key,
-    //                             players: wsmatch.players
-    //                         });
-
-    //                         break;
+                    }
 
 
-    //                 }
+                } else {
 
-    //             });
+                    res.redirect('/?fail_msg=invalid owner_user_key');
 
-    //             if (!req.app.get("app_launched_matches").has(user.email)) {
+                }
 
-    //                 req.app.get("app_launched_matches").set(user.email, new Map());
+            } else {
 
-    //             }
+                res.redirect('/?fail_msg=no provided ws_challenge_key');
 
-    //             req.app.get("app_launched_matches").get(user.email).set(wsmatch.key, wsmatch);
+            }
 
-    //             wsmatch.launch(req.app.get("app_web_server_address"), req.app.get("app_websockt_server_port"));
+        } else {
 
+            res.redirect('/user_login_form?fail_msg=login is required');
 
+        }
 
-    //             res.redirect('/match_home');
+    }
 
-    //         } else {
+    public launch(req: Request, res: Response) {
 
-    //             res.redirect('/match_view?fail_msg=invalid match_key');
+        const wsaddress = req.app.get("app_web_server_address");
+        const wsport = req.app.get("app_web_server_port");
+        const app_name = req.app.get("app_name");
 
-    //         }
+        const user: User = req.app.get("users_session_login").get(req.session.id);
 
-    //     } else {
+        if (user !== undefined) {
 
-    //         res.redirect('/user_login_form?fail_msg=login is required');
+            const challenge_key: string = req.query.challenge_key as string;
 
-    //     }
+            // console.log("+++++++++:  ", challenge_key)
 
-    // }
+            if (challenge_key !== undefined) {
+
+                const wschallengeinfo: WS_ChallengeInfo = req.app.get("app_ws_challenge_info_client") as WS_ChallengeInfo;
+
+                const challenge: Challenge = req.app.get("app_user_data_map")[user.email].challenges[challenge_key];
+
+                const wschallengekey = UID.get();
+
+                const wschallenge: WS_Challenge = new WS_Challenge(wschallengekey, user.email, challenge, (ev: string, wschallenge: WS_Challenge) => {
+
+                    switch (ev) {
+
+                        case ChallengeStatus.launched:
+                        // case ChallengeStatus.aborted:
+                        // case ChallengeStatus.ended:
+                        // case ChallengeStatus.started:
+                        // case ChallengeStatus.wait_to_start:
+                        // case ChallengeStatus.wait_to_registry:
+
+                        // console.log("Chellenge Launched: " + challenge.name);
+
+                            wschallengeinfo.setInfo({
+                                name: wschallenge.challenge.name,
+                                key: wschallenge.key,
+                                status: ev,
+                                owner_user_key: wschallenge.owner_user_key,
+                                players: wschallenge.players
+                            });
+
+                            break;
+
+                    }
+
+                });
+
+                if (!req.app.get("app_launched_challenges").has(user.email)) {
+
+                    req.app.get("app_launched_challenges").set(user.email, new Map());
+
+                }
+
+                req.app.get("app_launched_challenges").get(user.email).set(wschallenge.key, wschallenge);
+
+                wschallenge.launch(req.app.get("app_web_server_address"), req.app.get("app_websockt_server_port"));
+
+                res.redirect('/challenge_home');
+
+            } else {
+
+                res.redirect('/challenge_view?fail_msg=invalid challenge_key');
+
+            }
+
+        } else {
+
+            res.redirect('/user_login_form?fail_msg=login is required');
+
+        }
+
+    }
 
 
 
