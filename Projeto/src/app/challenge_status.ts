@@ -12,6 +12,4 @@ export const ChallengeStatus = {
     closed_socket: "9",
     error_socket: "X"
 
-
-
 } as const;

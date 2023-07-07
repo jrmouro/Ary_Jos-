@@ -52,11 +52,11 @@ router.get("/round_edit", roundController.edit);
 //Challenges
 router.get("/challenge_home", challengeController.home);
 router.get("/challenge_view", challengeController.view);
-// router.get("/match_launch", matchController.launch);
-// router.get("/match_abort", matchController.abort);
+router.get("/challenge_launch", challengeController.launch);
+router.get("/challenge_abort", challengeController.abort);
 // router.get("/match_room", matchController.room);
 router.get("/challenge_register", challengeController.register);
-// router.get("/match_edit", matchController.edit);
+router.get("/challenge_edit", challengeController.edit);
 router.get("/challenge_edit_form", challengeController.edit_form);
 router.get("/challenge_register_form", challengeController.register_form);
 

@@ -56,38 +56,7 @@
           <label for="name"> Challenge name</label>
           <input id="name" name="name" placeholder="challenge name" style="margin: 2px" autofocus required type="text" value= '<%= user_challenges[challenge_key].name %>' ></input><br>
           
-          <% if(user_challenges[challenge_key].config.show_options){ %>
-            <input type="checkbox" id="checkbox1" name="checkbox1" value="0" checked>
-          <% } else{ %>  
-            <input type="checkbox" id="checkbox1" name="checkbox1" value="0">
-         <% } %>          
-          <label for="checkbox1"> Show options in shooting state</label><br>
-
-          <% if(user_challenges[challenge_key].config.start_match_upon_completing_registration){ %>
-            <input type="checkbox" id="checkbox2" name="checkbox2" value="0" checked>
-          <% } else{ %>  
-            <input type="checkbox" id="checkbox2" name="checkbox2" value="0">
-         <% } %>          
-          <label for="checkbox2"> Start match upon completing registration</label><br>
-
-          <label for="quantity1">Minimum number of players</label>
-          <input type="number" id="quantity1" name="quantity1" min="1" max="50" value='<%= user_challenges[challenge_key].config.min_amount_players %>'><br>
-          <label for="quantity2">Maximum number of players</label>
-          <input type="number" id="quantity2" name="quantity2" min="1" max="50" value='<%= user_challenges[challenge_key].config.max_amount_players %>'><br>
-          <label for="quantity3">Waiting time for registration at match (seconds)</label>
-          <input type="number" id="quantity3" name="quantity3" min="5" max="300" value='<%= user_challenges[challenge_key].config.wait_to_registry_at_match_time/1000 %>'><br>
-          <label for="quantity4">Waiting time for the start of the match (seconds)</label>
-          <input type="number" id="quantity4" name="quantity4" min="5" max="300" value='<%= user_challenges[challenge_key].config.wait_to_start_match_time/1000 %>'><br>
-          <!-- <label for="quantity5">Wait time to shooting (seconds)</label>
-          <input type="number" id="quantity5" name="quantity5" min="30" max="300"><br> -->
-          <label for="quantity6">Waiting time to start the next round (seconds)</label>
-          <input type="number" id="quantity6" name="quantity6" min="5" max="300" value='<%= user_challenges[challenge_key].config.wait_to_next_round_start_time/1000 %>'><br>
-          <label for="quantity7">Waiting time to resume the round (seconds)</label>
-          <input type="number" id="quantity7" name="quantity7" min="5" max="300" value='<%= user_challenges[challenge_key].config.wait_to_round_resume_time/1000 %>'><br>
-          <label for="quantity8">Waiting time to end the match (seconds)</label>
-          <input type="number" id="quantity8" name="quantity8" min="5" max="300" value='<%= user_challenges[challenge_key].config.wait_to_match_end_time/1000 %>'><br>
-          <label for="quantity9">Waiting time to destroy the match (seconds)</label>
-          <input type="number" id="quantity9" name="quantity9" min="5" max="300" value='<%= user_challenges[challenge_key].config.wait_to_match_abort_time/1000 %>'><br>
+    
         </Div>
         <div style="text-align: left;">
           <h4 style="margin: 0px;margin-top: 10px;">Rounds</h4>

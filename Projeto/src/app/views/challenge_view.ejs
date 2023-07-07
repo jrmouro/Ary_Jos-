@@ -51,25 +51,6 @@
       <h3 style="margin: 0px;padding: 0px;"><%= "Challenge: " + user_challenges[challenge_key].name %></h3>
     </div>
     
-    <Div style="text-align: left;">
-      <p style="margin: 0px;">Show options in shooting state: <%=user_challenges[challenge_key].config.show_options%></p>
-      <p style="margin: 0px;">Start match upon completing registration:
-        <%=user_challenges[challenge_key].config.start_match_upon_completing_registration%></p>
-      <p style="margin: 0px;">Minimum number of players: <%=user_challenges[challenge_key].config.min_amount_players%></p>
-      <p style="margin: 0px;">Maximum number of players: <%=user_challenges[challenge_key].config.max_amount_players%></p>
-      <p style="margin: 0px;">Waiting time for registration at match (seconds:
-        <%=user_challenges[challenge_key].config.wait_to_registry_at_match_time/1000%></p>
-      <p style="margin: 0px;">Waiting time for the start of the match (seconds):
-        <%=user_challenges[challenge_key].config.wait_to_start_match_time/1000%></p>
-      <p style="margin: 0px;">Waiting time to start the next round (seconds):
-        <%=user_challenges[challenge_key].config.wait_to_next_round_start_time/1000%></p>
-      <p style="margin: 0px;">Waiting time to resume the round (seconds):
-        <%=user_challenges[challenge_key].config.wait_to_round_resume_time/1000%></p>
-      <p style="margin: 0px;">Waiting time to end the match (seconds):
-        <%=user_challenges[challenge_key].config.wait_to_match_end_time/1000%></p>
-      <p style="margin: 0px;margin-bottom: 10px;">Waiting time to destroy the match (seconds):
-        <%=user_challenges[challenge_key].config.wait_to_match_abort_time/1000%></p>
-    </Div>
     <div>
       <h4 style="margin: 0px;">Rounds</h4>
       <ul style="margin: 0px;margin-left: 25px; padding: 0;">
