@@ -165,8 +165,6 @@ class MatchController {
 
                 if (match_key in user_matches) {
 
-                    const edit_quiz: Match = user_matches[match_key];
-
                     res.render('match_edit_form', {
                         title: app_name,
                         wsa: wsaddress,

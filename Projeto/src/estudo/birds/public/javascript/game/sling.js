@@ -11,14 +11,17 @@ class Sling extends Binding {
                 rate: .95
             },
             e2: undefined
-        }) {
+        },
+        releasedBodyId = undefined) {
         super(constraintOptions, drawPointA);
         this.limit = limit * limit;
         this.maxLength = maxLength;
         this.velLength = velLength;
         this.time = Date.now();
-    }
 
+        this.releasedBodyId = releasedBodyId;
+    }
+    
 
     isLimit() {
 

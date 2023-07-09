@@ -57,9 +57,6 @@ class UserController {
 
                 req.app.get("users_session_login").set(req.session.id, user);
 
-                console.log("LOGIN");
-                console.log(req.query);
-
                 res.redirect('/');
 
             }

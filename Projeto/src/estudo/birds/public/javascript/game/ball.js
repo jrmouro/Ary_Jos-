@@ -34,6 +34,7 @@ class Ball extends DrawBody {
 
             });
 
+        this._draw = draw;
         this.redraw = redraw;
         this.radius = r;
 
@@ -62,10 +63,12 @@ class Ball extends DrawBody {
 
             }
 
+            const d = this._draw;
+            this._draw = this.redraw;
+            this.redraw = d;
+
         }
 
     }
-
-
 
 }

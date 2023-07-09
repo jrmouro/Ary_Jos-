@@ -44,7 +44,7 @@ export class App {
     this.server.set('app_ws_challenge_info_client', 
       new WS_ChallengeInfo(UID.get(), (ev: string, ws_challenge_info: WS_ChallengeInfo) => {
 
-      console.log(`LOG wschallengeinfo at port ${ws_challenge_info.port} event: ${ev}`);
+      console.log(`LOG: wschallengeinfo at port ${ws_challenge_info.port} event: ${ev}`);
 
     }));
 

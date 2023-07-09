@@ -26,6 +26,4 @@ class DrawWorld extends Drawable {
     this.map.delete(key);
   }
 
-  
-
 }

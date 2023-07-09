@@ -51,10 +51,11 @@ function wschallengeinfo(filter=false) {
                 if((filter && owner_user_key === user_key)||!filter ){
 
                 var challengename = launched_challenges[wschallengekey].name;
+                var challengeaddress = launched_challenges[wschallengekey].ws_address;
                 var challengestatus = launched_challenges[wschallengekey].status;
 
                 var status_simbol = '&#x270D;';
-                var tooltip_text = 'register';
+                var tooltip_text = 'game';
 
                 switch (challengestatus) {
                     case "1":
@@ -72,7 +73,11 @@ function wschallengeinfo(filter=false) {
                 }
 
                 const x = document.createElement("A");
-                x.setAttribute("href", "/challenge_room?ws_challenge_key=" + wschallengekey + "&ws_challenge_owner_user_key="+owner_user_key);
+                x.setAttribute("target", "_blank");
+
+                const ws_client = Date.now().toString(36) + Math.random().toString(36).substr(2);
+
+                x.setAttribute("href", "http://" + challengeaddress + "/?ws_cluster=" + wschallengekey + "&ws_client=" + ws_client + "&wssa=" + wsa + "&wssp=" + wssp);
                 x.setAttribute("class", "tooltip");
                 x.style.textDecorationLine = "none";
                 x.innerHTML = status_simbol;

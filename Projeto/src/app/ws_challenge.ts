@@ -13,7 +13,6 @@ export class WS_Challenge {
     owner_user_key: string;
     challenge: Challenge;
     players: { [key: string]: Player } = {};
-    readonly challenge_round_entries: [string, Round][];
     socket: WebSocket | undefined = undefined;
     eventCallback: (event: string, wschallenge: WS_Challenge) => void;
 
@@ -21,14 +20,19 @@ export class WS_Challenge {
         key: string,
         owner_user_key: string,
         challenge: Challenge,
-        eventCallback: (event: string, wschallenge: WS_Challenge) => void, wss_ip?: string, port?: number) {
+        eventCallback: (event: string, wschallenge: WS_Challenge) => void, 
+        wss_ip?: string, 
+        port?: number) {
+
         this.key = key;
         this.owner_user_key = owner_user_key;
         this.challenge = challenge;
-        this.challenge_round_entries = Object.entries(this.challenge.rounds);
         this.eventCallback = eventCallback;
+
         if (wss_ip !== undefined && port !== undefined) {
+
             this.launch(wss_ip, port);
+
         }
     }
 
@@ -48,8 +52,8 @@ export class WS_Challenge {
                         JSON.stringify({
                             sender: this.key,
                             sender_cluster: this.key,
-                            receiver: receiver || "__cluster__",
-                            receiver_cluster: this.key,
+                            receiver:  sender || "__cluster__",
+                            receiver_clureceiverster: this.key,
                             msg_type: Protocol.challenge_info,
                             msg_content: {
 
@@ -93,6 +97,8 @@ export class WS_Challenge {
 
                 self.socket.onmessage = function (event: MessageEvent) {
 
+                    console.log('Challenge control websocket(' + self.key + ') onmessage: ' + event.data.toString());
+
                     self.control(JSON.parse(event.data.toString()) as WS_MSG);
 
                 };
@@ -125,7 +131,7 @@ export class WS_Challenge {
 
                 self.eventCallback(ChallengeStatus.launched, self);
 
-                // console.log('Challenge control websocket(' + self.key + ') launched.');
+                console.log('Challenge control websocket(' + self.key + ') launched.');
 
             };
 

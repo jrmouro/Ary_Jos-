@@ -1,21 +1,22 @@
-class Scene extends DrawWorld {
+class InitialScene extends DrawWorld {
 
     constructor(canvas, engine, def = null, finished = (score) => {}) {
         super(engine.world, 0, 0, 0, def.drawFunction);
         this.canvas = canvas;
         this.engine = engine;
         this.def = def;
-        this.finished = finished;
-
         this.current_shot = 0;
         this.sling = null;
         this.bird = null;
         this.mouseConstraint = null;
         this.nextflag = false;
         this.score = 0;
-        this.isFinished = false;
 
         if (def) this.build(def);
+
+        this.finished = finished;
+        this.isFinished = false;
+
 
     }
 
@@ -102,23 +103,7 @@ class Scene extends DrawWorld {
 
                     ball = new Ball(x, y, def.sensor2.dimension, def.sensor2.bodyOptions, def.sensor2.draw, def.sensor2.redraw);
 
-                } else if (angle === 6) {
-
-                    ball = new GBox(x, y, def.building5.width, def.building5.height, def.building5.bodyOptions, def.building5.draw, def.building5.redraw);
-
-                } else if (angle === 7) {
-
-                    ball = new GBox(x, y, def.building4.width, def.building4.height, def.building4.bodyOptions, def.building4.draw, def.building4.redraw);
-
-                }else if (angle === 9) {
-
-                    ball = new GBox(x, y, def.building2.width, def.building2.height, def.building2.bodyOptions, def.building2.draw, def.building2.redraw);
-
-                } else if (angle === 8) {
-
-                    ball = new GBox(x, y, def.building3.width, def.building3.height, def.building3.bodyOptions, def.building3.draw, def.building3.redraw);
-
-                }else if (angle === -1) {
+                } else if (angle === -1) {
 
                     this.def.bird1.position.x = x;
                     this.def.bird1.position.y = y;
@@ -206,33 +191,20 @@ class Scene extends DrawWorld {
 
                 }
 
-                if (!self.bird.isDead && self.sling.isBind()) {
+                if (!self.bird.isDead) {
 
                     if (pair.bodyB.label === "b" && pair.bodyA.label === "5") {
 
-                        // setTimeout(() => {
 
-                        //     if (self.nextflag) {
-                        //         self.next();
-                        //         self.nextflag = false;
-                        //     }
-
-                        // }, def.nextTime);
-
-                        self.isFinished = true;
-                        Matter.Events.off(self.engine);
-                        Matter.Events.off(self.mouseConstraint);
 
                         setTimeout(() => {
-                            
-                            // self.bird.dead();
-                            setTimeout(() => {
-                            
-                                self.finish();                                
-    
-                            }, 2000);
 
-                        }, 200);
+                            if (self.nextflag) {
+                                self.next();
+                                self.nextflag = false;
+                            }
+
+                        }, def.nextTime);
 
                     }
                 }

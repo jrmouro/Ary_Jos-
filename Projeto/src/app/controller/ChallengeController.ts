@@ -49,21 +49,22 @@ class ChallengeController {
 
     public register(req: Request, res: Response) {
         
-        const wsaddress = req.app.get("app_web_server_address");
-        const wsport = req.app.get("app_web_server_port");
-        const app_name = req.app.get("app_name");
+        // const wsaddress = req.app.get("app_web_server_address");
+        // const wsport = req.app.get("app_web_server_port");
+        // const app_name = req.app.get("app_name");
 
         const user: User = req.app.get("users_session_login").get(req.session.id);
 
         if (user !== undefined) {
 
             const name: string = req.query.name as string;
-
+            const ws_address: string = req.query.ws_address as string;
             
             const challenge: Challenge = {
                 key: UID.get(),
                 name: name,
-                rounds: {}
+                rounds: {},
+                ws_address: ws_address
             }
 
             const user_challenges: { [key: string]: Challenge } = req.app.get("app_user_data_map")[user.email].challenges;
@@ -89,10 +90,12 @@ class ChallengeController {
 
             const challenge_key: string = req.query.challenge_key as string;
             const name: string = req.query.name as string;
+            const ws_address: string = req.query.ws_address as string;
 
             if( challenge_key in req.app.get("app_user_data_map")[user.email].challenges){
 
                 req.app.get("app_user_data_map")[user.email].challenges[challenge_key].name = name;
+                req.app.get("app_user_data_map")[user.email].challenges[challenge_key].ws_address = ws_address;
                 
                 Data.writeFileSync<User>(req.app.get("app_user_data_path"), req.app.get("app_user_data_map"));
 
@@ -103,7 +106,6 @@ class ChallengeController {
                 res.redirect('/user_login_form?fail_msg=invalid challenge_key');
 
             }
-
             
 
         } else {
@@ -133,8 +135,6 @@ class ChallengeController {
                 const user_challenges: { [key: string]: Challenge } = req.app.get("app_user_data_map")[user.email].challenges;
 
                 if (challenge_key in user_challenges) {
-
-                    const edit_quiz: Challenge = user_challenges[challenge_key];
 
                     res.render('challenge_edit_form', {
                         title: app_name,
@@ -196,72 +196,6 @@ class ChallengeController {
         }
 
     }
-
-    // public room(req: Request, res: Response) {
-
-    //     const wsaddress = req.app.get("app_web_server_address");
-    //     const wsport = req.app.get("app_web_server_port");
-    //     const wss_port = req.app.get("app_websockt_server_port");
-    //     const app_name = req.app.get("app_name");
-
-    //     const user: User = req.app.get("users_session_login").get(req.session.id);
-    //     const fail_msg = req.query.fail_msg;
-
-    //     if (user !== undefined) {
-
-    //         const ws_match_key: string = req.query.ws_match_key as string; 
-    //         const owner_user_key: string = req.query.ws_match_owner_user_key as string;
-
-    //         if (ws_match_key !== undefined && owner_user_key !== undefined) {
-
-    //             if (req.app.get("app_launched_matches").has(owner_user_key)) {
-
-    //                 const wsmatch = req.app.get("app_launched_matches").get(owner_user_key).get(ws_match_key) as WS_Match;
-                    
-    //                 if (wsmatch !== undefined) {
-
-    //                     res.render('match_room', {
-    //                         title: app_name,
-    //                         wsa: wsaddress,
-    //                         wsp: wsport,
-    //                         wssp: wss_port,
-    //                         user: user,
-    //                         match: wsmatch.match,
-    //                         ws_match_cluster_key: wsmatch.key,
-    //                         ws_match_owner_user_key: wsmatch.owner_user_key,
-    //                         ws_match_player_key: user.email,
-    //                         ws_match_player_name: user.name,
-    //                         fail_msg: fail_msg
-    //                     });
-
-    //                 } else {
-
-    //                     res.redirect('/?fail_msg=invalid ws_match_key');
-
-    //                 }
-
-    //             } else {
-
-    //                 res.redirect('/?fail_msg=invalid owner_user_key');
-
-    //             }
-
-
-
-    //         } else {
-
-    //             res.redirect('/?fail_msg=ws_match_key or owner_user_key not provided');
-
-    //         }
-
-    //     } else {
-
-    //         res.redirect('/user_login_form?fail_msg=login is required');
-
-    //     }
-
-
-    // }
 
     public view(req: Request, res: Response) {
 
@@ -325,12 +259,7 @@ class ChallengeController {
 
                         const match: Challenge = req.app.get("app_user_data_map")[user.email].challenges[wschallenge.challenge.key];
 
-                        // console.log("AQUI...0:" + wsmatch.match.key);
-                        // console.log(req.app.get("app_user_data_map")[user.email].matches[wsmatch.match.key]);
-
                         if (match !== undefined) {
-
-                            // console.log("AQUI...0");
 
                             wschallenge.abort();
 
@@ -338,10 +267,11 @@ class ChallengeController {
 
                             wschallengeinfo.setInfo({
                                 name: wschallenge.challenge.name,
+                                ws_address: wschallenge.challenge.ws_address,
                                 key: ws_challenge_key,
                                 status: ChallengeStatus.aborted,
                                 owner_user_key: wschallenge.owner_user_key,
-                                players: wschallenge.players
+                                players: wschallenge.players                                
                             });
 
                             req.app.get("app_launched_challenges").get(user.email).delete(ws_challenge_key);
@@ -389,8 +319,6 @@ class ChallengeController {
 
             const challenge_key: string = req.query.challenge_key as string;
 
-            // console.log("+++++++++:  ", challenge_key)
-
             if (challenge_key !== undefined) {
 
                 const wschallengeinfo: WS_ChallengeInfo = req.app.get("app_ws_challenge_info_client") as WS_ChallengeInfo;
@@ -399,32 +327,30 @@ class ChallengeController {
 
                 const wschallengekey = UID.get();
 
-                const wschallenge: WS_Challenge = new WS_Challenge(wschallengekey, user.email, challenge, (ev: string, wschallenge: WS_Challenge) => {
+                const wschallenge: WS_Challenge = new WS_Challenge(
+                    wschallengekey, 
+                    user.email, 
+                    challenge, 
+                    (ev: string, wschallenge: WS_Challenge) => {
 
-                    switch (ev) {
+                        switch (ev) {
 
-                        case ChallengeStatus.launched:
-                        // case ChallengeStatus.aborted:
-                        // case ChallengeStatus.ended:
-                        // case ChallengeStatus.started:
-                        // case ChallengeStatus.wait_to_start:
-                        // case ChallengeStatus.wait_to_registry:
+                            case ChallengeStatus.launched:
 
-                        // console.log("Chellenge Launched: " + challenge.name);
+                                wschallengeinfo.setInfo({
+                                    name: wschallenge.challenge.name,
+                                    ws_address: wschallenge.challenge.ws_address,
+                                    key: wschallenge.key,
+                                    status: ev,
+                                    owner_user_key: wschallenge.owner_user_key,
+                                    players: wschallenge.players
+                                });
 
-                            wschallengeinfo.setInfo({
-                                name: wschallenge.challenge.name,
-                                key: wschallenge.key,
-                                status: ev,
-                                owner_user_key: wschallenge.owner_user_key,
-                                players: wschallenge.players
-                            });
+                                break;
 
-                            break;
+                        }
 
-                    }
-
-                });
+                    });
 
                 if (!req.app.get("app_launched_challenges").has(user.email)) {
 

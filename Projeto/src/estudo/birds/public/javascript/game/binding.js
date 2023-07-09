@@ -101,36 +101,20 @@ class Binding extends Drawable {
 
     // }
 
-    // release(timeToRelease = 0) {
+    release(timeToRelease = 0) {
 
-    //     if (this.constraint) {
+        if (this.constraint) {
 
-    //         setTimeout((binding) => {
+            setTimeout((binding) => {
 
-    //             binding.constraint.bodyB = null;
-    //             this.drawFunction = () => {}
+                binding.constraint.bodyB = null;
+                this.drawFunction = () => {}
 
-    //         }, timeToRelease, this);
+            }, timeToRelease, this);
 
-    //     }
+        }
 
-    // }
-
-    // isLimit() {
-
-    //     if (this.constraint.bodyB) {
-
-    //         const a = this.constraint.pointA.x - this.constraint.bodyB.position.x;
-    //         const b = this.constraint.pointA.y - this.constraint.bodyB.position.y;
-    //         const h = a * a + b * b;
-
-    //         return h > this.limit;
-
-    //     }
-
-    //     return true;
-
-    // }
+    }
 
     isBind() {
 
@@ -139,91 +123,3 @@ class Binding extends Drawable {
     }
 
 }
-
-// class Binding extends Drawable {
-
-//     constructor(body, x, y, le = 50, li = 100, st = .5) {
-
-//         super(x, y, 0, () => {
-
-//             line(0, 0,
-//                 body.position.x - x,
-//                 body.position.y - y);
-
-//         });
-
-//         this.limit = li * li;
-
-//         this.constraint = Matter.Constraint.create({
-//             bodyB: body,
-//             pointA: {
-//                 x: x,
-//                 y: y
-//             },
-//             pointB: {
-//                 x: 0,
-//                 y: 15
-//             },
-//             stiffness: st,
-//             length: le
-
-//         });
-
-//     }
-
-//     bind(point = undefined, body = undefined) {
-
-//         if (point) {
-//             this.x = this.constraint.pointA.x = point.x;
-//             this.y = this.constraint.pointA.y = point.y;
-//         }
-//         if (body) this.constraint.bodyB = body;
-
-//         if (this.constraint.bodyB) {
-//             const constraint = this.constraint;
-//             this.drawFunction = () => {
-//                 line(0, 0,
-//                     constraint.bodyB.position.x - constraint.pointA.x,
-//                     constraint.bodyB.position.y - constraint.pointA.y);
-//             }
-//         }
-
-//     }
-
-//     release(timeToBind = undefined) {
-
-//         const body = this.constraint.bodyB;
-//         this.constraint.bodyB = null;
-//         this.drawFunction = () => {}
-//         if (timeToBind) {
-//             const self = this;
-//             setTimeout(() => {
-//                 self.bind(self.constraint.pointA, body);
-//             }, timeToBind);
-//         }
-
-//     }
-
-//     isLimit() {
-
-//         if (this.constraint.bodyB) {
-
-//             const a = this.constraint.pointA.x - this.constraint.bodyB.position.x;
-//             const b = this.constraint.pointA.y - this.constraint.bodyB.position.y;
-//             const h = a * a + b * b;
-
-//             return h > this.limit;
-
-//         }
-
-//         return true;
-
-//     }
-
-//     isBind() {
-
-//         return this.constraint.bodyB !== null;
-
-//     }
-
-// }

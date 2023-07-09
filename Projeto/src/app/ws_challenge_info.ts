@@ -6,6 +6,7 @@ import { ChallengeStatus } from "./challenge_status";
 
 interface ChallengeInfo{
     name:string;
+    ws_address:string,
     key:string;
     status:string;
     owner_user_key:string;
@@ -82,7 +83,7 @@ export class WS_ChallengeInfo {
         const sender = msg_obj.sender;
         const msg_type = msg_obj.msg_type;
 
-        console.log(JSON.stringify(msg_obj));
+        // console.log(JSON.stringify(msg_obj));
 
         if (receiver === this.key && sender !== undefined) {
 
