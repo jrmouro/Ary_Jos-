@@ -26,7 +26,7 @@ class Game {
 
             WSChallenge.get(this.challenge_service, (rounds) => {
 
-                self.rounds = rounds;
+                if(rounds) self.rounds = Object.values(rounds);
 
                 console.log('Rounds: ', JSON.stringify(self.rounds))
 

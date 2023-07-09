@@ -15,11 +15,15 @@ class WSChallenge {
 
             socket.onopen = function (event) {
 
+                let timeoutId = undefined;
+
                 socket.onmessage = function (event) {
 
                     var msg_obj = JSON.parse(event.data.toString());
 
                     if (msg_obj.msg_type === '56') {
+
+                        clearTimeout(timeoutId);
 
                         rounds(msg_obj.msg_content);
 
@@ -44,7 +48,7 @@ class WSChallenge {
                     msg_content: {}
                 }));
 
-                setTimeout((socket) => {
+                timeoutId = setTimeout((socket) => {
 
                     if (socket !== undefined && socket.readyState === WebSocket.OPEN) {
 
