@@ -25,7 +25,7 @@ class ChallengeScene extends DrawWorld {
         this.finished(this.score);
 
     }
-   
+
 
     build(def) {
 
@@ -63,7 +63,7 @@ class ChallengeScene extends DrawWorld {
 
             let def_option = def.options[count++];
 
-            
+
 
             if (element == self.round.question.true_option) {
 
@@ -103,10 +103,21 @@ class ChallengeScene extends DrawWorld {
 
         ball = new Ball(
             def.sensor2.position.x,
-            def.sensor2.position.y - def.chase2.dimension,
-            def.chase2.dimension, def.chase2.bodyOptions, def.chase2.draw, def.chase2.redraw);
+            def.sensor2.position.y - def.chase3.dimension,
+            def.chase3.dimension, def.chase3.bodyOptions, def.chase3.draw, def.chase3.redraw);
+        self.add(ball.body.id, ball);
 
-            self.add(ball.body.id, ball);
+        // ball = new GBox(def.ground.position.x, def.ground.position.y, def.ground.width, def.ground.height, def.ground.bodyOptions, def.ground.draw, def.ground.redraw);
+        // self.add(ball.body.id, ball);
+
+        ball = new DrawBody(Matter.Bodies.rectangle(def.ground.position.x, def.ground.position.y, def.ground.width, def.ground.height, def.ground.bodyOptions, ), () => {
+
+            rectMode(CENTER);
+            fill(0);
+            rect(0, 0, def.ground.width, def.ground.height + 100);
+
+        });
+        self.add(ball.body.id, ball);
 
         const options = {
             mouse: Matter.Mouse.create(this.canvas),
@@ -140,128 +151,97 @@ class ChallengeScene extends DrawWorld {
 
             event.pairs.forEach(pair => {
 
-                if (!self.bird.isDead && !self.sling.isBind()) {
+                if (!self.bird.isDead) {
 
-                    if (pair.bodyB.label === "b" && pair.bodyA.label === def.chase1.bodyOptions.label && self.sling.releasedBodyId !== pair.bodyA.id) {
+                    if (!self.sling.isBind()) {
 
-                        setTimeout(() => {
-
-                            self.get(pair.bodyA.id).change();
-
-                            if(self.sling.releasedBodyId) self.get(self.sling.releasedBodyId).change();
-
-                            self.delete(-1);
-
-                            const op = {
-                                bodyB: self.bird.body,
-                                pointA: {
-                                    x: pair.bodyA.position.x,
-                                    y: pair.bodyA.position.y
-                                },
-                                pointB: self.def.sling.constraintOptions.pointB,
-                                stiffness: self.def.sling.constraintOptions.stiffness,
-                                length: self.def.sling.constraintOptions.length
-                            };
-
-
-                            self.sling = new Sling(self.def.sling.limit, self.def.sling.maxLength, self.def.sling.velLength, op, self.def.sling.drawPointA, pair.bodyA.id);
-
-                            self.add(-1, self.sling);
-
-                            self.score = self.round.score;
-
-                        }, 100);
-
-                    }
-
-                    if (pair.bodyB.label === "b" && pair.bodyA.label === def.chase2.bodyOptions.label && self.sling.releasedBodyId !== pair.bodyA.id) {
-
-
-                        setTimeout(() => {
-
-                            self.get(pair.bodyA.id).change();
-
-                            if(self.sling.releasedBodyId) self.get(self.sling.releasedBodyId).change();
-
-                            self.delete(-1);
-
-                            const op = {
-                                bodyB: self.bird.body,
-                                pointA: {
-                                    x: pair.bodyA.position.x,
-                                    y: pair.bodyA.position.y
-                                },
-                                pointB: self.def.sling.constraintOptions.pointB,
-                                stiffness: self.def.sling.constraintOptions.stiffness,
-                                length: self.def.sling.constraintOptions.length
-                            };
-
-
-                            self.sling = new Sling(self.def.sling.limit, self.def.sling.maxLength, self.def.sling.velLength, op, self.def.sling.drawPointA, pair.bodyA.id);
-
-                            self.add(-1, self.sling);
-
-                            self.score = 0;
-
-                        }, 100);
-
-                    }
-
-                }
-
-                if (!self.bird.isDead && self.sling.isBind()) {
-
-                    if (pair.bodyB.label === "b" && pair.bodyA.label === "5") {
-
-                        // setTimeout(() => {
-
-                        //     if (self.nextflag) {
-                        //         self.next();
-                        //         self.nextflag = false;
-                        //     }
-
-                        // }, def.nextTime);
-
-                        self.isFinished = true;
-                        Matter.Events.off(self.engine);
-                        Matter.Events.off(self.mouseConstraint);
-
-                        setTimeout(() => {
+                        if (
+                            pair.bodyB.label === def.bird1.bodyOptions.label &&
+                            (pair.bodyA.label === def.chase1.bodyOptions.label || pair.bodyA.label === def.chase2.bodyOptions.label || pair.bodyA.label === def.chase3.bodyOptions.label) &&
+                            self.sling.releasedBodyId !== pair.bodyA.id) {
 
                             setTimeout(() => {
 
-                                self.finish();
+                                self.get(pair.bodyA.id).change();
 
-                            }, 1000);
+                                if (self.sling.releasedBodyId) self.get(self.sling.releasedBodyId).change();
 
-                        }, 200);
+                                self.delete(-1);
 
-                    }
-                }
+                                const op = {
+                                    bodyB: self.bird.body,
+                                    pointA: {
+                                        x: pair.bodyA.position.x,
+                                        y: pair.bodyA.position.y
+                                    },
+                                    pointB: self.def.sling.constraintOptions.pointB,
+                                    stiffness: self.def.sling.constraintOptions.stiffness,
+                                    length: self.def.sling.constraintOptions.length
+                                };
 
-                if (!self.isFinished) {
 
-                    if (pair.bodyB.label === "b" && pair.bodyA.label === "4") {
+                                self.sling = new Sling(self.def.sling.limit, self.def.sling.maxLength, self.def.sling.velLength, op, self.def.sling.drawPointA, pair.bodyA.id);
 
-                        self.isFinished = true;
-                        Matter.Events.off(self.engine);
-                        Matter.Events.off(self.mouseConstraint);
+                                self.add(-1, self.sling);
 
-                        setTimeout(() => {
+                                if (pair.bodyA.label === def.chase1.bodyOptions.label) {
+                                    self.score = self.round.score;
+                                } else if (pair.bodyA.label === def.chase2.bodyOptions.label) {
+                                    self.score = 0;
+                                }
 
-                            self.bird.dead();
+
+                            }, 100);
+
+                        }
+
+                        if ((pair.bodyB.label === def.bird1.bodyOptions.label &&
+                                pair.bodyA.label === def.ground.bodyOptions.label) || (pair.bodyB.label === def.ground.bodyOptions.label &&
+                                pair.bodyA.label === def.bird1.bodyOptions.label)) {
+
+                            self.isFinished = true;
+                            Matter.Events.off(self.engine);
+                            Matter.Events.off(self.mouseConstraint);
+
                             setTimeout(() => {
 
-                                self.finish();
+                                self.bird.dead();
 
-                            }, 2000);
+                                setTimeout(() => {
 
-                        }, 200);
+                                    self.finish();
+
+                                }, 1500);
+
+                            }, 200);
+
+                        } else {
+
+                            if ((pair.bodyB.label === def.bird1.bodyOptions.label &&
+                                    pair.bodyA.label === def.sensor2.bodyOptions.label) || (pair.bodyB.label === def.sensor2.bodyOptions.label &&
+                                    pair.bodyA.label === def.bird1.bodyOptions.label)) {
+
+                                self.isFinished = true;
+                                Matter.Events.off(self.engine);
+                                Matter.Events.off(self.mouseConstraint);
+
+                                setTimeout(() => {
+
+                                    setTimeout(() => {
+
+                                        self.finish();
+
+                                    }, 1500);
+
+                                }, 200);
+
+                            }
+
+                        }
 
                     }
 
                 }
-
 
 
             });

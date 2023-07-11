@@ -14,7 +14,7 @@ class Game {
         this.current_scene = undefined;
         this.canvas = canvas;
         this.score = 0;
-        this.rounds = undefined;
+        this.rounds = [];
 
     }
 
@@ -26,9 +26,22 @@ class Game {
 
             WSChallenge.get(this.challenge_service, (rounds) => {
 
-                if(rounds) self.rounds = Object.values(rounds);
+                if(rounds) { 
 
-                console.log('Rounds: ', JSON.stringify(self.rounds))
+                    const aux = Object.values(rounds);
+
+                    aux.forEach((value)=>{
+
+                        self.rounds = self.rounds.concat(Object.values(value));
+
+                    });              
+
+                
+                    console.log('Rounds: ', JSON.stringify(self.rounds))
+
+
+                }
+
 
                 self.next();
 
@@ -52,32 +65,7 @@ class Game {
 
         const self = this;
 
-        // const round = {
-        //     key: "li24hajxisbo3s3d0t",
-        //     quiz_theme: "Histórico e Mitos da Engenharia de Software",
-        //     question: {
-        //         key: "lh9hegs214gyvtgk8zoe",
-        //         description: "O Ciclo de Vida espiral surgiu no ano de:",
-        //         fake_options: ["1975", "1985", "1990"],
-        //         true_option: "1980"
-        //     },
-        //     shooting_timeout: 3000,
-        //     response_timeout: 3000,
-        //     pass_timeout: 3000,
-        //     score: 4
-        // };
-
-        // this.current_scene = new ChallengeScene(round, this.canvas, this.engine, challenge_scene, (score) => {
-
-        //     self.score += score;
-
-        //     // self.next();
-        //     // console.log("Scene Over: " + score);
-
-
-        // });
-
-        if (this.rounds) {
+        if (this.rounds.length > 0) {
 
             if (this.def_scene_index < this.rounds.length) {
 
@@ -95,7 +83,6 @@ class Game {
                             self.score += score;
 
                             self.next();
-
 
                         });
 
