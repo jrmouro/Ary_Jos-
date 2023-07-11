@@ -1,37 +1,110 @@
 class Actor extends DrawWorld {
-    constructor(engine) {
-        super(engine.world,  0, 0, 0, ()=>{});
+
+    constructor(engine, def = undefined) {
+        super(engine.world, 0, 0, 0, () => {});
+        this.engine = engine;
+        this.def = def;
         this.bird = undefined;
-        this.binding = undefined;
+        this.sling = undefined;
+        this.mouseConstraint = undefined;
+
+        if (def) this.build(def);
 
     }
 
-    build(def, index, key){
+    build(def) {
 
-        const actorDef = def.actors[index];
+        const self = this;
 
-        this.bird = this.bird = new Bird(
-            (actorDef.bird.position.x + 1) * def.spacing.w + def.position.x,
-            (actorDef.bird.position.y + 1) * def.spacing.h + def.position.y,
-            actorDef.bird.dimension.w,
-            actorDef.bird.label,
-            actorDef.e1,
-            actorDef.e2,
-            actorDef.category,
-            actorDef.frictionAir,
-            actorDef.retitution);
+        this.def = def;
 
-        this.add(key++, this.bird);
+        this.mouseConstraint = Matter.MouseConstraint.create(this.engine, def.mouse.constraintOptions);
 
-        this.sling = new Sling(
-            this.bird.body,
-            (actorDef.bird.position.x) * def.spacing.w + def.position.x,
-            (actorDef.bird.position.y) * def.spacing.h + def.position.y,
-            actorDef.sling.lenght,
-            actorDef.sling.limit,
-            actorDef.sling.stiffness);
+        Matter.World.add(this.engine.world, this.mouseConstraint);
 
-        this.add(key++, this.sling);
+        Matter.Events.on(this.mouseConstraint, "mousemove", function (event) {
+
+            if (self.mouseConstraint.body && self.mouseConstraint.body.label === self.def.bird1.bodyOptions.label) {
+
+                if (self.sling.isLimit()) {
+
+                    self.mouseConstraint.constraint.bodyB = null;
+
+                    self.sling.release();
+
+                }
+
+            }
+
+        });
+
+        this.slinging(this.def.bird1.position);
 
     }
+
+    dead(){
+
+        if(this.bird)this.bird.dead();
+
+    }
+
+    isDead(){
+        if(this.bird)
+        return this.bird.isDead;
+        return true;
+    }
+
+    isSlinging() {
+        if (this.sling)
+            return this.sling.isBind();
+        return false;
+    }
+
+    label(){
+        if(this.def)
+        return this.def.bird1.bodyOptions.label;
+        return undefined;
+    }
+
+    releasedBodyId(){
+        if(this.sling)
+        return this.sling.releasedBodyId;
+        return undefined;
+    }
+
+    slinging(point, releasedBodyId = undefined) {
+
+        if (this.bird) {
+            this.delete(this.bird.body.id);
+        }else{
+           this.bird = new Bird(
+            this.def.bird1.position.x,
+            this.def.bird1.position.y,
+            this.def.bird1.dimension,
+            this.def.bird1.bodyOptions, this.def.bird1.draw, this.def.bird1.redraw);
+
+        }
+        
+
+        
+
+        if (this.sling) this.delete(-1);
+
+        const op = {
+            bodyB: this.bird.body,
+            pointA: point,
+            pointB: this.def.sling.constraintOptions.pointB,
+            stiffness: this.def.sling.constraintOptions.stiffness,
+            length: this.def.sling.constraintOptions.length
+        };
+
+
+        this.sling = new Sling(this.def.sling.limit, this.def.sling.maxLength, this.def.sling.velLength, op, this.def.sling.drawPointA, releasedBodyId);
+
+        this.add(-1, this.sling);
+        this.add(this.bird.body.id, this.bird);
+
+    }
+
+
 }

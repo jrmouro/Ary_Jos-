@@ -22,7 +22,7 @@ const challenge_scene = {
         },
     
         dimension: {
-            w: 400,
+            w: 200,
             h: 90
         },
 
@@ -37,7 +37,7 @@ const challenge_scene = {
             },
         
             dimension: {
-                w: 250,
+                w: 200,
                 h: 60
             },
     
@@ -50,7 +50,7 @@ const challenge_scene = {
             },
         
             dimension: {
-                w: 250,
+                w: 200,
                 h: 60
             },
     
@@ -63,7 +63,7 @@ const challenge_scene = {
             },
         
             dimension: {
-                w: 250,
+                w: 200,
                 h: 60
             },
     
@@ -76,7 +76,7 @@ const challenge_scene = {
             },
         
             dimension: {
-                w: 250,
+                w: 200,
                 h: 60
             },
     
@@ -88,9 +88,13 @@ const challenge_scene = {
 
     mouse: {
         timeToRelease: 10,
-        stiffness: .1,
-        mask: 0b10,
         bind: undefined,
+        constraintOptions:{
+            collisionFilter: {
+                mask: 0b10
+            },
+            stiffness: .1
+        }
     },
 
     position: {
@@ -162,7 +166,7 @@ const challenge_scene = {
         draw: {
             e1: {
                 code: 0x1F573,
-                rate: 1
+                rate: 3.0
             },
             e2: undefined
         },
@@ -251,16 +255,14 @@ const challenge_scene = {
 
     },
 
-    
-
     chase1: { //3
 
-        dimension: 45,
+        dimension: 30,
 
         draw: {
             e1: {
                 code: 0x1F997,
-                rate: .95
+                rate: 1.3
             },
             e2: undefined,
         },
@@ -268,7 +270,7 @@ const challenge_scene = {
         redraw: {
             e1: {
                 code: 0x1F997,
-                rate: .95
+                rate: 1.0
             },
             e2: {
                 code: 0x1F578,
@@ -291,12 +293,12 @@ const challenge_scene = {
 
     chase2: { //3
 
-        dimension: 45,
+        dimension: 30,
 
         draw: {
             e1: {
                 code: 0x1F997,
-                rate: .95
+                rate: 1.3
             },
             e2: undefined,
         },
@@ -304,7 +306,7 @@ const challenge_scene = {
         redraw: {
             e1: {
                 code: 0x1F997,
-                rate: .95
+                rate: 1.0
             },
             e2: {
                 code: 0x1F578,
@@ -402,15 +404,11 @@ const challenge_scene = {
 
     },
 
-
-
-    
-
     sling: {
 
         limit: 90,
 
-        maxLength:50,
+        maxLength:60,
         velLength:0.05,
 
         timeToRelease: 10,
@@ -420,7 +418,7 @@ const challenge_scene = {
 
             length: 0,
 
-            stiffness: 0.1,
+            stiffness: 0.15,
 
             pointA: {
                 x: 0,
@@ -447,7 +445,7 @@ const challenge_scene = {
 
         }
 
-    },
+    }
 
 
 

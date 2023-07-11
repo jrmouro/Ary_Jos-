@@ -4,19 +4,14 @@ const initial_scene = {
 
     mouse: {
         timeToRelease: 10,
-        stiffness: .1,
-        mask: 0b10,
         bind: undefined,
+        constraintOptions:{
+            collisionFilter: {
+                mask: 0b10
+            },
+            stiffness: .1
+        }
     },
-
-    // shot: {
-
-    //     amount: 3,
-    //     timeToRelease: 10,
-    //     stiffness: .001,
-    //     bind: undefined
-
-    // },
 
     position: {
         x: 18,
@@ -50,33 +45,61 @@ const initial_scene = {
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 4, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9, 0, 0],
     ],
 
-    sensor1: { //4
+    ground: { //4
+
+        height: 44,
+        width: 5000,
+
+        position: {
+            x: 300,
+            y: 650
+        },
+        
+        draw: {
+            e1: undefined,
+            e2: undefined
+        },
+
+        redraw: {
+            e1: undefined,
+            e2: undefined,
+        },
+
+        bodyOptions: {
+            frictionAir: .03,
+            isStatic: true,
+            isSensor: false,
+            label: '8',
+            restitution: .8,
+            collisionFilter: {
+                category: 0b1
+            }
+        }
+
+    },
+
+    sensor1: { //5
 
         dimension: 25,
 
@@ -114,26 +137,25 @@ const initial_scene = {
 
     sensor2: { //5
 
-        dimension: 5,
+        dimension: 35,
+
+        position: {
+            x: 110,
+            y: 500
+        },
 
         draw: {
             e1: {
                 code: 0x1F573,
-                rate: 20
+                rate: 3.0
             },
             e2: undefined
         },
 
-        redraw: {
-            e1: {
-                code: 0x1F573,
-                rate: 20
-            },
-            e2: undefined
-        },
+        redraw: undefined,
 
         bodyOptions: {
-            frictionAir: .03,
+            frictionAir: .028,
             isStatic: true,
             isSensor: true,
             label: '5',
@@ -172,7 +194,7 @@ const initial_scene = {
             frictionAir: .03,
             isStatic: true,
             isSensor: false,
-            label: '2',
+            label: '9',
             restitution: .8,
             collisionFilter: {
                 category: 0b1
@@ -320,8 +342,8 @@ const initial_scene = {
             frictionAir: .03,
             isStatic: true,
             isSensor: false,
-            label: '6',
-            restitution: .8,
+            label: '9',
+            restitution: 1,
             collisionFilter: {
                 category: 0b1
             }
@@ -338,17 +360,17 @@ const initial_scene = {
                 code: 0x1F997,
                 rate: 1.3
             },
-            e2: undefined
+            e2: undefined,
         },
 
         redraw: {
             e1: {
                 code: 0x1F997,
-                rate: 1.3
+                rate: 1.0
             },
             e2: {
                 code: 0x1F578,
-                rate: 1.5
+                rate: 1.3
             },
         },
 
@@ -357,7 +379,7 @@ const initial_scene = {
             isStatic: true,
             isSensor: true,
             label: '1',
-            restitution: .008,
+            restitution: .8,
             collisionFilter: {
                 category: 0b1
             }
@@ -371,30 +393,63 @@ const initial_scene = {
 
         draw: {
             e1: {
-                code: 0x1F31F,
-                rate: .95
+                code: 0x1F41B,
+                rate: 1.3
             },
-            e2: {
-                code: 0x2753,
-                rate: .50
-            },
+            e2: undefined,
         },
 
         redraw: {
             e1: {
-                code: 0x1F577,
-                rate: .95
+                code: 0x1F41B,
+                rate: 1.0
             },
             e2: {
-                code: 0x1F480,
-                rate: .95
+                code: 0x1F578,
+                rate: 1.3
             },
         },
 
         bodyOptions: {
             frictionAir: .03,
             isStatic: true,
-            isSensor: false,
+            isSensor: true,
+            label: '2',
+            restitution: .8,
+            collisionFilter: {
+                category: 0b1
+            }
+        }
+
+    },
+
+    chase3: { //3
+
+        dimension: 25,
+
+        draw: {
+            e1: {
+                code: 0x1F41D,
+                rate: .95
+            },
+            e2: undefined,
+        },
+
+        redraw: {
+            e1: {
+                code: 0x1F41D,
+                rate: .95
+            },
+            e2: {
+                code: 0x1F578,
+                rate: 1.3
+            },
+        },
+
+        bodyOptions: {
+            frictionAir: .035,
+            isStatic: true,
+            isSensor: true,
             label: '3',
             restitution: .8,
             collisionFilter: {
@@ -409,8 +464,8 @@ const initial_scene = {
         dimension: 45,
 
         position: {
-            x: 0,
-            y: 0
+            x: 650,
+            y: 500
         },
 
         draw: {
@@ -433,11 +488,11 @@ const initial_scene = {
         },
 
         bodyOptions: {
-            frictionAir: .06,
+            frictionAir: .04,
             isStatic: false,
             isSensor: false,
             label: 'b',
-            restitution: .003,
+            restitution: 0.1,
             collisionFilter: {
                 category: 0b10
             }
@@ -445,13 +500,9 @@ const initial_scene = {
 
     },
 
-
-
-    
-
     sling: {
 
-        limit: 120,
+        limit: 90,
 
         maxLength:60,
         velLength:0.05,
@@ -463,7 +514,7 @@ const initial_scene = {
 
             length: 0,
 
-            stiffness: 0.13,
+            stiffness: 0.15,
 
             pointA: {
                 x: 0,
@@ -490,7 +541,7 @@ const initial_scene = {
 
         }
 
-    },
+    }
 
 
 

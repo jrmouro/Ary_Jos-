@@ -22,5 +22,4 @@ class Bird extends Ball {
     this.isDead = true;
   }
 
-
 }

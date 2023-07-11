@@ -3,13 +3,7 @@ class GBox extends DrawBody {
     constructor(
         x, y, w, h,
         bodyOptions = {},
-        draw = {
-            e1: {
-                code: 0x1F6D1,
-                rate: .95
-            },
-            e2: undefined
-        },
+        draw = undefined,
         redraw = undefined
     ) {
 

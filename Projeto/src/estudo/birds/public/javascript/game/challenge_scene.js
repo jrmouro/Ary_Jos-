@@ -1,15 +1,16 @@
 class ChallengeScene extends DrawWorld {
 
-    constructor(round, canvas, engine, def = null, finished = (score) => {}) {
+    constructor(round, /*canvas,*/ engine, def = null, finished = (score) => {}) {
         super(engine.world, 0, 0, 0, def.drawFunction);
         this.round = round;
-        this.canvas = canvas;
+        // this.canvas = canvas;
         this.engine = engine;
         this.def = def;
         this.finished = finished;
-        this.sling = null;
-        this.bird = null;
-        this.mouseConstraint = null;
+        this.actor = undefined;
+        // this.sling = null;
+        // this.bird = null;
+        // this.mouseConstraint = null;
         this.score = 0;
 
 
@@ -22,7 +23,7 @@ class ChallengeScene extends DrawWorld {
     finish() {
 
         this.clear();
-        this.finished(this.score);
+        this.finished(this.score, true);
 
     }
 
@@ -103,7 +104,7 @@ class ChallengeScene extends DrawWorld {
 
         ball = new Ball(
             def.sensor2.position.x,
-            def.sensor2.position.y - def.chase3.dimension,
+            def.sensor2.position.y - def.sling.maxLength,
             def.chase3.dimension, def.chase3.bodyOptions, def.chase3.draw, def.chase3.redraw);
         self.add(ball.body.id, ball);
 
@@ -117,72 +118,34 @@ class ChallengeScene extends DrawWorld {
             rect(0, 0, def.ground.width, def.ground.height + 100);
 
         });
+
         self.add(ball.body.id, ball);
 
-        const options = {
-            mouse: Matter.Mouse.create(this.canvas),
-            collisionFilter: {
-                mask: def.mouse.mask
-            },
-            stiffness: def.mouse.stiffness
-        }
-
-        this.mouseConstraint = Matter.MouseConstraint.create(this.engine, options);
-
-        Matter.World.add(this.world, this.mouseConstraint);
-
-        Matter.Events.on(this.mouseConstraint, "mousemove", function (event) {
-
-            if (self.mouseConstraint.body && self.mouseConstraint.body.label === 'b') {
-
-                if (self.sling.isLimit()) {
-
-                    self.mouseConstraint.constraint.bodyB = null;
-
-                    self.sling.release();
-
-                }
-
-            }
-
-        });
+        this.actor = new Actor(this.engine, this.def);
+        self.add(-2, this.actor);
 
         Matter.Events.on(this.engine, 'collisionStart', function (event) {
 
             event.pairs.forEach(pair => {
 
-                if (!self.bird.isDead) {
+                if (!self.actor.isDead()) {
 
-                    if (!self.sling.isBind()) {
+                    if (!self.actor.isSlinging()) {
 
                         if (
-                            pair.bodyB.label === def.bird1.bodyOptions.label &&
+                            pair.bodyB.label === self.actor.label() &&
                             (pair.bodyA.label === def.chase1.bodyOptions.label || pair.bodyA.label === def.chase2.bodyOptions.label || pair.bodyA.label === def.chase3.bodyOptions.label) &&
-                            self.sling.releasedBodyId !== pair.bodyA.id) {
+                            self.actor.releasedBodyId() !== pair.bodyA.id) {
 
                             setTimeout(() => {
 
                                 self.get(pair.bodyA.id).change();
 
-                                if (self.sling.releasedBodyId) self.get(self.sling.releasedBodyId).change();
+                                const oldRreleaseBodyId = self.actor.releasedBodyId();
 
-                                self.delete(-1);
+                                if (oldRreleaseBodyId) self.get(oldRreleaseBodyId).change();
 
-                                const op = {
-                                    bodyB: self.bird.body,
-                                    pointA: {
-                                        x: pair.bodyA.position.x,
-                                        y: pair.bodyA.position.y
-                                    },
-                                    pointB: self.def.sling.constraintOptions.pointB,
-                                    stiffness: self.def.sling.constraintOptions.stiffness,
-                                    length: self.def.sling.constraintOptions.length
-                                };
-
-
-                                self.sling = new Sling(self.def.sling.limit, self.def.sling.maxLength, self.def.sling.velLength, op, self.def.sling.drawPointA, pair.bodyA.id);
-
-                                self.add(-1, self.sling);
+                                self.actor.slinging(pair.bodyA.position, pair.bodyA.id);
 
                                 if (pair.bodyA.label === def.chase1.bodyOptions.label) {
                                     self.score = self.round.score;
@@ -190,22 +153,21 @@ class ChallengeScene extends DrawWorld {
                                     self.score = 0;
                                 }
 
-
-                            }, 100);
+                            }, 10);
 
                         }
 
-                        if ((pair.bodyB.label === def.bird1.bodyOptions.label &&
+                        if ((pair.bodyB.label === self.actor.label() &&
                                 pair.bodyA.label === def.ground.bodyOptions.label) || (pair.bodyB.label === def.ground.bodyOptions.label &&
-                                pair.bodyA.label === def.bird1.bodyOptions.label)) {
+                                pair.bodyA.label === self.actor.label())) {
 
                             self.isFinished = true;
                             Matter.Events.off(self.engine);
-                            Matter.Events.off(self.mouseConstraint);
+                            // Matter.Events.off(self.mouseConstraint);
 
                             setTimeout(() => {
 
-                                self.bird.dead();
+                                self.actor.dead();
 
                                 setTimeout(() => {
 
@@ -217,13 +179,19 @@ class ChallengeScene extends DrawWorld {
 
                         } else {
 
-                            if ((pair.bodyB.label === def.bird1.bodyOptions.label &&
+                            
+
+                        }
+
+                    } else {
+
+                        if ((pair.bodyB.label === self.actor.label() &&
                                     pair.bodyA.label === def.sensor2.bodyOptions.label) || (pair.bodyB.label === def.sensor2.bodyOptions.label &&
-                                    pair.bodyA.label === def.bird1.bodyOptions.label)) {
+                                    pair.bodyA.label === self.actor.label())) {
 
                                 self.isFinished = true;
                                 Matter.Events.off(self.engine);
-                                Matter.Events.off(self.mouseConstraint);
+                                // Matter.Events.off(self.mouseConstraint);
 
                                 setTimeout(() => {
 
@@ -237,8 +205,6 @@ class ChallengeScene extends DrawWorld {
 
                             }
 
-                        }
-
                     }
 
                 }
@@ -247,32 +213,6 @@ class ChallengeScene extends DrawWorld {
             });
 
         });
-
-        if (this.bird) this.delete(this.bird.body.id);
-        this.delete(-1);
-
-        this.bird = new Bird(
-            this.def.bird1.position.x,
-            this.def.bird1.position.y,
-            this.def.bird1.dimension,
-            this.def.bird1.bodyOptions, this.def.bird1.draw, this.def.bird1.redraw);
-
-        const op = {
-            bodyB: this.bird.body,
-            pointA: {
-                x: this.def.bird1.position.x,
-                y: this.def.bird1.position.y,
-            },
-            pointB: this.def.sling.constraintOptions.pointB,
-            stiffness: this.def.sling.constraintOptions.stiffness,
-            length: this.def.sling.constraintOptions.length
-        };
-
-
-        this.sling = new Sling(this.def.sling.limit, this.def.sling.maxLength, this.def.sling.velLength, op, this.def.sling.drawPointA);
-
-        this.add(-1, this.sling);
-        this.add(this.bird.body.id, this.bird);
 
     }
 

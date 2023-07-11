@@ -118,7 +118,7 @@ class Binding extends Drawable {
 
     isBind() {
 
-        return this.constraint && this.constraint.bodyB !== null;
+        return this.constraint.bodyB !== null;
 
     }
 

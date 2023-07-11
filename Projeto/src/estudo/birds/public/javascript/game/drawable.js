@@ -1,6 +1,6 @@
 class Drawable {
 
-  constructor(x, y, a, drawFunction = () => {}) {
+  constructor(x = 0, y = 0, a = 0 , drawFunction = () => {}) {
     this.isVisible = true;
     this.x = x;
     this.y = y;
@@ -10,6 +10,8 @@ class Drawable {
   }
 
   add(key, drawable) {
+    const obj = this.map.get(key);
+    if(obj) this.delete(key);
     this.map.set(key, drawable);
   }
 

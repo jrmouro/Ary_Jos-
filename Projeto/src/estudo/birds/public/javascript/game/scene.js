@@ -7,11 +7,7 @@ class Scene extends DrawWorld {
         this.def = def;
         this.finished = finished;
 
-        this.current_shot = 0;
-        this.sling = null;
-        this.bird = null;
-        this.mouseConstraint = null;
-        this.nextflag = false;
+        this.actor = null;
         this.score = 0;
         this.isFinished = false;
 
@@ -19,53 +15,23 @@ class Scene extends DrawWorld {
 
     }
 
-    finish(){
-
+    finish() {
+        this.isFinished = true;
         this.clear();
-        console.log("finished scene");
-        this.finished(this.score);
-
+        this.finished(this.score, true);
     }
 
-    next() {
-
-        this.nextflag = true;
-
-        if (this.bird) this.delete(this.bird.body.id);
-        this.delete(-1);
-
-        this.bird = new Bird(
-            this.def.bird1.position.x,
-            this.def.bird1.position.y,
-            this.def.bird1.dimension,
-            this.def.bird1.bodyOptions, this.def.bird1.draw, this.def.bird1.redraw);
-
-        const op = {
-            bodyB: this.bird.body,
-            pointA: {
-                x: this.def.bird1.position.x,
-                y: this.def.bird1.position.y,
-            },
-            pointB: this.def.sling.constraintOptions.pointB,
-            stiffness: this.def.sling.constraintOptions.stiffness,
-            length: this.def.sling.constraintOptions.length
-        };
-
-
-        this.sling = new Sling(this.def.sling.limit, this.def.sling.maxLength, this.def.sling.velLength, op, this.def.sling.drawPointA);
-
-        this.add(-1, this.sling);
-        this.add(this.bird.body.id, this.bird);
-
-    }
 
     build(def) {
+
+        this.clear();
 
         this.def = def;
 
         let li = 0;
         let lj = 0;
 
+        let ball;
 
         def.elements.forEach((element, i) => {
 
@@ -73,7 +39,9 @@ class Scene extends DrawWorld {
 
             li = Math.max(li, i);
 
-            element.forEach((angle, j) => {
+            element.forEach((label, j) => {
+
+                label = label.toString();
 
                 let x = (j) * def.spacing.w + def.position.x;
 
@@ -81,47 +49,28 @@ class Scene extends DrawWorld {
 
                 let ball = undefined;
 
-                if (angle === 1) {
+                if (label === def.chase1.bodyOptions.label) {
 
                     ball = new Ball(x, y, def.chase1.dimension, def.chase1.bodyOptions, def.chase1.draw, def.chase1.redraw);
 
-                } else if (angle === 2) {
-
-                    ball = new Ball(x, y, def.building1.dimension, def.building1.bodyOptions, def.building1.draw, def.building1.redraw);
-
-
-                } else if (angle === 3) {
+                } else if (label === def.chase2.bodyOptions.label) {
 
                     ball = new Ball(x, y, def.chase2.dimension, def.chase2.bodyOptions, def.chase2.draw, def.chase2.redraw);
 
-                } else if (angle === 4) {
+                } else if (label === def.chase3.bodyOptions.label) {
 
-                    ball = new Ball(x, y, def.sensor1.dimension, def.sensor1.bodyOptions, def.sensor1.draw, def.sensor1.redraw);
+                    // ball = new Ball(x, y, def.chase3.dimension, def.chase3.bodyOptions, def.chase3.draw, def.chase3.redraw);
+                    ball = new Fly(def.chase3.vel, def.chase3.max, x, y, def.chase3.dimension, def.chase3.bodyOptions, def.chase3.draw, def.chase3.redraw);
 
-                } else if (angle === 5) {
 
-                    ball = new Ball(x, y, def.sensor2.dimension, def.sensor2.bodyOptions, def.sensor2.draw, def.sensor2.redraw);
+                } else if (label === def.sensor1.bodyOptions.label) {
 
-                } else if (angle === 6) {
+                    // ball = new Ball(x, y, def.sensor1.dimension, def.sensor1.bodyOptions, def.sensor1.draw, def.sensor1.redraw);
+                    ball = new Fire(def.sensor1.vel, def.sensor1.max, x, y, def.sensor1.dimension, def.sensor1.bodyOptions, def.sensor1.draw, def.sensor1.redraw);
 
-                    ball = new GBox(x, y, def.building5.width, def.building5.height, def.building5.bodyOptions, def.building5.draw, def.building5.redraw);
+                } else if (label === def.building5.bodyOptions.label) {
 
-                } else if (angle === 7) {
-
-                    ball = new GBox(x, y, def.building4.width, def.building4.height, def.building4.bodyOptions, def.building4.draw, def.building4.redraw);
-
-                }else if (angle === 9) {
-
-                    ball = new GBox(x, y, def.building2.width, def.building2.height, def.building2.bodyOptions, def.building2.draw, def.building2.redraw);
-
-                } else if (angle === 8) {
-
-                    ball = new GBox(x, y, def.building3.width, def.building3.height, def.building3.bodyOptions, def.building3.draw, def.building3.redraw);
-
-                }else if (angle === -1) {
-
-                    this.def.bird1.position.x = x;
-                    this.def.bird1.position.y = y;
+                    ball = new GBox(x, y, def.building5.width, def.building5.height, def.building5.bodyOptions);
 
                 }
 
@@ -131,142 +80,154 @@ class Scene extends DrawWorld {
 
         });
 
-        const self = this;
+        ball = new Ball(
+            def.sensor2.position.x,
+            def.sensor2.position.y,
+            def.sensor2.dimension, def.sensor2.bodyOptions, def.sensor2.draw, def.sensor2.redraw);
 
-        const options = {
-            mouse: Matter.Mouse.create(this.canvas),
-            collisionFilter: {
-                mask: def.mouse.mask
-            },
-            stiffness: def.mouse.stiffness
-        }
+        this.add(ball.body.id, ball);
 
-        this.mouseConstraint = Matter.MouseConstraint.create(this.engine, options);
+        ball = new Ball(
+            def.sensor2.position.x,
+            def.sensor2.position.y - def.sling.maxLength,
+            def.chase3.dimension, def.chase3.bodyOptions, def.chase3.draw, def.chase3.redraw);
+        this.add(ball.body.id, ball);
 
-        Matter.World.add(this.world, this.mouseConstraint);
+        ball = new DrawBody(Matter.Bodies.rectangle(def.ground.position.x, def.ground.position.y, def.ground.width, def.ground.height, def.ground.bodyOptions, ), () => {
 
-        Matter.Events.on(this.mouseConstraint, "mousemove", function (event) {
-
-            if (self.mouseConstraint.body && self.mouseConstraint.body.label === 'b') {
-
-                if (self.sling.isLimit()) {
-
-                    self.mouseConstraint.constraint.bodyB = null;
-
-                    setTimeout(() => {
-
-                        self.delete(-1);
-
-                    }, def.sling.timeToRelease);
-
-                }
-
-            }
+            rectMode(CENTER);
+            fill(0);
+            rect(0, 0, def.ground.width, def.ground.height + 100);
 
         });
+
+        this.add(ball.body.id, ball);
+
+        this.actor = new Actor(this.engine, this.def);
+        this.add(-2, this.actor);
+
+        const self = this;
 
         Matter.Events.on(this.engine, 'collisionStart', function (event) {
 
             event.pairs.forEach(pair => {
 
-                if (pair.bodyB.label === "b" && pair.bodyA.label === "1") {
+                if (!self.actor.isDead() && !self.isFinished) {
 
-                    if (!self.bird.isDead) {
+                    if (!self.actor.isSlinging()) {
 
-                        setTimeout(() => {
-
-                            Matter.World.remove(self.world, pair.bodyA);
-                            self.get(pair.bodyA.id).change();
-
-                            self.delete(-1);
-                            if (self.bird) self.delete(self.bird.body.id);
-
-                            const op = {
-                                bodyB: self.bird.body,
-                                pointA: {
-                                    x: pair.bodyA.position.x,
-                                    y: pair.bodyA.position.y
-                                },
-                                pointB: self.def.sling.constraintOptions.pointB,
-                                stiffness: self.def.sling.constraintOptions.stiffness,
-                                length: self.def.sling.constraintOptions.length
-                            };
+                        if (pair.bodyB.label === self.actor.label()) {
 
 
-                            self.sling = new Sling(self.def.sling.limit, self.def.sling.maxLength, self.def.sling.velLength, op, self.def.sling.drawPointA);
+                            if (
+                                (pair.bodyA.label === def.chase1.bodyOptions.label || pair.bodyA.label === def.chase2.bodyOptions.label) &&
+                                self.actor.releasedBodyId() !== pair.bodyA.id) {
 
-                            self.add(-1, self.sling);
-                            if (self.bird) self.add(self.bird.body.id, self.bird);
+                                setTimeout(() => {
 
-                            self.score++;
+                                    self.get(pair.bodyA.id).change();
+                                    Matter.World.remove(self.engine.world, pair.bodyA);
 
-                        }, 100);
+                                    self.actor.slinging(pair.bodyA.position, pair.bodyA.id);
 
-                    }
+                                    self.finished(1, false)
 
-                }
+                                }, 10);
 
-                if (!self.bird.isDead && self.sling.isBind()) {
+                            }
 
-                    if (pair.bodyB.label === "b" && pair.bodyA.label === "5") {
+                            if ((pair.bodyA.label === def.chase3.bodyOptions.label) &&
+                                self.actor.releasedBodyId() !== pair.bodyA.id) {
 
-                        // setTimeout(() => {
+                                setTimeout(() => {
 
-                        //     if (self.nextflag) {
-                        //         self.next();
-                        //         self.nextflag = false;
-                        //     }
+                                    self.get(pair.bodyA.id).change();
+                                    self.get(pair.bodyA.id).enable = false;
+                                    Matter.World.remove(self.engine.world, pair.bodyA);
 
-                        // }, def.nextTime);
+                                    self.actor.slinging(pair.bodyA.position, pair.bodyA.id);
 
-                        self.isFinished = true;
-                        Matter.Events.off(self.engine);
-                        Matter.Events.off(self.mouseConstraint);
+                                    self.finished(1, false)
 
-                        setTimeout(() => {
-                            
-                            // self.bird.dead();
+                                }, 10);
+
+                            }
+
+                        }
+
+                        if (((pair.bodyB.label === self.actor.label() &&
+                                pair.bodyA.label === def.ground.bodyOptions.label) || (pair.bodyB.label === def.ground.bodyOptions.label &&
+                                pair.bodyA.label === self.actor.label()))) {
+
+                            self.isFinished = true;
+                            Matter.Events.off(self.engine);
+
                             setTimeout(() => {
-                            
-                                self.finish();                                
-    
-                            }, 2000);
 
-                        }, 200);
+                                self.actor.dead();
 
-                    }
-                }
+                                setTimeout(() => {
 
-                if (!self.isFinished) {
+                                    self.finish();
 
-                    if (pair.bodyB.label === "b" && pair.bodyA.label === "4") {
+                                }, 1500);
 
-                        self.isFinished = true;
-                        Matter.Events.off(self.engine);
-                        Matter.Events.off(self.mouseConstraint);
+                            }, 200);
 
-                        setTimeout(() => {
-                            
-                            self.bird.dead();
+                        }
+
+                        if (((pair.bodyB.label === self.actor.label() &&
+                                pair.bodyA.label === def.sensor1.bodyOptions.label) || (pair.bodyB.label === def.sensor1.bodyOptions.label &&
+                                pair.bodyA.label === self.actor.label()))) {
+
+                            self.isFinished = true;
+                            Matter.Events.off(self.engine);
+
                             setTimeout(() => {
-                            
-                                self.finish();                                
-    
-                            }, 2000);
 
-                        }, 200);
+                                self.actor.dead();
+
+                                setTimeout(() => {
+
+                                    self.finish();
+
+                                }, 2500);
+
+                            }, 20);
+
+                        }
+
+                    } else {
+
+                        if (((pair.bodyB.label === self.actor.label() &&
+                                pair.bodyA.label === def.sensor2.bodyOptions.label) || (pair.bodyB.label === def.sensor2.bodyOptions.label &&
+                                pair.bodyA.label === self.actor.label()))) {
+
+                            self.isFinished = true;
+                            Matter.Events.off(self.engine);
+
+                            setTimeout(() => {
+
+                                setTimeout(() => {
+
+                                    self.finish();
+
+                                }, 1500);
+
+                            }, 200);
+
+                        }
 
                     }
 
                 }
-
 
 
             });
 
         });
 
-        this.next();
+
 
     }
 

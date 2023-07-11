@@ -13,8 +13,33 @@ class Game {
         this.def_scene_index = 0;
         this.current_scene = undefined;
         this.canvas = canvas;
-        this.score = 0;
         this.rounds = [];
+
+
+        const ScoreBoard = class  extends Drawable{
+            constructor(score = 0){
+                super(20, 30);
+                this.score = score;
+                const self = this;
+                this.drawFunction = ()=>{
+                    textAlign(LEFT, CENTER);
+                    textSize(28);
+                    text("Score: " + self.score, 0, 0);
+                }
+            }
+            inc(score){
+                this.score += score;
+            }
+        }
+
+        this.scoreBoard = new ScoreBoard(0);
+        this.foreground = new Drawable();
+        this.foreground.add(0, new Drawable(260, 20, 0, ()=>{
+            textAlign(LEFT, CENTER);
+            textSize(40);
+            text("Spider Quiz", 0, 0);
+        }));
+        this.foreground.add(1, this.scoreBoard);
 
     }
 
@@ -57,7 +82,7 @@ class Game {
 
     gameOver() {
 
-        console.log("Game Over: " + this.score);
+        console.log("Game Over: " + this.scoreBoard.score);
 
     }
 
@@ -72,17 +97,17 @@ class Game {
                 Matter.World.clear(this.engine.world);
                 Matter.Engine.clear(this.engine);
 
-                this.current_scene = new ChallengeScene(this.rounds[this.def_scene_index++], this.canvas, this.engine, challenge_scene, (score) => {
+                this.current_scene = new ChallengeScene(this.rounds[this.def_scene_index++], /*this.canvas,*/ this.engine, challenge_scene, (score) => {
 
-                    self.score += score;
+                    self.scoreBoard.inc(score);
 
                     if (self.def_scene_index < self.def_scenes.length - 1) {
 
-                        self.current_scene = new Scene(this.canvas, this.engine, this.def_scenes[this.def_scene_index - 1], (score) => {
+                        self.current_scene = new Scene(this.canvas, this.engine, this.def_scenes[this.def_scene_index - 1], (score, finished) => {
 
-                            self.score += score;
+                            self.scoreBoard.inc(score);
 
-                            self.next();
+                            if(finished) self.next();
 
                         });
 
@@ -107,12 +132,11 @@ class Game {
 
             if (self.def_scene_index < self.def_scenes.length) {
 
-                self.current_scene = new Scene(this.canvas, this.engine, this.def_scenes[this.def_scene_index++], (score) => {
+                self.current_scene = new Scene(this.canvas, this.engine, this.def_scenes[this.def_scene_index++], (score, finished) => {
 
-                    self.score += score;
+                    self.scoreBoard.inc(score);
 
-                    self.next();
-
+                    if(finished)self.next();
 
                 });
 
@@ -138,13 +162,7 @@ class Game {
             this.current_scene.draw();
         }
 
-        new Drawable(20, 30, 0, () => {
-
-            textAlign(LEFT, CENTER);
-            textSize(32);
-            text("Score: " + self.score, 0, 0);
-
-        }).draw();
+        this.foreground.draw();
 
     }
 
