@@ -20,10 +20,10 @@ class ChallengeScene extends DrawWorld {
 
     }
 
-    finish() {
+    finish(flag) {
 
         this.clear();
-        this.finished(this.score, true);
+        this.finished(this.score, flag);
 
     }
 
@@ -171,7 +171,7 @@ class ChallengeScene extends DrawWorld {
 
                                 setTimeout(() => {
 
-                                    self.finish();
+                                    self.finish(false);
 
                                 }, 1500);
 
@@ -197,7 +197,7 @@ class ChallengeScene extends DrawWorld {
 
                                     setTimeout(() => {
 
-                                        self.finish();
+                                        self.finish(true);
 
                                     }, 1500);
 

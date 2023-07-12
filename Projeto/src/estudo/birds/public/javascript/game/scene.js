@@ -168,7 +168,7 @@ class Scene extends DrawWorld {
 
                                 setTimeout(() => {
 
-                                    self.finish();
+                                    self.finish(0, false);
 
                                 }, 1500);
 
@@ -189,7 +189,7 @@ class Scene extends DrawWorld {
 
                                 setTimeout(() => {
 
-                                    self.finish();
+                                    self.finish(1, true);
 
                                 }, 2500);
 
@@ -210,7 +210,7 @@ class Scene extends DrawWorld {
 
                                 setTimeout(() => {
 
-                                    self.finish();
+                                    self.finish(0, false);
 
                                 }, 1500);
 
