@@ -59,11 +59,24 @@
   <div  style="overflow:auto;background-color:#90b1df;margin-top:7px;">
 
     <div class="left" style="background-color:#90b1df">
-    <h3 style="margin: 0px;padding: 0;"><a href=<%="/match_edit_form?match_key=" + match_key %> style="text-decoration: none;">&#x1F519;</a> Rounds</h3>
+    <h3 style="margin: 0px;padding: 0;">
+      <% if (match_key != undefined) { %>
+      <a href=<%="/match_edit_form?match_key=" + match_key %> style="text-decoration: none;">&#x1F519;</a>
+      <% } %>
+      <% if (challenge_key != undefined) { %>
+        <a href=<%="/challenge_edit_form?challenge_key=" + challenge_key %> style="text-decoration: none;">&#x1F519;</a>
+        <% } %>
+       Rounds
+    </h3>
       <ul>
         <li>
           <Div>
+            <% if (match_key != undefined) { %>
             <a href=<%= "/round_register_form?match_key=" + match_key %>> New... </a>
+            <% } %>
+            <% if (challenge_key != undefined) { %>
+              <a href=<%= "/round_register_form?challenge_key=" + challenge_key %>> New... </a>
+              <% } %>
           </Div>
         </li>
         <% if (user_matches != undefined && match_key in user_matches) { %>
@@ -78,6 +91,18 @@
         </li>
         <% } %>
         <% } %>
+        <% if (user_challenges != undefined && challenge_key in user_challenges) { %>
+          <% for (const round_key in user_challenges[challenge_key].rounds) { %>
+          <li>
+            <Div>
+              <p style="font-size:75%;margin-top: 0.0em ; margin-bottom: 0.0em ;">
+                <%= user_challenges[challenge_key].rounds[round_key].question.description %> <a
+                  href=<%= "/round_edit_form?challenge_key=" + challenge_key + "&round_key=" + round_key %>
+                  style="text-decoration: none;"> &#9998 </a></p>
+            </Div>
+          </li>
+          <% } %>
+          <% } %>
       </ul>
       
       <!-- <h3 style="margin: 0px;padding: 0;"><a href="/match_view" style="text-decoration: none;">&#x1F519</a>  Matches</h3>
@@ -106,6 +131,7 @@
     <form id="round_register" action=/round_register method="get">
 
       <input id="match_key" name="match_key" type="hidden" value=<%= match_key %>>
+      <input id="challenge_key" name="challenge_key" type="hidden" value=<%= challenge_key %>>
 
       <Div style="text-align: left;margin-top: 10px;">
 

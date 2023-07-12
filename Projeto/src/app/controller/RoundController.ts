@@ -2,10 +2,10 @@ import { Request, Response } from "express";
 import { User } from "../user";
 import { Data } from "../data";
 import { Quiz } from "../quiz";
-import { Question } from "../question";
 import { UID } from "../uid";
 import { Match } from "../match";
 import { Round } from "../round";
+import { Challenge } from "../challenge";
 
 class RoundController {
 
@@ -20,8 +20,36 @@ class RoundController {
         if (user !== undefined) {
 
             const match_key: string | undefined = req.query.match_key as string;
+            const challenge_key: string | undefined = req.query.challenge_key as string;
 
-            if (match_key !== undefined) {
+            if (challenge_key !== undefined) {
+
+                const user_challenges: { [key: string]: Challenge } = req.app.get("app_user_data_map")[user.email].challenges;
+
+                if (challenge_key in user_challenges) {
+
+                    const user_quizzes: { [key: string]: Quiz } = req.app.get("app_user_data_map")[user.email].quizzes;
+
+                    res.render('round_register_form', {
+                        title: app_name,
+                        wsa: wsaddress,
+                        wsp: wsport,
+                        user: user,
+                        user_challenges: user_challenges,
+                        user_matches: undefined,
+                        user_quizzes: user_quizzes,
+                        challenge_key: challenge_key,
+                        match_key: undefined,
+                        fail_msg: undefined
+                    });
+
+                } else {
+
+                    res.redirect('/challenge_home?fail_msg=invalid challenge_key');
+
+                }
+
+            } else if (match_key !== undefined) {
 
                 const user_matches: { [key: string]: Match } = req.app.get("app_user_data_map")[user.email].matches;
 
@@ -35,7 +63,9 @@ class RoundController {
                         wsp: wsport,
                         user: user,
                         user_matches: user_matches,
+                        user_challenges: undefined,
                         user_quizzes: user_quizzes,
+                        challenge_key: undefined,
                         match_key: match_key,
                         fail_msg: undefined
                     });
@@ -48,7 +78,7 @@ class RoundController {
 
             } else {
 
-                res.redirect('/match_home?fail_msg=match_key is required');
+                res.redirect('/home?fail_msg=match_key or challenge_key is required');
 
             }
 
@@ -70,10 +100,57 @@ class RoundController {
 
         if (user !== undefined) {
 
+            const challenge_key: string | undefined = req.query.challenge_key as string;
             const match_key: string | undefined = req.query.match_key as string;
             const round_key: string | undefined = req.query.round_key as string;
 
-            if (match_key !== undefined) {
+            if (challenge_key !== undefined) {
+
+                if (round_key !== undefined) {
+
+                    const user_challenges: { [key: string]: Challenge } = req.app.get("app_user_data_map")[user.email].challenges;
+
+                    if (challenge_key in user_challenges) {
+
+                        const edit_challenge: Challenge = user_challenges[challenge_key];
+
+                        if (round_key in edit_challenge.rounds) {
+
+                            const user_quizzes: { [key: string]: Quiz } = req.app.get("app_user_data_map")[user.email].quizzes;
+
+                            res.render('round_edit_form', {
+                                title: app_name,
+                                wsa: wsaddress,
+                                wsp: wsport,
+                                user: user,
+                                user_challenges: user_challenges,
+                                user_matches: undefined,
+                                user_quizzes: user_quizzes,
+                                challenge_key: challenge_key,
+                                match_key: undefined,
+                                round_key: round_key,
+                                fail_msg: req.query.fail_msg
+                            });
+
+                        } else {
+
+                            res.redirect('/challenge_home?fail_msg=invalid round_key');
+
+                        }
+
+                    } else {
+
+                        res.redirect('/challenge_home?fail_msg=invalid challenge_key');
+
+                    }
+
+                } else {
+
+                    res.redirect('/challenge_home?fail_msg=round_key is required');
+
+                }
+
+            } else if (match_key !== undefined) {
 
                 if (round_key !== undefined) {
 
@@ -92,8 +169,10 @@ class RoundController {
                                 wsa: wsaddress,
                                 wsp: wsport,
                                 user: user,
+                                user_challenges: undefined,
                                 user_matches: user_matches,
                                 user_quizzes: user_quizzes,
+                                challenge_key: undefined,
                                 match_key: match_key,
                                 round_key: round_key,
                                 fail_msg: undefined
@@ -119,7 +198,7 @@ class RoundController {
 
             } else {
 
-                res.redirect('/match_home?fail_msg=match_key is required');
+                res.redirect('/home?fail_msg=match_key or challenge_key is required');
 
             }
 
@@ -138,12 +217,83 @@ class RoundController {
 
         if (user !== undefined) {
 
+            const challenge_key: string | undefined = req.query.challenge_key as string;
             const match_key: string | undefined = req.query.match_key as string;
 
-            if (match_key !== undefined) {
+            if (challenge_key !== undefined) {
+
+                const user_challenges: { [key: string]: Challenge } = req.app.get("app_user_data_map")[user.email].challenges;
+                const user_quizzes: { [key: string]: Quiz } = req.app.get("app_user_data_map")[user.email].quizzes;
+
+                if (challenge_key in user_challenges) {
+
+                    const quiz_key: string | undefined = req.query.quiz_key as string;
+                    const question_key: string | undefined = req.query.question_key as string;
+
+                    if (quiz_key in user_quizzes) {
+
+                        const quiz: Quiz = req.app.get("app_user_data_map")[user.email].quizzes[quiz_key];
+
+                        if (question_key in quiz.questions) {
+
+                            const shooting_timeout: number = 1000 * parseInt(req.query.quantity1 as string);
+                            const response_timeout: number = 1000 * parseInt(req.query.quantity2 as string);
+                            const pass_timeout: number = 1000 * parseInt(req.query.quantity3 as string);
+                            const score: number = parseInt(req.query.quantity4 as string);
+
+                            if (shooting_timeout !== undefined
+                                && response_timeout !== undefined
+                                && pass_timeout !== undefined
+                                && score !== undefined) {
+
+                                const round: Round = {
+                                    key: UID.get(),
+                                    quiz_theme: quiz.theme,
+                                    question: quiz.questions[question_key],
+                                    shooting_timeout: shooting_timeout,
+                                    response_timeout: response_timeout,
+                                    pass_timeout: pass_timeout,
+                                    score: score
+                                }
+
+                                user_challenges[challenge_key].rounds[round.key] = round;
+
+                                Data.writeFileSync<User>(req.app.get("app_user_data_path"), req.app.get("app_user_data_map"));
+
+                                // res.redirect('/round_edit_form?match_key=' + match_key + '&round_key=' + round.key);
+
+                                res.redirect('/round_register_form?challenge_key=' + challenge_key);
+
+                            } else {
+
+                                res.redirect('/challenge_home?fail_msg=missing necessary data');
+
+                            }
+
+                        } else {
+
+                            res.redirect('/challenge_home?fail_msg=invalid question_key');
+
+                        }
+
+
+                    } else {
+
+                        res.redirect('/challenge_home?fail_msg=invalid quiz_key');
+
+                    }
+
+
+                } else {
+
+                    res.redirect('/challenge_home?fail_msg=invalid challenge_key');
+
+                }
+
+            } else if (match_key !== undefined) {
 
                 const user_matches: { [key: string]: Match } = req.app.get("app_user_data_map")[user.email].matches;
-                const user_quizzes: { [key: string]: Match } = req.app.get("app_user_data_map")[user.email].quizzes;
+                const user_quizzes: { [key: string]: Quiz } = req.app.get("app_user_data_map")[user.email].quizzes;
 
                 if (match_key in user_matches) {
 
@@ -212,7 +362,7 @@ class RoundController {
 
             } else {
 
-                res.redirect('/match_home?match_msg=quiz_key is required');
+                res.redirect('/home?match_msg=match_key or challenge_key is required');
 
             }
 
@@ -230,9 +380,102 @@ class RoundController {
 
         if (user !== undefined) {
 
+            const challenge_key: string | undefined = req.query.challenge_key as string;
             const match_key: string | undefined = req.query.match_key as string;
 
-            if (match_key !== undefined) {
+            if (challenge_key !== undefined) {
+
+                const round_key: string | undefined = req.query.round_key as string;
+
+                if (round_key !== undefined) {
+
+                    const user_challenges: { [key: string]: Challenge } = req.app.get("app_user_data_map")[user.email].challenges;
+
+                    if (challenge_key in user_challenges) {
+
+                        if (round_key in user_challenges[challenge_key].rounds) {
+
+                            const shooting_timeout: number = 1000 * parseInt(req.query.quantity1 as string);
+                            const response_timeout: number = 1000 * parseInt(req.query.quantity2 as string);
+                            const pass_timeout: number = 1000 * parseInt(req.query.quantity3 as string);
+                            const score: number = parseInt(req.query.quantity4 as string);
+
+
+
+                            if (shooting_timeout !== undefined
+                                && response_timeout !== undefined
+                                && pass_timeout !== undefined
+                                && score !== undefined) {
+
+                                let quiz_theme = user_challenges[challenge_key].rounds[round_key].quiz_theme;
+                                let question = user_challenges[challenge_key].rounds[round_key].question;
+
+                                const quiz_key = req.query.quiz_key as string;
+                                const question_key = req.query.question_key as string;
+
+                                if (quiz_key !== undefined && question_key !== undefined) {
+
+                                    const user_quizzes: { [key: string]: Quiz } = req.app.get("app_user_data_map")[user.email].quizzes;
+
+                                    if (quiz_key in user_quizzes) {
+
+                                        if (question_key in user_quizzes[quiz_key].questions) {
+
+                                            quiz_theme = user_quizzes[quiz_key].theme;
+                                            question = user_quizzes[quiz_key].questions[question_key];
+
+                                        } else {
+
+                                            res.redirect('/challenge_home?fail_msg=invalid question_key');
+                                            return;
+
+                                        }
+
+                                    } else {
+
+                                        res.redirect('/challenge_home?fail_msg=invalid quiz_key');
+                                        return;
+
+                                    }
+
+                                }
+
+                                user_challenges[challenge_key].rounds[round_key].shooting_timeout = shooting_timeout;
+                                user_challenges[challenge_key].rounds[round_key].response_timeout = response_timeout;
+                                user_challenges[challenge_key].rounds[round_key].pass_timeout = pass_timeout;
+                                user_challenges[challenge_key].rounds[round_key].score = score;
+                                user_challenges[challenge_key].rounds[round_key].quiz_theme = quiz_theme;
+                                user_challenges[challenge_key].rounds[round_key].question = question;
+
+                                Data.writeFileSync<User>(req.app.get("app_user_data_path"), req.app.get("app_user_data_map"));
+
+                                res.redirect('/round_edit_form?challenge_key=' + challenge_key + "&round_key=" + round_key);
+
+                            } else {
+
+                                res.redirect('/challenge_home?fail_msg=missing necessary data');
+
+                            }
+
+                        } else {
+
+                            res.redirect('/challenge_home?fail_msg=invalid round_key');
+
+                        }
+
+                    } else {
+
+                        res.redirect('/challenge_home?fail_msg=invalid challenge_key');
+
+                    }
+
+                } else {
+
+                    res.redirect('/challenge_home?fail_msg=round_key is required');
+
+                }
+
+            } else if (match_key !== undefined) {
 
                 const round_key: string | undefined = req.query.round_key as string;
 
@@ -327,7 +570,7 @@ class RoundController {
 
             } else {
 
-                res.redirect('/match_home?fail_msg=match_key is required');
+                res.redirect('/home?fail_msg=match_key or challenge_key is required');
 
             }
 

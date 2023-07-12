@@ -64,12 +64,24 @@
   <div  style="overflow:auto;background-color:#90b1df;margin-top:7px;">
 
     <div class="left" style="background-color:#90b1df">
+
+      <% if (match_key != undefined) { %>
       <h3 style="margin: 0px;padding: 0px;"><a href=<%="/match_edit_form?match_key=" + match_key %> style="text-decoration: none;">&#x1F519;</a> <%= user_matches[match_key].name %></h3>
-    <h4">Rounds</h4>
+      <% } %>
+      <% if (challenge_key != undefined) { %>
+        <h3 style="margin: 0px;padding: 0px;"><a href=<%="/challenge_edit_form?challenge_key=" + challenge_key %> style="text-decoration: none;">&#x1F519;</a> <%= user_challenges[challenge_key].name %></h3>
+        <% } %>
+
+      <h4">Rounds</h4>
       <ul>
         <li>
           <Div>
+            <% if (match_key != undefined) { %>
             <a href=<%= "/round_register_form?match_key=" + match_key %>> Novo... </a>
+            <% } %>
+            <% if (challenge_key != undefined) { %>
+              <a href=<%= "/round_register_form?challenge_key=" + challenge_key %>> Novo... </a>
+              <% } %>
           </Div>
         </li>
         <% if (user_matches != undefined && match_key in user_matches) { %>
@@ -84,6 +96,18 @@
         </li>
         <% } %>
         <% } %>
+        <% if (user_challenges != undefined && challenge_key in user_challenges) { %>
+          <% for (const round_key in user_challenges[challenge_key].rounds) { %>
+          <li>
+            <Div>
+              <p style="font-size:75%;margin-top: 0.0em ; margin-bottom: 0.0em ;">
+                <%= user_challenges[challenge_key].rounds[round_key].question.description %> <a
+                  href=<%= "/round_edit_form?challenge_key=" + challenge_key + "&round_key=" + round_key %>
+                  style="text-decoration: none;"> &#9998 </a></p>
+            </Div>
+          </li>
+          <% } %>
+          <% } %>
       </ul>
   </div>
 
@@ -93,9 +117,12 @@
     <form id="round_edit" action="/round_edit" method="get">
 
       <input id="match_key" name="match_key" type="hidden" value=<%= match_key %>>
+      <input id="challenge_key" name="challenge_key" type="hidden" value=<%= challenge_key %>>
       <input id="round_key" name="round_key" type="hidden" value=<%= round_key %>>
 
       <Div style="text-align: left;">
+
+        <% if (match_key != undefined) { %>
 
         <label style="margin-top: 5px;" for="quantity1">Tempo para responder ou passar (em segundos)</label>
         <input type="number" id="quantity1" name="quantity1" min="3" max="300"
@@ -110,11 +137,40 @@
         <input type="number" id="quantity4" name="quantity4" min="1" max="10"
           value=<%= user_matches[match_key].rounds[round_key].score %>><br>
 
+          <% } %>
+
+          <% if (challenge_key != undefined) { %>
+
+            <label style="margin-top: 5px;" for="quantity1">Wait time to shooting (seconds)</label>
+            <input type="number" id="quantity1" name="quantity1" min="3" max="300"
+              value=<%= user_challenges[challenge_key].rounds[round_key].shooting_timeout / 1000%>><br>
+            <label for="quantity2">Wait time to response (seconds)</label>
+            <input type="number" id="quantity2" name="quantity2" min="3" max="300"
+              value=<%= user_challenges[challenge_key].rounds[round_key].response_timeout  / 1000%>><br>
+            <label for="quantity3">Wait time to pass (seconds)</label>
+            <input type="number" id="quantity3" name="quantity3" min="3" max="300"
+              value=<%= user_challenges[challenge_key].rounds[round_key].pass_timeout  / 1000%>><br>
+            <label for="quantity4">Score</label>
+            <input type="number" id="quantity4" name="quantity4" min="1" max="10"
+              value=<%= user_challenges[challenge_key].rounds[round_key].score %>><br>
+    
+              <% } %>
+
       </Div>
 
       <Div style="text-align: left;">
 
+        <% if (match_key != undefined) { %>
+
         <p><%=user_matches[match_key].rounds[round_key].question.description%></p>
+
+        <% } %>
+
+        <% if (challenge_key != undefined) { %>
+
+          <p><%=user_challenges[challenge_key].rounds[round_key].question.description%></p>
+  
+          <% } %>
 
         <h6 style="margin-top: 20px;margin-bottom: 0px;  padding: 5px;">(selecione novamente o quiz e a questão, se quiser)</h6>
         <h4 style="margin: 0;padding: 5px;">Quizzes</h4>

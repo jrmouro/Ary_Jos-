@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="/stylesheets/style.css">
+  <!-- <script src="/javascripts/chatroom.js"></script> -->
+
+</head>
+
+<body style="font-family:Verdana;color:#05252c;">
+
+  
+  <div style="background-color:#90b1df;padding:5px;text-align:center;">
+    <h2 style="margin: 0px;padding: 0;"><%= title %></h2>
+    <p style="font-size:50%;margin: 0px;padding: 0;"><%= wsa %>:<%= wsp %></p>
+    <% if (fail_msg != undefined) { %>
+    <p style="font-family:Verdana;color:#e10e1c;"> <%= fail_msg%> </p>
+    <%}%>
+  </div>
+
+  <div  style="overflow:auto;background-color:#90b1df;margin-top:7px;">
+
+    <div class="left" style="background-color:#90b1df">
+      <h3 style="margin: 0px;padding: 0px;"><a href="/challenge_home" style="text-decoration: none;">&#x1F519;</a> Challenges</h3>
+      <ul style="list-style-type: none; margin: 10px;padding: 0;">
+        <li> 
+          <Div  style="padding-bottom: 10px ;">
+            &#x1F4C4 <a href="/challenge_register_form" >New...</a>
+          </Div>            
+        </li>
+        <% if (user_challenges != undefined) { %>
+    <% for (const key in user_challenges) { %>
+    <li>
+      <Div>
+        &#x1F50E <a href=<%= "/challenge_view?challenge_key=" + key %> style="text-decoration: none;">
+          <%= user_challenges[key].name %> </a>
+        <a href=<%= "/challenge_edit_form?challenge_key=" + key %> style="text-decoration: none;">
+          &#9998;
+        </a>
+        <p style="font-size:50%;margin-top: 0px ; margin-bottom: 5px; margin-left: 25px;">
+          <%= user_challenges[key].theme %> </p>
+      </Div>
+    </li>
+    <% } %>
+    <% } %>
+    </ul>
+  </div>
+
+
+
+  <div class="forms" style="background-color:#90b1df">
+    <h3>New Challenge</h3>
+    <form id="challenge_register" action="/challenge_register" method="get">
+      
+      
+        <Div style="text-align: left;">
+          <label for="name"> Challenge name</label>
+          <input id="name" name="name" placeholder="challenge name" style="margin: 2px" autofocus required type="text"></input><br>
+          <label for="name"> Challenge web server address</label>
+          <input id="ws_address" name="ws_address" placeholder="web server address" style="margin: 2px" autofocus required type="text"></input><br>
+        </Div>
+      
+      <button id="register_btn" type="submit" style="margin: 10px;">Register</button>
+    </form>
+  </div>
+
+  <div class="left"></div>
+
+  </div>
+
+  <div id="status" style="background-color:#90b1df;text-align:center;padding:5px;margin-top:7px;">
+    <% if (user != undefined) { %>
+    <p style="margin: 0px;padding: 0;"> <%= user.name %> </p>
+    <p style="font-size:50%;margin: 0px;padding: 0;"> <%= user.email %> </p>
+    <a href="/user_logout"> logout </a>
+    <%} else { %>
+    <a style="margin: 0px;padding: 0;" href="/user_login_form"> login </a>
+    <% } %>
+  </div>
+
+</body>
+
+</html>

@@ -77,7 +77,6 @@ export class WS_MatchInfo {
         const receiver = msg_obj.receiver;
         const sender = msg_obj.sender;
         const msg_type = msg_obj.msg_type;
-        const msg_content = msg_obj.msg_content;
 
         if (receiver === this.key && sender !== undefined) {
 

@@ -37,6 +37,9 @@ export const Protocol = {
     player_shot_response: "24",
     player_shot_pass: "25",
 
+    challenge_info: "56",
+
+
     wss_client_register:"99"
 
 } as const;

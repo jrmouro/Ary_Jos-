@@ -24,6 +24,8 @@ class MatchController {
 
             const user_matches: { [key: string]: Match } = req.app.get("app_user_data_map")[user.email].matches;
 
+            const fail_msg = req.query.fail_msg;
+
             res.render('match_home', {
                 title: app_name,
                 wsa: wsaddress,
@@ -33,7 +35,7 @@ class MatchController {
                 user_matches: user_matches,
                 wsmatchinfoclusterkey: wsmatchinfo.key,
                 wsmatchinfokey: UID.get(),
-                fail_msg: undefined
+                fail_msg: fail_msg
             });
 
         } else {
@@ -56,8 +58,6 @@ class MatchController {
         if (user !== undefined) {
 
             const name: string = req.query.name as string;
-
-
 
             const config: MatchConfig = {
                 show_options: req.query.checkbox1 ? true : false,
@@ -157,13 +157,13 @@ class MatchController {
 
             const match_key: string = req.query.match_key as string;
 
+            const fail_msg = req.query.fail_msg;
+
             if (match_key !== undefined) {
 
                 const user_matches: { [key: string]: Match } = req.app.get("app_user_data_map")[user.email].matches;
 
                 if (match_key in user_matches) {
-
-                    const edit_quiz: Match = user_matches[match_key];
 
                     res.render('match_edit_form', {
                         title: app_name,
@@ -172,7 +172,7 @@ class MatchController {
                         user: user,
                         user_matches: user_matches,
                         match_key: match_key,
-                        fail_msg: undefined
+                        fail_msg: fail_msg
                     });
 
                 } else {
@@ -207,13 +207,15 @@ class MatchController {
 
             const user_matches: { [key: string]: Match } = req.app.get("app_user_data_map")[user.email].matches;
 
+            const fail_msg = req.query.fail_msg;
+
             res.render('match_register_form', {
                 title: app_name,
                 wsa: wsaddress,
                 wsp: wsport,
                 user: user,
                 user_matches: user_matches,
-                fail_msg: undefined
+                fail_msg: fail_msg
             });
 
         } else {
@@ -238,6 +240,8 @@ class MatchController {
 
             const ws_match_key: string = req.query.ws_match_key as string; 
             const owner_user_key: string = req.query.ws_match_owner_user_key as string;
+
+
 
             if (ws_match_key !== undefined && owner_user_key !== undefined) {
 
@@ -301,6 +305,7 @@ class MatchController {
         if (user !== undefined) {
 
             const match_key: string = req.query.match_key as string;
+            const fail_msg = req.query.fail_msg;
 
             if (match_key !== undefined) {
 
@@ -313,7 +318,7 @@ class MatchController {
                     user: user,
                     user_matches: user_matches,
                     match_key: match_key,
-                    fail_msg: undefined
+                    fail_msg: fail_msg
                 });
 
             } else {

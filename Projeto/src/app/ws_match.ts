@@ -6,7 +6,7 @@ import { MatchStatus } from "./match_status";
 import { Player } from "./player";
 import { Round_State_Value } from "./round_state";
 import { Round } from "./round";
-import { _WS_Match_State, WS_Match_State_Value, Unlaunched_Match_State } from "./ws_match_state";
+import { _WS_Match_State, Unlaunched_Match_State } from "./ws_match_state";
 
 
 export class WS_Match {

@@ -1,3 +1,4 @@
+import { Challenge } from './challenge';
 import { Match } from './match';
 import { Quiz } from './quiz';
 
@@ -9,6 +10,7 @@ export class User {
     readonly key_password:string;
     readonly quizzes: { [key: string]: Quiz };
     readonly matches: { [key: string]: Match };
+    readonly challenges: { [key: string]: Challenge };
 
     constructor(
         name:string, 
@@ -16,7 +18,8 @@ export class User {
         password:string,
         key_password:string,  
         quizzes: { [key: string] : Quiz} = {}, 
-        matches: { [key: string] : Match} = {}){
+        matches: { [key: string] : Match} = {},
+        challenges: { [key: string] : Challenge} = {}){
 
         this.name = name;
         this.email = email;
@@ -24,6 +27,7 @@ export class User {
         this.key_password = key_password;
         this.quizzes = quizzes;
         this.matches = matches;
+        this.challenges = challenges;
 
     }
 

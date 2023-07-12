@@ -121,8 +121,6 @@ class QuizController {
 
                 if (quiz_key in user_quizzes) {
 
-                    const edit_quiz: Quiz = user_quizzes[quiz_key];
-
                     res.render('quiz_edit_form', {
                         title: app_name,
                         wsa: wsaddress,
