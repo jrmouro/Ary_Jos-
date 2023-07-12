@@ -20,14 +20,6 @@ class ChallengeScene extends DrawWorld {
 
     }
 
-    finish(flag) {
-
-        this.clear();
-        this.finished(this.score, flag);
-
-    }
-
-
     build(def) {
 
         this.clear();
@@ -171,7 +163,8 @@ class ChallengeScene extends DrawWorld {
 
                                 setTimeout(() => {
 
-                                    self.finish(false);
+                                    self.clear();
+                                    self.finished(0, false);
 
                                 }, 1500);
 
@@ -179,31 +172,34 @@ class ChallengeScene extends DrawWorld {
 
                         } else {
 
-                            
+
 
                         }
 
                     } else {
 
                         if ((pair.bodyB.label === self.actor.label() &&
-                                    pair.bodyA.label === def.sensor2.bodyOptions.label) || (pair.bodyB.label === def.sensor2.bodyOptions.label &&
-                                    pair.bodyA.label === self.actor.label())) {
+                                pair.bodyA.label === def.sensor2.bodyOptions.label) || (pair.bodyB.label === def.sensor2.bodyOptions.label &&
+                                pair.bodyA.label === self.actor.label())) {
 
-                                self.isFinished = true;
-                                Matter.Events.off(self.engine);
-                                // Matter.Events.off(self.mouseConstraint);
+                            self.isFinished = true;
+                            Matter.Events.off(self.engine);
+                            // Matter.Events.off(self.mouseConstraint);
+
+                            if(self.score > 0) applause.play(); else wrong.play();
+
+                            setTimeout(() => {
 
                                 setTimeout(() => {
 
-                                    setTimeout(() => {
+                                    self.clear();
+                                    self.finished(self.score, true);
 
-                                        self.finish(true);
+                                }, 1500);
 
-                                    }, 1500);
+                            }, 200);
 
-                                }, 200);
-
-                            }
+                        }
 
                     }
 

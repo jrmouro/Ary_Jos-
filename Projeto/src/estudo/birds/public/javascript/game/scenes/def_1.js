@@ -105,10 +105,10 @@ const scene1 = {
 
         vel:{
             x:0,
-            y:-0.1
+            y:-0.05
         },
 
-        max: 35,
+        max: 55,
 
         draw: {
             e1: {

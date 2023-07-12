@@ -44,7 +44,10 @@ class Actor extends DrawWorld {
 
     dead(){
 
-        if(this.bird)this.bird.dead();
+        if(this.bird){
+            wrong.play();
+            this.bird.dead();
+        }
 
     }
 

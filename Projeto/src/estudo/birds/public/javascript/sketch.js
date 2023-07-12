@@ -1,5 +1,16 @@
 let game;
 
+let applause, right, wrong;
+function preload() {
+  soundFormats('wav');  
+  register = loadSound('/audio/register.wav',()=>{
+    // register.play();
+  });
+  applause = loadSound('/audio/applause.wav');
+  right = loadSound('/audio/right.wav');
+  wrong = loadSound('/audio/wrong.wav');
+}
+
 function setup() {
 
   const challenge_service = {
@@ -12,8 +23,10 @@ function setup() {
   const canvas = createCanvas(800, 1400);
   game = new Game(canvas.canvas.canvas, [scene1, scene2, scene3, scene4, scene5], game_def, challenge_service);
   game.setup();
+  
 
 }
+
 
 function draw() {
 

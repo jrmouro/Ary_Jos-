@@ -54,7 +54,7 @@ function wschallengeinfo(filter=false) {
                 var challengeaddress = launched_challenges[wschallengekey].ws_address;
                 var challengestatus = launched_challenges[wschallengekey].status;
 
-                var status_simbol = '&#x270D;';
+                var status_simbol = '&#x1F577;';
                 var tooltip_text = 'game';
 
                 switch (challengestatus) {

@@ -123,6 +123,7 @@ class Scene extends DrawWorld {
                                 (pair.bodyA.label === def.chase1.bodyOptions.label || pair.bodyA.label === def.chase2.bodyOptions.label) &&
                                 self.actor.releasedBodyId() !== pair.bodyA.id) {
 
+                                    right.play();
                                 setTimeout(() => {
 
                                     self.get(pair.bodyA.id).change();
@@ -138,6 +139,8 @@ class Scene extends DrawWorld {
 
                             if ((pair.bodyA.label === def.chase3.bodyOptions.label) &&
                                 self.actor.releasedBodyId() !== pair.bodyA.id) {
+
+                                    right.play();
 
                                 setTimeout(() => {
 
@@ -168,7 +171,8 @@ class Scene extends DrawWorld {
 
                                 setTimeout(() => {
 
-                                    self.finish(0, false);
+                                    self.clear();
+                                    self.finished(0, false);
 
                                 }, 1500);
 
@@ -189,7 +193,8 @@ class Scene extends DrawWorld {
 
                                 setTimeout(() => {
 
-                                    self.finish(1, true);
+                                    self.clear();
+                                    self.finished(0, false);
 
                                 }, 2500);
 
@@ -206,11 +211,14 @@ class Scene extends DrawWorld {
                             self.isFinished = true;
                             Matter.Events.off(self.engine);
 
+                            applause.play();
+
                             setTimeout(() => {
 
                                 setTimeout(() => {
 
-                                    self.finish(0, false);
+                                    self.clear();
+                                    self.finished(1, true);
 
                                 }, 1500);
 
